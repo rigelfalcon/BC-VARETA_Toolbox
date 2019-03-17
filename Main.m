@@ -20,16 +20,67 @@ function [] = Main()
 clear all;
 clc;
 close all;
-%% loading data...
+%% loading data... 
 load('data/mycolormap_brain_basic_conn.mat');
-[filename_eeg, pathname] = uigetfile({'data'},'Pick the EEG data');
-load([pathname,filename_eeg]);
-[filename_lf, pathname] = uigetfile({'data'},'Pick the leadfield matrix');
-load([pathname,filename_lf]);
-[filename_surf, pathname] = uigetfile({'data'},'Pick the cortical surf');
-load([pathname,filename_surf]);
-[filename_elect, pathname] = uigetfile({'data'},'Pick the scalp info');
-load([pathname,filename_elect]);
+
+
+folder = uigetdir('tittle','Select the Data''s Folder');
+if(folder==0)
+    return;
+end
+
+
+pathname = strcat(folder,'\');
+
+ext='.mat'; % extension, si no se desea filtrar por extension poner ext=''
+ar=ls(folder);
+
+files_to_load = ["eeg", "leadfield", "surf" ,"scalp"];
+
+for j=1:size(ar,1)
+    cn=ar(j,:);
+    [~,~,ex]=fileparts(cn);
+    %----------isdir(cn)--------------
+    if (and(~isfolder(fullfile(path,cn)),or(strcmpi(strtrim(ex),ext),isempty(ext))))
+        
+        if(size( strfind(cn,'eeg'))>0)
+            filename_eeg = cn;
+            load([pathname,filename_eeg]);
+            k = find(files_to_load =='eeg');
+            files_to_load(k) = [];
+            
+        end
+        if(size( strfind(cn,'leadfield'))>0)
+            filename_lf = cn;
+            load([pathname,filename_lf]);
+            k = find(files_to_load =='leadfield');
+            files_to_load(k) = [];
+        end
+        if(size( strfind(cn,'surf'))>0)
+            filename_surf = cn;
+            load([pathname,filename_surf]);
+            k = find(files_to_load =='surf');
+            files_to_load(k) = [];
+        end
+        if(size( strfind(cn,'scalp'))>0)
+            filename_elect= cn;
+            load([pathname,filename_elect]);
+            k = find(files_to_load =='scalp');
+            files_to_load(k) = [];
+        end
+        
+        
+    end
+end
+if (size(files_to_load)>0)
+    disp( 'The following File Data are missing:' );
+    
+    for j=1 : size(files_to_load,2)
+        disp(files_to_load(j) );
+    end
+    return;
+end
+
 Input_flat = 0;
 
 %% initial values...
@@ -116,7 +167,7 @@ title('Scalp','Color','w','FontSize',16);
 pause(1e-12);
 %%
 %% bc-vareta toolbox...
-%% Parameters 
+%% Parameters
 param.maxiter_outer = 60;
 param.maxiter_inner = 30;
 param.m             = length(peak_pos)*Nseg;
