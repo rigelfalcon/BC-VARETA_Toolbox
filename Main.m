@@ -14,7 +14,7 @@ function [] = Main()
 % - Eduardo Gonzalez Moreira
 % - Pedro A. Valdes Sosa
 
-% Date: September 15, 2018
+% Date: March 16, 2019
 
 %% cleaning...
 clear all;
@@ -31,23 +31,31 @@ load([pathname,filename_surf]);
 [filename_elect, pathname] = uigetfile({'data'},'Pick the scalp info');
 load([pathname,filename_elect]);
 Input_flat = 0;
+
 %% initial values...
 [Ne1,Np1] = size(K_6k);
 Nseg      = 5e2;
 snr       = 1;
 snr_ch    = 1;
 verbosity = 1;
+%%
+
 %% estimating cross-spectra...
 disp('estimating cross-spectra for EEG data...');
-[Svv_channel,F,Nseg,PSD] = xspectrum(data,200,[],[]);                 % estimates the Cross Spectrum of the input M/EEG data
+Fs     = 200; % sampling frequency
+Fm     = 19; % maximum frequency
+deltaf = 0.5; % frequency resolution
+[Svv_channel,F,Nseg,PSD] = xspectrum(data,Fs,Fm,deltaf);                 % estimates the Cross Spectrum of the input M/EEG data
 disp('applying average reference...');
 Nf = length(F);
 for jj = 1:Nf
     [Svv_channel(:,:,jj),K_6k] = applying_reference(Svv_channel(:,:,jj),K_6k);    % applying average reference...
 end
+%%
+
 %% alpha peak picking and psd visualization...
-peak_pos = 27;
-Svv = Svv_channel(:,:,peak_pos);
+peak_pos = find(F == 9.5):find(F == 11.5);
+Svv = mean(Svv_channel(:,:,peak_pos),3);
 PSD_log = 10*log10(abs(PSD));
 min_psd = min(PSD_log(:));
 max_psd = max(PSD_log(:));
@@ -61,9 +69,12 @@ ylabel('PSD (dB)','Color','w');
 xlabel('Freq. (Hz)','Color','w');
 title('Power Spectral Density','Color','w');
 pause(1e-10);
+
 %% inverse covariance matrix...
 Nelec = size(K_6k,1);
 Svv_inv = sqrt(Svv*Svv+4*eye(Nelec))-Svv;
+%%
+
 %% electrodes space visualization...
 X = zeros(length(elect_58_343.conv_ASA343),1);
 Y = zeros(length(elect_58_343.conv_ASA343),1);
@@ -103,8 +114,34 @@ colorbar;
 axis square;
 title('Scalp','Color','w','FontSize',16);
 pause(1e-12);
+%%
 %% bc-vareta toolbox...
-[ThetaJJ,SJJ,indms] = bcvareta(Svv,K_6k,Nseg,S_6k.Vertices,S_6k.Faces);
+%% Parameters 
+param.maxiter_outer = 60;
+param.maxiter_inner = 30;
+param.m             = length(peak_pos)*Nseg;
+param.penalty       = 1;
+param.rth           = 3.16;
+param.axi           = 1E-3;
+param.Axixi         = eye(length(Svv));
+%%
+%% Activation Leakage Module
+disp('activation leakage module...');
+% Default Atlas (groups)
+nonovgroups = [];
+for ii = 1:length(K_6k)
+    nonovgroups{ii} = ii;
+end
+%%
+[miu,sigma_post,DSTF] = cross_nonovgrouped_enet_ssbl({Svv},{K_6k},length(peak_pos)*Nseg,nonovgroups);
+stat                  = sqrt((abs(miu))./abs(sigma_post));
+indms                 = find(stat > 1);
+%%
+%% Connectivity Leakage Module
+disp('connectivity leakage module...');
+[ThetaJJ,SJJ,llh,jj_on,xixi_on] = h_hggm(Svv,K_6k(:,indms),param);
+%%
+%% Plotting results
 sources_iv          = zeros(length(K_6k),1);
 sources_iv(indms)   = abs(diag(SJJ));
 sources_iv          = sources_iv/max(sources_iv(:));
@@ -144,6 +181,7 @@ colormap(gca,cmap_c);
 axis square;
 title('BC-VARETA','Color','w','FontSize',16);
 pause(1e-12);
+
 %% saving...
-save('results/EEG_real.mat','ThetaJJ','SJJ','indms');
+save('results\EEG_real.mat','ThetaJJ','SJJ','indms');
 end
