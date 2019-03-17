@@ -30,6 +30,8 @@ Complementary Functions
 - trascendent_term: nonlinear function for regularization parameters estimation within the function 'screening_ssbl'     
 - screening: applies a smoothing to the outputs of 'screening_ssbl'
 
+
+
 % Authors:
 % - Deirel Paz Linares
 % - Eduardo Gonzalez Moreira
