@@ -1,6 +1,7 @@
 function [] = Main()
 
 %% BC-VARETA toolbox v8.1
+%%%%%%%%%%%%%%%%%%%%
 
 % Includes the routines of the Brain Connectivity Variable Resolution
 % Tomographic Analysis (BC-VARETA), an example for real EEG analysis.
