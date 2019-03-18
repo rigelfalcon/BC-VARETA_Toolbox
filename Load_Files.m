@@ -1,7 +1,7 @@
 function [outputArg1,outputArg2] = Load_Files(folder)
 %LOAD_FILES Summary of this function goes here
 %   Detailed explanation goes here
-%
+%%%%%
 %
 % Authors:
 % - Deirel Paz Linares
