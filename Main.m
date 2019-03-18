@@ -20,6 +20,7 @@ function [] = Main()
 clear all;
 clc;
 close all;
+
 %% loading data...
 load('data/mycolormap_brain_basic_conn.mat');
 [filename_eeg, pathname] = uigetfile({'data'},'Pick the EEG data');
