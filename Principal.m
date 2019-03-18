@@ -18,8 +18,7 @@
 clear all;
 clc;
 close all;
-%% loading data... 
-load('data/mycolormap_brain_basic_conn.mat');
+
 
 folder = uigetdir('tittle','Select the Data''s Folder');
 if(folder==0)

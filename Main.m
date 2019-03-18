@@ -1,4 +1,4 @@
-function [] = Main()
+function [files_to_load] = Main(pathname,filename_eeg,filename_lf,filename_surf,filename_elect)
 
 %% BC-VARETA toolbox v8.1
 
@@ -16,70 +16,17 @@ function [] = Main()
 
 % Date: March 16, 2019
 
-%% cleaning...
-clear all;
-clc;
-close all;
+
 %% loading data... 
-load('data/mycolormap_brain_basic_conn.mat');
+load('tools/mycolormap_brain_basic_conn.mat');
 
+load([pathname,filename_eeg]);
 
-folder = uigetdir('tittle','Select the Data''s Folder');
-if(folder==0)
-    return;
-end
+load([pathname,filename_lf]);
 
+load([pathname,filename_surf]);
 
-pathname = strcat(folder,'\');
-
-ext='.mat'; % extension, si no se desea filtrar por extension poner ext=''
-ar=ls(folder);
-
-files_to_load = ["eeg", "leadfield", "surf" ,"scalp"];
-
-for j=1:size(ar,1)
-    cn=ar(j,:);
-    [~,~,ex]=fileparts(cn);
-    %----------isdir(cn)--------------
-    if (and(~isfolder(fullfile(path,cn)),or(strcmpi(strtrim(ex),ext),isempty(ext))))
-        
-        if(size( strfind(cn,'eeg'))>0)
-            filename_eeg = cn;
-            load([pathname,filename_eeg]);
-            k = find(files_to_load =='eeg');
-            files_to_load(k) = [];
-            
-        end
-        if(size( strfind(cn,'leadfield'))>0)
-            filename_lf = cn;
-            load([pathname,filename_lf]);
-            k = find(files_to_load =='leadfield');
-            files_to_load(k) = [];
-        end
-        if(size( strfind(cn,'surf'))>0)
-            filename_surf = cn;
-            load([pathname,filename_surf]);
-            k = find(files_to_load =='surf');
-            files_to_load(k) = [];
-        end
-        if(size( strfind(cn,'scalp'))>0)
-            filename_elect= cn;
-            load([pathname,filename_elect]);
-            k = find(files_to_load =='scalp');
-            files_to_load(k) = [];
-        end
-        
-        
-    end
-end
-if (size(files_to_load)>0)
-    disp( 'The following File Data are missing:' );
-    
-    for j=1 : size(files_to_load,2)
-        disp(files_to_load(j) );
-    end
-    return;
-end
+load([pathname,filename_elect]);
 
 Input_flat = 0;
 
