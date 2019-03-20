@@ -1,8 +1,17 @@
-function [] = band_analysis(Svv_channel,K_6k,F,frequency_band)
-[f1,nf1] = min(abs(F - str2double(frequency_band(1)))) ;
-[f2,nf2] = min(abs(F - str2double(frequency_band(2)))) ;
-peak_pos = nf1:nf2;
-Svv = mean(Svv_channel(:,:,peak_pos),3);
+function [result] = band_analysis(Svv,K_6k,F,band,parameters_data,figures)
+
+
+elect_58_343 = parameters_data.elect_58_343;
+ASA_343 = parameters_data.ASA_343;
+S_h = parameters_data.S_h;
+cmap_a=parameters_data.cmap_a;
+cmap_c=parameters_data.cmap_c;
+Nseg=parameters_data.Nseg;
+S_6k=parameters_data.S_6k;
+
+
+
+peak_pos=parameters_data.peak_pos;
 
 
 %% inverse covariance matrix...
@@ -22,13 +31,18 @@ end
 C = abs(diag(Svv));
 C = C/max(C);
 C(C<0.01) = 0;
-figure('Color','k'); hold on; set(gca,'Color','k');
+figure_scalp = figure('Color','k'); hold on; set(gca,'Color','k');
 scatter3(X,Y,Z,100,C.^1,'filled');
 patch('Faces',S_h.Faces,'Vertices',S_h.Vertices,'FaceVertexCData',0.01*(ones(length(S_h.Vertices),1)),'FaceColor','interp','EdgeColor','none','FaceAlpha',.35);
 colormap(gca,cmap_a);
 az = 0; el = 0;
 view(az, el);
 title('Scalp','Color','w','FontSize',16);
+
+
+figures.figure_scalp = figure_scalp;
+
+
 temp_diag  = diag(diag(abs(Svv_inv)));
 temp_ndiag = abs(Svv_inv)-temp_diag;
 temp_ndiag = temp_ndiag/max(temp_ndiag(:));
@@ -36,7 +50,7 @@ temp_diag  = diag(abs(diag(Svv)));
 temp_diag  = temp_diag/max(temp_diag(:));
 temp_diag  = diag(diag(temp_diag)+1);
 temp_comp  = temp_diag+temp_ndiag;
-figure('Color','k');
+figure_scalp_electrodes = figure('Color','k');
 imagesc(temp_comp);
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
     'XTick',1:length(elect_58_343.conv_ASA343),'YTick',1:length(elect_58_343.conv_ASA343),...
@@ -48,6 +62,9 @@ colormap(gca,cmap_c);
 colorbar;
 axis square;
 title('Scalp','Color','w','FontSize',16);
+
+figures.figure_scalp_electrodes = figure_scalp_electrodes;
+
 pause(1e-12);
 %%
 %% bc-vareta toolbox...
@@ -82,13 +99,16 @@ sources_iv(indms)   = abs(diag(SJJ));
 sources_iv          = sources_iv/max(sources_iv(:));
 ind_zr              = sources_iv < 0.01;
 sources_iv(ind_zr)  = 0;
-figure('Color','k'); hold on;
+figure_BC_VARETA = figure('Color','k'); hold on;
 patch('Faces',S_6k.Faces,'Vertices',S_6k.Vertices,'FaceVertexCData',sources_iv,'FaceColor','interp','EdgeColor','none','FaceAlpha',.85);
 set(gca,'Color','k');
 az = 0; el = 0;
 view(az,el);
 colormap(gca,cmap_a);
 title('BC-VARETA','Color','w','FontSize',16);
+
+figures.figure_BC_VARETA1 = figure_BC_VARETA1;
+
 temp_iv    = abs(SJJ);
 connect_iv = abs(ThetaJJ);
 temp       = abs(connect_iv);
@@ -103,7 +123,7 @@ label_gen = [];
 for ii = 1:length(indms)
     label_gen{ii} = num2str(ii);
 end
-figure('Color','k');
+figure_BC_VARETA2 = figure('Color','k');
 imagesc(temp_comp);
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
     'XTick',1:length(indms),'YTick',1:length(indms),...
@@ -115,10 +135,18 @@ colorbar;
 colormap(gca,cmap_c);
 axis square;
 title('BC-VARETA','Color','w','FontSize',16);
+
+figures.figure_BC_VARET2 = figure_BC_VARETA2;
+
 pause(1e-12);
 
 %% saving...
 
-save(strcat(pathname ,'/EEG_real_',frequency_band(3),'_',frequency_band(1),'Hz-',frequency_band(1),'Hz.mat'),'ThetaJJ','SJJ','indms');
+save(strcat(pathname ,'/EEG_real_',band(3),'_',band(1),'Hz-',band(1),'Hz.mat'),'ThetaJJ','SJJ','indms');
+
+for i=1:numel(fields)
+    saveas(fields(i),strcat(pathname ,'/',get(fields(i),'title'))) ;
+end
+
 end
 
