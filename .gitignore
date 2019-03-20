@@ -1,3 +1,4 @@
 *.asv
 data/
 results/
+.gitignore*
