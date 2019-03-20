@@ -33,7 +33,7 @@ close all;
 
 properties = struct;
 %--------------------frequency bands-----------------------------------
-guiHandle = frequency_bands;
+guiHandle = frequency_bands_guide;
 disp('------Waitintg for frequency_bands------');
 uiwait(guiHandle.UIFigure);
 %waitfor(guiHandle);
