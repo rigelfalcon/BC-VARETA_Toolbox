@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = Load_Files(folder)
+function [outputArg1,outputArg2] = Load_Files(folder,properties)
 %LOAD_FILES Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -49,17 +49,33 @@ for j=1:size(ar,1)
         
     end
     if(isfolder(fullfile(pathname,cn)) & cn ~= '.' & string(cn) ~="..")
-        Load_Files(strcat(pathname,cn) );
+        Load_Files(strcat(pathname,cn),properties );
     end
 end
 if (size(files_to_load)>0)
+    disp(strcat( '---- Folder: ' , pathname, '-------------') );
     disp( 'The following File Data are missing:' );
     
     for j=1 : size(files_to_load,2)
         disp(files_to_load(j) );
     end
 else
-    Main(pathname,filename_eeg,filename_lf,filename_surf,filename_elect);
+    
+    
+    disp(strcat( '---- Folder: ' , pathname, '-------------') );
+    disp(strcat( '---- -----------------------------------') );
+       
+    frequencies_band = properties.frequencies;
+       
+    for i=1:size(frequencies_band,2)
+        frequency_band=frequencies_band(i,:);
+        properties.frequency_band = frequency_band;
+        disp(strcat( '---- Frequency Band: (' , frequency_band(3) , ')' , frequency_band(1), 'Hz  -->  ' , frequency_band(2) , 'Hz    -------------') );
+        disp(strcat( '---- -----------------------------------') );
+        files_data = [filename_eeg;filename_lf;filename_surf;filename_elect];
+        Main(pathname,files_data,properties);
+    end
+    disp(strcat( '---- -----------------------------------') );
 end
 end
 
