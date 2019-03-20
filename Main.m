@@ -214,6 +214,9 @@ files_to_load = band_analysis(Svv_channel,K_6k,F,frequency_band);
 %         label_gen = [];
 %         for ii = 1:length(indms)
 %             label_gen{ii} = num2str(ii);
+
+
+
 %         end
 %         figure('Color','k');
 %         imagesc(temp_comp);
