@@ -17,6 +17,10 @@ function [files_to_load] = Main(pathname,files_data,properties)
 
 % Date: March 16, 2019
 
+% Updates
+% - Ariosky Areces Gonzalez
+
+% Date: March 20, 2019
 
 %% ----------------create vars-------------------
 frequency_band = properties.frequency_band;
@@ -72,6 +76,9 @@ PSD_log = 10*log10(abs(PSD));
 min_psd = min(PSD_log(:));
 max_psd = max(PSD_log(:));
 plot_peak = min_psd*ones(Nf,1);
+[f1,nf1] = min(abs(F - str2double(frequency_band(1)))) ;
+[f2,nf2] = min(abs(F - str2double(frequency_band(2)))) ;
+peak_pos = nf1:nf2;
 plot_peak(peak_pos) = max_psd;
 figure('Color','k'); hold on;
 plot(F,PSD_log);
