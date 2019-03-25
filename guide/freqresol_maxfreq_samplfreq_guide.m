@@ -5,9 +5,9 @@ classdef freqresol_maxfreq_samplfreq_guide < matlab.apps.AppBase
         UIFigure                       matlab.ui.Figure
         PropertiesPanel                matlab.ui.container.Panel
         SamplingfrequencySpinnerLabel  matlab.ui.control.Label
+        SamplingfrequencySpinner       matlab.ui.control.Spinner
         FrequencyresolutionSpinnerLabel  matlab.ui.control.Label
         FrequencyresolutionSpinner     matlab.ui.control.Spinner
-        SamplingfrequencySpinner       matlab.ui.control.Spinner
         MaxfrequencySpinnerLabel       matlab.ui.control.Label
         MaxfrequencySpinner            matlab.ui.control.Spinner
         CancelButton                   matlab.ui.control.Button
@@ -20,6 +20,7 @@ classdef freqresol_maxfreq_samplfreq_guide < matlab.apps.AppBase
     end
     
     properties (Access = public)
+        canceled
         frequency_resolution % Resolution frequency
         sampling_frequency % Samplin frequency
         max_frequency % Max frequency
@@ -36,13 +37,14 @@ classdef freqresol_maxfreq_samplfreq_guide < matlab.apps.AppBase
 
         % Button pushed function: CancelButton
         function CancelButtonPushed(app, event)
-            
+            app.canceled = true;
             uiresume(app.UIFigure);
             close();
         end
 
         % Button pushed function: OkButton
         function OkButtonPushed(app, event)
+            app.canceled = false;
             app.frequency_resolution = app.FrequencyresolutionSpinner.Value;
             app.sampling_frequency = app.SamplingfrequencySpinner.Value;
             app.max_frequency = app.MaxfrequencySpinner.Value;

@@ -7,13 +7,18 @@ classdef frequency_bands_guide < matlab.apps.AppBase
         CheckBox_Delta             matlab.ui.control.CheckBox
         CheckBox_theta             matlab.ui.control.CheckBox
         CheckBox_alpha             matlab.ui.control.CheckBox
+        CheckBox_beta              matlab.ui.control.CheckBox
         FromLabel                  matlab.ui.control.Label
         HztoLabel                  matlab.ui.control.Label
         HzdeltaLabel               matlab.ui.control.Label
+        Spinner_delta_start        matlab.ui.control.Spinner
         Spinner_delta_end          matlab.ui.control.Spinner
         FromLabel_2                matlab.ui.control.Label
         HzthetaLabel               matlab.ui.control.Label
         FromLabel_3                matlab.ui.control.Label
+        HzalphaLabel               matlab.ui.control.Label
+        FromLabel_4                matlab.ui.control.Label
+        HzbetaLabel                matlab.ui.control.Label
         HztoLabel_2                matlab.ui.control.Label
         Spinner_theta_start        matlab.ui.control.Spinner
         Spinner_theta_end          matlab.ui.control.Spinner
@@ -23,19 +28,15 @@ classdef frequency_bands_guide < matlab.apps.AppBase
         HztoLabel_4                matlab.ui.control.Label
         Spinner_beta_start         matlab.ui.control.Spinner
         Spinner_beta_end           matlab.ui.control.Spinner
-        HzalphaLabel               matlab.ui.control.Label
-        FromLabel_4                matlab.ui.control.Label
-        HzbetaLabel                matlab.ui.control.Label
-        Spinner_delta_start        matlab.ui.control.Spinner
         AgreeButton                matlab.ui.control.Button
         CancelButton               matlab.ui.control.Button
-        CheckBox_beta              matlab.ui.control.CheckBox
     end
 
     
     properties (Access = public)
         frequencies % Description
-        Property2 % Description      
+        Property2 % Description  
+        canceled
     end
     
     methods (Access = private)
@@ -50,6 +51,7 @@ classdef frequency_bands_guide < matlab.apps.AppBase
 
         % Button pushed function: AgreeButton
         function AgreeButtonPushed(app, event)
+             app.canceled = false;
             row = 1;
             allOk = true;
             if(app.CheckBox_Delta.Value)
@@ -97,8 +99,10 @@ classdef frequency_bands_guide < matlab.apps.AppBase
         % Button pushed function: CancelButton
         function CancelButtonPushed(app, event)
             app.frequencies = [];
+            app.canceled = true;
             uiresume(app.UIFigure);
             close();
+           
             
             
         end
