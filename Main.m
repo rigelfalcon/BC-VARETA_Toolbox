@@ -28,6 +28,8 @@ clear all;
 clc;
 close all;
 
+% diary('example')
+% diary on;
 
 %%  Test's Seccion
 
@@ -107,6 +109,7 @@ end
 %%
 
 %% ----- Search the subject's folders and load the data's files
+
 Load_Files(folder,properties );
 
 %----------------End Load Subject's File-------------------------------

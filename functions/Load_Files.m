@@ -9,11 +9,11 @@ function [] = Load_Files(root_path,properties)
 % - Pedro A. Valdes Sosa
 %
 % Date: March 18, 2019
-% 
-% 
+%
+%
 % Updates:
 % - Ariosky Areces Gonzalez
-% 
+%
 % Date: March 26, 2019
 %%
 
@@ -28,11 +28,18 @@ deltaf = properties.freqres; % frequency resolution
 frequency_bands = properties.frequencies;
 %%
 
-subjects=ls(root_path);
+subjects=dir(root_path);
 tic
-parfor i=1:size(subjects,1)
+
+process_waitbar = waitbar(0,'Please wait...');
+
+% setappdata(process_waitbar,'canceling',0);
+
+
+for i=1:size(subjects,1)
     
-    subject_name = subjects(i,:);
+    subject_name = subjects(i).name;
+    
     pathname = strcat(root_path,filesep,subject_name);
     if(isfolder(pathname) & subject_name ~= '.' & string(subject_name) ~="..")
         
@@ -87,7 +94,7 @@ parfor i=1:size(subjects,1)
         end
         if (size(files_to_load)>0)
             disp(strcat( '---- Folder: ' , pathname, '-------------') );
-             fprintf(2, strcat( 'The following File Data are missing for this subject: ', subject_name ,'\n'));
+            fprintf(2, strcat( 'The following File Data are missing for this subject: ', subject_name ,'\n'));
             
             for s=1 : size(files_to_load,2)
                 disp(files_to_load(s) );
@@ -134,11 +141,11 @@ parfor i=1:size(subjects,1)
                     parameters_data.ASA_343 =scalp.ASA_343;
                     parameters_data.S_h = scalp.S_h;
                 else
-                     fprintf(2,strcat( 'The Scalp''s structure is not correct.\n') );
+                    fprintf(2,strcat( 'The Scalp''s structure is not correct.\n') );
                     all_file_ok = false;
                 end
             else
-                 fprintf(2,strcat( 'The Scalp''s structure is not correct.\n') );
+                fprintf(2,strcat( 'The Scalp''s structure is not correct.\n') );
                 all_file_ok = false;
             end
             % ---- Loading Surf ---------------
@@ -150,7 +157,7 @@ parfor i=1:size(subjects,1)
             elseif(ismatrix(surf))
                 parameters_data.S_6k  = surf;
             else
-                 fprintf(2,strcat( 'The Surf''s structure is not correct.\n') );
+                fprintf(2,strcat( 'The Surf''s structure is not correct.\n') );
                 all_file_ok = false;
             end
             
@@ -177,10 +184,13 @@ parfor i=1:size(subjects,1)
             %%--------------- estimating cross-spectra-------------------------------
             disp('estimating cross-spectra for EEG data...');
             try
-            [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k);
+                waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for EEG data...'));
+                [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k);
+                
+                error = false;
             catch
-                 fprintf(2, 'You have some problem with the configation''s properties\n' );                 
-                 error = true;
+                fprintf(2, 'You have some problem with the configuration''s properties\n' );
+                error = true;
             end
             
             %%
@@ -204,6 +214,7 @@ parfor i=1:size(subjects,1)
                         disp(strcat( '---- -----------------------------------') );
                         
                         % --------- Get band -----------------------------------
+                        
                         [Svv,peak_pos,fig_struct] = get_band(Svv_channel,PSD,Nf,F,band);
                         
                         figures.figure_band = fig_struct;
@@ -212,18 +223,25 @@ parfor i=1:size(subjects,1)
                         
                         %% alpha peak picking and psd visualization...
                         try
+                              waitbar((i*h)/(size(subjects,1)*size(frequency_bands,1)),...
+                                process_waitbar,strcat('Processing ',subject_name, ...
+                                ' Frequency''s Band: (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz'));
+                            
                             result = band_analysis(pathname,Svv,K_6k,band,parameters_data,figures,properties);
+                         
+                            disp(result);
                         catch
                             fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
                         end
                         
-                        disp(result);
+                        
                         disp('-----------------------------------------------------------------');
                         disp('       -------------------------------------------------');
                         disp('               --------------------------------');
                         disp('                     -------------------');
                         
                     end
+                    
                     disp(strcat( '----------------------------------------') );
                 else
                     disp('-----------------------------------------------------------------' );
@@ -237,7 +255,9 @@ parfor i=1:size(subjects,1)
             end
         end
     end
+    
 end
+delete(process_waitbar);
 toc
 end
 

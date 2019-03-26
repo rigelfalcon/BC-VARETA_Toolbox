@@ -171,28 +171,49 @@ pause(1e-12);
 
 disp('-----------------Saving files-----------------')
 
-disp(strcat(pathname ,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),'Hz_FR_',properties.freqres,'_SF_',properties.samplfreq,'_MF_',properties.maxfreq,'_.mat'));
+disp(strcat(pathname ,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),...
+    'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),'_MF_',string(properties.maxfreq),'_.mat'));
 
 pathname = strcat( pathname , filesep, 'result' , filesep);
 if(~isfolder(pathname))
-mkdir (pathname);
+    mkdir (pathname);
 end
-save(strcat(pathname ,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),'Hz_FR_',properties.freqres,'_SF_',properties.samplfreq,'_MF_',properties.maxfreq,'_.mat'),'ThetaJJ','SJJ','indms');
+save(strcat(pathname ,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),...
+    'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),...
+    '_MF_',string(properties.maxfreq),'_.mat'),'ThetaJJ','SJJ','indms');
 
 disp('-----------------Saving files-----------------')
 
 %% saving figures...............
+%---------------------------------------------------------------------------------
 fields = fieldnames(figures);
 for i = 1:numel(fields)
-    path = strcat(pathname ,band(3),'_',string(band(1)),'Hz_',string(band(2)),'Hz_FR_',properties.freqres,'_SF_',properties.samplfreq,'_MF_',properties.maxfreq,'_',figures.(fields{i}).title);
+    path = strcat(pathname ,band(3),'_',string(band(1)),'Hz_',string(band(2)),...
+        'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),...
+        '_MF_',string(properties.maxfreq),'_',figures.(fields{i}).title);
+    
     saveas( figures.(fields{i}).figure,strcat(path,'.fig'));
-    disp(strcat('Saving figure ----> ',figures.(fields{i}).title,' to  ---> ', pathname , ' with frequency band  --->',band(3),'_',band(1),'Hz_',band(2),'Hz','---Properties--->','FR_',properties.freqres,'_SF_',properties.samplfreq,'_MF_',properties.maxfreq) );
+    disp(strcat('Saving figure ----> ',figures.(fields{i}).title,' to  ---> ', pathname ,...
+        ' with frequency band  --->',band(3),'_',band(1),'Hz_',band(2),'Hz','---Properties--->',...
+        'FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),'_MF_',string(properties.maxfreq)) );
+    
+    
+    %------------------- Delete figures --------------------
     delete(figures.(fields{i}).figure);
+    
+    
 end
-resultfile = strcat('EEG_real_',band(3),'_',band(1),'Hz_',band(2),'Hz_FR_',properties.freqres,'_SF_',properties.samplfreq,'_MF_',properties.maxfreq,'_','.mat');
+resultfile = strcat('EEG_real_',band(3),'_',band(1),'Hz_',band(2),'Hz_FR_',string(properties.freqres),...
+    '_SF_',string(properties.samplfreq),'_MF_',string(properties.maxfreq),'_','.mat');
+
 result = ["Finished iteration ", "";...
     "Path and subject: " , string(pathname) ;...
     "Output file: " , string(resultfile) ];
+
+
+
+
+
 
 end
 
