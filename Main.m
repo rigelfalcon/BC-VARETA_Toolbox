@@ -28,6 +28,11 @@ clear all;
 clc;
 close all;
 
+addpath('functions');
+addpath('guide');
+addpath('properties');
+addpath('tools');
+
 % diary('example')
 % diary on;
 
