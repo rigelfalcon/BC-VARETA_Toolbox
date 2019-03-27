@@ -206,6 +206,9 @@ end
 resultfile = strcat('EEG_real_',band(3),'_',band(1),'Hz_',band(2),'Hz_FR_',string(properties.freqres),...
     '_SF_',string(properties.samplfreq),'_MF_',string(properties.maxfreq),'_','.mat');
 
+disp('                       ---------------------')
+disp('           -----------------------------------------------')
+disp('-----------------------------------------------------------------------------')
 result = ["Finished iteration ", "";...
     "Path and subject: " , string(pathname) ;...
     "Output file: " , string(resultfile) ];
