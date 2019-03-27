@@ -43,46 +43,45 @@ for i=1:size(subjects,1)
     pathname = strcat(root_path,filesep,subject_name);
     if(isfolder(pathname) & subject_name ~= '.' & string(subject_name) ~="..")
         
-        subject_childs=ls(pathname);
-        
+        subject_childs=dir(pathname);
+       
         files_to_load = ["eeg", "leadfield", "surf" ,"scalp"];
         
         for j=1:size(subject_childs,1)
-            cn=subject_childs(j,:);
-            
+            cn = subject_childs(j).name;
             %% ----------Searching de data files ------------------------------------
             if(isfolder(fullfile(pathname,cn)) & cn ~= '.' & string(cn) ~="..")
                 [~,~,ex]=fileparts(cn);
                 
                 if (isfolder(fullfile(pathname,cn)))
                     if(size(strfind(cn,'eeg'))>0)
-                        files=ls(strcat( pathname,filesep,cn));
-                        if(size(files)>2 & size(strfind(files(3,:),'.mat'))>0)
-                            filename_eeg = files(3,:);
+                        files=dir(strcat( pathname,filesep,cn));
+                        if(numel(files)>2 & size(strfind(files(3).name,'.mat'))>0)
+                            filename_eeg = files(3).name;
                             k = find(files_to_load =='eeg');
                             files_to_load(k) = [];
                         end
                     end
                     if(size(strfind(cn,'leadfield'))>0)
-                        files=ls(strcat( pathname,filesep,cn));
-                        if(size(files)>2  &  size(strfind(files(3,:),'.mat'))>0)
-                            filename_lf = files(3,:);
+                        files=dir(strcat( pathname,filesep,cn));
+                        if(numel(files)>2  &  size(strfind(files(3).name,'.mat'))>0)
+                            filename_lf = files(3).name;
                             k = find(files_to_load =='leadfield');
                             files_to_load(k) = [];
                         end
                     end
                     if(size(strfind(cn,'scalp'))>0)
-                        files=ls(strcat( pathname,filesep,cn));
-                        if(size(files)>2  &  size(strfind(files(3,:),'.mat'))>0)
-                            filename_scalp = files(3,:);
+                        files=dir(strcat( pathname,filesep,cn));
+                        if(numel(files)>2  &  size(strfind(files(3).name,'.mat'))>0)
+                            filename_scalp = files(3).name;
                             k = find(files_to_load =='scalp');
                             files_to_load(k) = [];
                         end
                     end
                     if(size(strfind(cn,'surf'))>0)
-                        files=ls(strcat( pathname,filesep,cn));
-                        if(size(files)>2  &  size(strfind(files(3,:),'.mat'))>0)
-                            filename_surf = files(3,:);
+                        files=dir(strcat( pathname,filesep,cn));
+                        if(numel(files)>2  &  size(strfind(files(3).name,'.mat'))>0)
+                            filename_surf = files(3).name;
                             k = find(files_to_load =='surf');
                             files_to_load(k) = [];
                         end

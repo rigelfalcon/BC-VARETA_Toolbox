@@ -52,7 +52,6 @@ if(run_mode == 1)
     properties.freqres = freqresol;
     properties.samplfreq = samplfreq;
     properties.maxfreq = maxfreq;
-    
 else
     
     %--------------------frequency bands-----------------------------------
