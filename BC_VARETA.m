@@ -81,6 +81,11 @@ classdef BC_VARETA < matlab.apps.AppBase
             set(jTextArea,'CaretUpdateCallback',@myUpdateFcn)
             
         end
+
+        % Menu selected function: ExitMenu
+        function ExitMenuSelected(app, event)
+             delete(app);
+        end
     end
 
     % App initialization and construction
@@ -102,6 +107,7 @@ classdef BC_VARETA < matlab.apps.AppBase
 
             % Create ExitMenu
             app.ExitMenu = uimenu(app.FileMenu);
+            app.ExitMenu.MenuSelectedFcn = createCallbackFcn(app, @ExitMenuSelected, true);
             app.ExitMenu.Text = 'Exit';
 
             % Create ToolsMenu
