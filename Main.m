@@ -28,6 +28,7 @@ clear all;
 clc;
 close all;
 
+
 addpath('functions');
 addpath('guide');
 addpath('properties');
@@ -45,13 +46,14 @@ addpath('tools');
 % --------   load the propoerties file to identify the move to Run (Guide or HPC)
 properties = struct;
 
-[run_mode,frequencies,freqresol,samplfreq,maxfreq,folder] = read_xml_properties();
+[run_mode,run_parallel,frequencies,freqresol,samplfreq,maxfreq,folder] = read_xml_properties();
 
 if(run_mode == 1)
     properties.frequencies = frequencies;
     properties.freqres = freqresol;
     properties.samplfreq = samplfreq;
     properties.maxfreq = maxfreq;
+    properties.run_parallel = run_parallel;
 else
     
     %--------------------frequency bands-----------------------------------
