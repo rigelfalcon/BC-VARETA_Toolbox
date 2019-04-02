@@ -1,7 +1,7 @@
 <in_datas >
-    <run_mode description="HPC-option1">1</run_mode> 
-    <run_parallel description="HPC-option1">1</run_parallel>
-    <data_path>D:\NeuroInformatics Lab\BC-VARETA1.0_repo\data\subject_1</data_path>
+    <run_mode description="HPC-option1">0</run_mode> 
+    <run_parallel description="HPC-option1">0</run_parallel>
+    <data_path>D:\NeuroInformatics Lab\BC-VARETA1.0_repo\data</data_path>
     <delta_band  run="true" start="0.1"  end="4"></delta_band>
     <theta_band  run="true" start="4"  end="7"></theta_band>
     <alpha_band run="true" start="7"  end="14"></alpha_band>
@@ -9,5 +9,4 @@
     <freq_resol description="Frequency resolution">0.5</freq_resol>
     <samp_freq  description="Sampling frequency" >200</samp_freq>    
     <max_freq  description="Maximum frequency" >32</max_freq>
-    
 </in_datas>
