@@ -47,13 +47,12 @@ addpath('tools');
 properties = struct;
 
 [run_mode,run_parallel,frequencies,freqresol,samplfreq,maxfreq,folder] = read_xml_properties();
-
+properties.run_parallel = run_parallel;
 if(run_mode == 1)
     properties.frequencies = frequencies;
     properties.freqres = freqresol;
     properties.samplfreq = samplfreq;
-    properties.maxfreq = maxfreq;
-    properties.run_parallel = run_parallel;
+    properties.maxfreq = maxfreq;    
 else
     
     %--------------------frequency bands-----------------------------------
