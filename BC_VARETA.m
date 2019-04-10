@@ -47,6 +47,10 @@ classdef BC_VARETA < matlab.apps.AppBase
         % Code that executes after component creation
         function startupFcn(app)
             try
+                addpath('functions');
+                addpath('guide');
+                addpath('properties');
+                addpath('tools');
                 
                 jDesktop = com.mathworks.mde.desk.MLDesktop.getInstance;
                 jCmdWin = jDesktop.getClient('Command Window');
@@ -69,6 +73,7 @@ classdef BC_VARETA < matlab.apps.AppBase
             if(folder==0)
                 return;
             end
+            
             create_data_structure(folder);
             msgbox('Completed operation!!!','Info');
         end
