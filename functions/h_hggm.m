@@ -41,8 +41,10 @@ Axixi                 = param.Axixi;
 %% Outer loop EM algorithm
 jj_on   = 0;
 xixi_on = 0;
+process_waitbar_h = waitbar(0,'Please wait...');
 for k_outer = 1:maxiter_outer
-    disp(['h-hggm unhide and solve (em) loop # ',num2str(k_outer)])
+     waitbar(k_outer/maxiter_outer,process_waitbar_h,strcat('h-hggm unhide and solve (em) loop # ',num2str(k_outer)));
+    disp(['h-hggm unhide and solve (em) loop # ',num2str(k_outer)]);
     %% Source Posterior Covariance (SPC)
     SigmajjLjv        = Sigmajj*Ljv; % SEC*SDTF'
     LvjSigmajj        = SigmajjLjv'; % Tranconjugated SEC*SDTF'
@@ -140,5 +142,6 @@ for k_outer = 1:maxiter_outer
     end
     %%
 end %iterations outer loop
+delete(process_waitbar_h);
 %%
 end
