@@ -165,6 +165,28 @@ else
         
         %% ----- Iterating the frequency bands to perform analyzes-----------
         if(all_file_ok)
+            if( properties.run_frequency_bin)
+                freq_res = properties.freqres;
+                frequency_bins = [];
+              process_bin_waitbar =  waitbar(0,strcat('Computing the frequency''s bin...'));
+                for h=1:size(frequency_bands,1)
+                    waitbar(h/size(frequency_bands,1),process_bin_waitbar,strcat('Computing the frequency''s bin...'));
+                    band = frequency_bands(h,:);
+                    pointer = str2num( band(1,1));
+                    while str2num(band(1,2)) > pointer + freq_res
+                        
+                        frequency_bins = [ frequency_bins;...
+                            pointer,pointer + freq_res , str2num(band(1,3)), band(1,3)];
+                      pointer =  pointer + freq_res;
+                    end
+                    if(pointer < str2num(band(1,2)))
+                        frequency_bins = [ frequency_bins;...
+                            pointer,band(1,2), band(1,3)];
+                    end
+                end
+                delete(process_bin_waitbar);
+                frequency_bands = frequency_bins;
+            end
             for h=1:size(frequency_bands,1)
                 band = frequency_bands(h,:);
                 
@@ -180,7 +202,7 @@ else
                 parameters_data.peak_pos = peak_pos;
                 
                 %% alpha peak picking and psd visualization...
-               try
+                try
                     waitbar((iteration*h)/(total_subjects*size(frequency_bands,1)),...
                         process_waitbar,strcat('Processing ',subject_name, ...
                         ' Frequency''s Band: (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz'));
@@ -188,8 +210,8 @@ else
                     result = band_analysis(pathname,Svv,K_6k,band,parameters_data,figures,properties);
                     
                     disp(result);
-               catch
-                   fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
+                catch
+                    fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
                 end
                 
                 
@@ -199,6 +221,7 @@ else
                 disp('                     -------------------');
                 
             end
+            
             
             disp(strcat( '----------------------------------------') );
         else

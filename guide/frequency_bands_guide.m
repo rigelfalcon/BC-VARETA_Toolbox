@@ -30,13 +30,17 @@ classdef frequency_bands_guide < matlab.apps.AppBase
         Spinner_beta_end           matlab.ui.control.Spinner
         AgreeButton                matlab.ui.control.Button
         CancelButton               matlab.ui.control.Button
+        RunmodeButtonGroup         matlab.ui.container.ButtonGroup
+        ByfrequencysbandButton     matlab.ui.control.RadioButton
+        FrequencysbinButton        matlab.ui.control.RadioButton
     end
 
     
     properties (Access = public)
         frequencies % Description
-        Property2 % Description  
+        Property2 % Description
         canceled
+        frequency_bin
     end
     
     methods (Access = private)
@@ -51,9 +55,13 @@ classdef frequency_bands_guide < matlab.apps.AppBase
 
         % Button pushed function: AgreeButton
         function AgreeButtonPushed(app, event)
-             app.canceled = false;
+            app.canceled = false;
             row = 1;
             allOk = true;
+            app.frequency_bin = true;
+            if(app.ByfrequencysbandButton.Value)
+                app.frequency_bin = false;
+            end
             if(app.CheckBox_Delta.Value)
                 if(app.Spinner_delta_start.Value <= app.Spinner_delta_end.Value)
                     app.frequencies = [ app.frequencies ;app.Spinner_delta_start.Value,app.Spinner_delta_end.Value , "delta"];
@@ -102,7 +110,7 @@ classdef frequency_bands_guide < matlab.apps.AppBase
             app.canceled = true;
             uiresume(app.UIFigure);
             close();
-           
+            
             
             
         end
@@ -116,13 +124,13 @@ classdef frequency_bands_guide < matlab.apps.AppBase
 
             % Create UIFigure
             app.UIFigure = uifigure;
-            app.UIFigure.Position = [100 100 360 271];
+            app.UIFigure.Position = [100 100 368 356];
             app.UIFigure.Name = 'UI Figure';
 
             % Create SelectfrequencysbandPanel
             app.SelectfrequencysbandPanel = uipanel(app.UIFigure);
             app.SelectfrequencysbandPanel.Title = 'Select frequency''s band';
-            app.SelectfrequencysbandPanel.Position = [29 60 309 191];
+            app.SelectfrequencysbandPanel.Position = [29 62 309 191];
 
             % Create CheckBox_Delta
             app.CheckBox_Delta = uicheckbox(app.SelectfrequencysbandPanel);
@@ -267,14 +275,30 @@ classdef frequency_bands_guide < matlab.apps.AppBase
             % Create AgreeButton
             app.AgreeButton = uibutton(app.UIFigure, 'push');
             app.AgreeButton.ButtonPushedFcn = createCallbackFcn(app, @AgreeButtonPushed, true);
-            app.AgreeButton.Position = [118 23 100 22];
+            app.AgreeButton.Position = [118 19 100 22];
             app.AgreeButton.Text = 'Agree';
 
             % Create CancelButton
             app.CancelButton = uibutton(app.UIFigure, 'push');
             app.CancelButton.ButtonPushedFcn = createCallbackFcn(app, @CancelButtonPushed, true);
-            app.CancelButton.Position = [238 23 100 22];
+            app.CancelButton.Position = [238 19 100 22];
             app.CancelButton.Text = 'Cancel';
+
+            % Create RunmodeButtonGroup
+            app.RunmodeButtonGroup = uibuttongroup(app.UIFigure);
+            app.RunmodeButtonGroup.Title = 'Run mode';
+            app.RunmodeButtonGroup.Position = [29 273 309 60];
+
+            % Create ByfrequencysbandButton
+            app.ByfrequencysbandButton = uiradiobutton(app.RunmodeButtonGroup);
+            app.ByfrequencysbandButton.Text = 'By frequency''s band ';
+            app.ByfrequencysbandButton.Position = [11 14 134 22];
+            app.ByfrequencysbandButton.Value = true;
+
+            % Create FrequencysbinButton
+            app.FrequencysbinButton = uiradiobutton(app.RunmodeButtonGroup);
+            app.FrequencysbinButton.Text = 'Frequency''s bin';
+            app.FrequencysbinButton.Position = [188 14 106 22];
         end
     end
 

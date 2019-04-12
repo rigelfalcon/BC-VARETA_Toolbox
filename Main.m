@@ -46,38 +46,18 @@ addpath('tools');
 % --------   load the propoerties file to identify the move to Run (Guide or HPC)
 properties = struct;
 
-[run_mode,run_parallel,frequencies,freqresol,samplfreq,maxfreq,folder] = read_xml_properties();
+[run_mode,run_parallel,run_frequency_bin,frequencies,freqresol,samplfreq,maxfreq,folder] = read_xml_properties();
 properties.run_parallel = run_parallel;
 if(run_mode == 1)
     properties.frequencies = frequencies;
     properties.freqres = freqresol;
     properties.samplfreq = samplfreq;
-    properties.maxfreq = maxfreq;    
+    properties.maxfreq = maxfreq;
+    properties.run_frequency_bin = run_frequency_bin;
+    
 else
     
-    %--------------------frequency bands-----------------------------------
-    guiHandle = frequency_bands_guide;
-    disp('------Waitintg for frequency_bands------');
-    uiwait(guiHandle.UIFigure);
-    %waitfor(guiHandle);
-    
-    
-    if(isvalid(guiHandle) & ~guiHandle.canceled)
-        frequencies = guiHandle.frequencies;
-        disp('-----------Frequencies band------------');
-        properties.frequencies = frequencies;
-        disp(frequencies);
-        disp('finishing frequencies_band...');
-        delete(guiHandle);
-    else
-        fprintf(2,'-----------Canceled by User------------\n');
-        delete(guiHandle);
-        return
-    end
-    
-    %-----------------------------------------------------------------------
-    %%
-    %%---------------Windows number and frequency's resolution---------------
+    %%---------------Frequency's bands---------------
     guiHandle = freqresol_maxfreq_samplfreq_guide;
     disp('-----Waiting for Windows number and frequency''s resolution------');
     uiwait(guiHandle.UIFigure);
@@ -101,6 +81,30 @@ else
         delete(guiHandle);
         return
     end
+    
+    %--------------------frequency bands-----------------------------------
+    guiHandle = frequency_bands_guide;
+    disp('------Waitintg for frequency_bands------');
+    uiwait(guiHandle.UIFigure);
+    %waitfor(guiHandle);
+    
+    
+    if(isvalid(guiHandle) & ~guiHandle.canceled)
+        frequencies = guiHandle.frequencies;
+        disp('-----------Frequencies band------------');
+        properties.frequencies = frequencies;
+        properties.run_frequency_bin = guiHandle.frequency_bin;
+        disp(frequencies);
+        disp('finishing frequencies_band...');
+        delete(guiHandle);
+    else
+        fprintf(2,'-----------Canceled by User------------\n');
+        delete(guiHandle);
+        return
+    end
+    
+    %-----------------------------------------------------------------------
+    %%
     
     %----------------End block the properties-----------------------------
     %%

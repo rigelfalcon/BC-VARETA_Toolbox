@@ -1,4 +1,4 @@
-function [run_mode,run_parallel,frequencies,freqresol,samplfreq,maxfreq,folder] = read_xml_properties()
+function [run_mode,run_parallel,run_frequency_bin,frequencies,freqresol,samplfreq,maxfreq,folder] = read_xml_properties()
 
 % Authors:
 % - Deirel Paz Linares
@@ -22,16 +22,17 @@ properties_struct = xml_struct.Children;
 
 run_mode = str2num( properties_struct(2).Children.Data);
 run_parallel = str2num( properties_struct(4).Children.Data);
-freqresol = str2double( properties_struct(16).Children.Data);
-samplfreq = str2double( properties_struct(18).Children.Data);
-maxfreq = str2double( properties_struct(20).Children.Data);
+run_frequency_bin = str2num( properties_struct(6).Children.Data);
+freqresol = str2double( properties_struct(18).Children.Data);
+samplfreq = str2double( properties_struct(20).Children.Data);
+maxfreq = str2double( properties_struct(22).Children.Data);
 
-folder =  properties_struct(6).Children.Data;
+folder =  properties_struct(8).Children.Data;
 
-freq_delta = properties_struct(8).Attributes;
-freq_theta = properties_struct(10).Attributes;
-freq_alpha = properties_struct(12).Attributes;
-freq_beta = properties_struct(14).Attributes;
+freq_delta = properties_struct(10).Attributes;
+freq_theta = properties_struct(12).Attributes;
+freq_alpha = properties_struct(14).Attributes;
+freq_beta = properties_struct(16).Attributes;
 
 frequencies = [];
 if(string(freq_delta(2).Value) == 'true')
