@@ -17,9 +17,9 @@ properties.run_mode = find_xml_parameter(file_path,'properties','run_mode',true)
 properties.run_parallel = find_xml_parameter(file_path,'properties','run_parallel',true);
 properties.run_frequency_bin = find_xml_parameter(file_path,'properties','run_frequency_bin',true);
 properties.run_single_subject = find_xml_parameter(file_path,'properties','run_single_subject',true);
-properties.freqres = find_xml_parameter(file_path,'properties','freq_resol',true);
-properties.samplfreq = find_xml_parameter(file_path,'properties','samp_freq',true);
-properties.maxfreq = find_xml_parameter(file_path,'properties','max_freq',true);
+properties.freqres = str2double(find_xml_parameter(file_path,'properties','freq_resol',true));
+properties.samplfreq = str2double(find_xml_parameter(file_path,'properties','samp_freq',true));
+properties.maxfreq = str2double(find_xml_parameter(file_path,'properties','max_freq',true));
 
 
 delta_band = find_xml_parameter(file_path,'properties','delta_band',false);

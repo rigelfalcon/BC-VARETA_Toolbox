@@ -145,19 +145,19 @@ else
         Fs = properties.samplfreq; % sampling frequency
         Fm = properties.maxfreq; % maximum frequency
         deltaf = properties.freqres; % frequency resolution
-            
+        
         waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for EEG data...'));
         [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k);
         waitbar(0.08,process_waitbar,strcat('Difine frequency''s bands...'));
-            
+        
         if(properties.run_mode ~= '1' & properties.define_bands == '1')
             % ----- Graficar el cross-spectra
             
-            %------------------------------------            
+            %------------------------------------
             properties.define_bands = '0';
             [properties] = define_frequency_bands(properties);
-        end        
-        frequency_bands = properties.frequencies;              
+        end
+        frequency_bands = properties.frequencies;
         error = false;
     catch
         fprintf(2, 'You have some problem with the configuration''s properties\n' );
@@ -227,7 +227,7 @@ else
                 catch
                     fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
                 end
-              
+                
                 disp('-----------------------------------------------------------------');
                 disp('       -------------------------------------------------');
                 disp('               --------------------------------');
