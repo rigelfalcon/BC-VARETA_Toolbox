@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = find_data_files(pathname,properties,color_map,Fs,Fm,deltaf,frequency_bands,subject_name,process_waitbar,iteration,total_subjects)
+function [properties] = find_data_files(pathname,properties,color_map,subject_name,process_waitbar,iteration,total_subjects)
 %FIND_DATA_FILES Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -142,9 +142,22 @@ else
     %%--------------- estimating cross-spectra-------------------------------
     disp('estimating cross-spectra for EEG data...');
     try
+        Fs = properties.samplfreq; % sampling frequency
+        Fm = properties.maxfreq; % maximum frequency
+        deltaf = properties.freqres; % frequency resolution
+            
         waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for EEG data...'));
         [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k);
-        
+        waitbar(0.08,process_waitbar,strcat('Difine frequency''s bands...'));
+            
+        if(properties.run_mode ~= '1' & properties.define_bands == '1')
+            % ----- Graficar el cross-spectra
+            
+            %------------------------------------            
+            properties.define_bands = '0';
+            [properties] = define_frequency_bands(properties);
+        end        
+        frequency_bands = properties.frequencies;              
         error = false;
     catch
         fprintf(2, 'You have some problem with the configuration''s properties\n' );
@@ -160,15 +173,16 @@ else
         parameters_data.cmap_c=color_map.cmap_c;
         parameters_data.Nseg=Nseg;
         
+        
         %%
         
         
         %% ----- Iterating the frequency bands to perform analyzes-----------
         if(all_file_ok)
-            if( properties.run_frequency_bin)
+            if( properties.run_frequency_bin == '1')
                 freq_res = properties.freqres;
                 frequency_bins = [];
-              process_bin_waitbar =  waitbar(0,strcat('Computing the frequency''s bin...'));
+                process_bin_waitbar =  waitbar(0,strcat('Computing the frequency''s bin...'));
                 for h=1:size(frequency_bands,1)
                     waitbar(h/size(frequency_bands,1),process_bin_waitbar,strcat('Computing the frequency''s bin...'));
                     band = frequency_bands(h,:);
@@ -177,7 +191,7 @@ else
                         
                         frequency_bins = [ frequency_bins;...
                             pointer,pointer + freq_res , str2num(band(1,3)), band(1,3)];
-                      pointer =  pointer + freq_res;
+                        pointer =  pointer + freq_res;
                     end
                     if(pointer < str2num(band(1,2)))
                         frequency_bins = [ frequency_bins;...
@@ -213,8 +227,7 @@ else
                 catch
                     fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
                 end
-                
-                
+              
                 disp('-----------------------------------------------------------------');
                 disp('       -------------------------------------------------');
                 disp('               --------------------------------');
