@@ -10,7 +10,7 @@ uiwait(guiHandle.UIFigure);
 
 if(isvalid(guiHandle) & ~guiHandle.canceled)
     frequencies = guiHandle.frequencies;
-    disp('-----------Frequencies band------------');
+    disp('-----------Frequency''s band------------');
     properties.frequencies = frequencies;
     properties.run_frequency_bin = find_xml_parameter(strcat('properties',filesep,'properties.xml'),...
         'properties','run_frequency_bin',true);
