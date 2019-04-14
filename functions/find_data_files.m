@@ -150,7 +150,6 @@ else
     
     if(properties.run_mode ~= '1' & properties.define_bands == '1')
         % ----- Graficar el cross-spectra
-        
         PSD_log = 10*log10(abs(PSD));
         min_psd = min(PSD_log(:));
         max_psd = max(PSD_log(:));
@@ -177,19 +176,14 @@ else
     %         error = true;
     %     end
     
-    %%
-    
+    %%    
     %%------- Load all parameters of datas --------------
     if(~error)
         figures = struct;
         parameters_data.cmap_a=color_map.cmap_a;
         parameters_data.cmap_c=color_map.cmap_c;
-        parameters_data.Nseg=Nseg;
-        
-        
-        %%
-        
-        
+        parameters_data.Nseg=Nseg;       
+        %%       
         %% ----- Iterating the frequency bands to perform analyzes-----------
         if(all_file_ok)
             for h=1:size(frequency_bands,1)
