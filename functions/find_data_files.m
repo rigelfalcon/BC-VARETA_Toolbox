@@ -207,7 +207,6 @@ else
                         ' Frequency''s Band: (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz'));
                     
                     result = band_analysis(pathname,Svv,K_6k,band,parameters_data,figures,properties);
-                    
                     disp(result);
                 catch
                     fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
