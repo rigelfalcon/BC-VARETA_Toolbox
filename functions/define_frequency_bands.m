@@ -37,7 +37,7 @@ if(isvalid(guiHandle) & ~guiHandle.canceled)
         delete(process_bin_waitbar);
         properties.frequencies = frequency_bins;
     end
-    disp(frequencies);
+    disp(properties.frequencies);
     disp('finishing frequencies_band...');
     delete(guiHandle);
 else
