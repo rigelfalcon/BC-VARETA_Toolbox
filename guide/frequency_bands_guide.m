@@ -58,7 +58,15 @@ classdef frequency_bands_guide < matlab.apps.AppBase
             app.canceled = false;
             row = 1;
             allOk = true;
-            app.frequency_bin = true;
+            root_tab =  'properties';
+            parameter_name = 'run_frequency_bin';
+            if(app.FrequencysbinButton.Value == true)
+                parameter_value = 1;
+            else
+                parameter_value = 0;
+            end
+            change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
+            
             if(app.ByfrequencysbandButton.Value)
                 app.frequency_bin = false;
             end

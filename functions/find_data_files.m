@@ -128,9 +128,7 @@ else
     
     %---------------end the Check the file's structure----------------------
     %
-    
-    
-    
+       
     %%-------------- initial values...------------
     Input_flat = 0;
     [Ne1,Np1] = size(K_6k);
@@ -141,28 +139,43 @@ else
     
     %%--------------- estimating cross-spectra-------------------------------
     disp('estimating cross-spectra for EEG data...');
-    try
-        Fs = properties.samplfreq; % sampling frequency
-        Fm = properties.maxfreq; % maximum frequency
-        deltaf = properties.freqres; % frequency resolution
+    %     try
+    Fs = properties.samplfreq; % sampling frequency
+    Fm = properties.maxfreq; % maximum frequency
+    deltaf = properties.freqres; % frequency resolution
+    
+    waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for EEG data...'));
+    [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k);
+    waitbar(0.08,process_waitbar,strcat('Difine frequency''s bands...'));
+    
+    if(properties.run_mode ~= '1' & properties.define_bands == '1')
+        % ----- Graficar el cross-spectra
         
-        waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for EEG data...'));
-        [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k);
-        waitbar(0.08,process_waitbar,strcat('Difine frequency''s bands...'));
-        
-        if(properties.run_mode ~= '1' & properties.define_bands == '1')
-            % ----- Graficar el cross-spectra
-            
-            %------------------------------------
-            properties.define_bands = '0';
-            [properties] = define_frequency_bands(properties);
-        end
-        frequency_bands = properties.frequencies;
-        error = false;
-    catch
-        fprintf(2, 'You have some problem with the configuration''s properties\n' );
-        error = true;
+        PSD_log = 10*log10(abs(PSD));
+        min_psd = min(PSD_log(:));
+        max_psd = max(PSD_log(:));
+        plot_peak = min_psd*ones(Nf,1);
+      
+        figure_cross = figure('Color','k');
+        hold on;
+        plot(F,PSD_log);
+        plot(F,plot_peak,'--w');
+        set(gca,'Color','k','XColor','w','YColor','w');
+        ylabel('PSD (dB)','Color','w');
+        xlabel('Freq. (Hz)','Color','w');
+        title('Power Spectral Density','Color','w');
+        pause(1e-10);
+        %------------------------------------
+        properties.define_bands = '0';
+        [properties] = define_frequency_bands(properties);
+        delete(figure_cross);
     end
+    frequency_bands = properties.frequencies;
+    error = false;
+    %     catch
+    %         fprintf(2, 'You have some problem with the configuration''s properties\n' );
+    %         error = true;
+    %     end
     
     %%
     
@@ -179,28 +192,6 @@ else
         
         %% ----- Iterating the frequency bands to perform analyzes-----------
         if(all_file_ok)
-            if( properties.run_frequency_bin == '1')
-                freq_res = properties.freqres;
-                frequency_bins = [];
-                process_bin_waitbar =  waitbar(0,strcat('Computing the frequency''s bin...'));
-                for h=1:size(frequency_bands,1)
-                    waitbar(h/size(frequency_bands,1),process_bin_waitbar,strcat('Computing the frequency''s bin...'));
-                    band = frequency_bands(h,:);
-                    pointer = str2num( band(1,1));
-                    while str2num(band(1,2)) > pointer + freq_res
-                        
-                        frequency_bins = [ frequency_bins;...
-                            pointer,pointer + freq_res , str2num(band(1,3)), band(1,3)];
-                        pointer =  pointer + freq_res;
-                    end
-                    if(pointer < str2num(band(1,2)))
-                        frequency_bins = [ frequency_bins;...
-                            pointer,band(1,2), band(1,3)];
-                    end
-                end
-                delete(process_bin_waitbar);
-                frequency_bands = frequency_bins;
-            end
             for h=1:size(frequency_bands,1)
                 band = frequency_bands(h,:);
                 
