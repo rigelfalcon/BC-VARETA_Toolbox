@@ -47,13 +47,7 @@ if(string(beta_band.item(1).getFirstChild.getData) == 'true')
 end
 
 properties.frequencies = frequencies;
-properties.define_bands = '1';
-
 folder = find_xml_parameter(file_path,'properties','data_path',true);
-
-
-
-
 
 end
 
