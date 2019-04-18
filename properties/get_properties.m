@@ -17,6 +17,9 @@ properties.run_mode = find_xml_parameter(file_path,'properties','run_mode',true)
 properties.run_parallel = find_xml_parameter(file_path,'properties','run_parallel',true);
 properties.run_frequency_bin = find_xml_parameter(file_path,'properties','run_frequency_bin',true);
 properties.run_single_subject = find_xml_parameter(file_path,'properties','run_single_subject',true);
+
+
+
 properties.freqres = str2double(find_xml_parameter(file_path,'properties','freq_resol',true));
 properties.samplfreq = str2double(find_xml_parameter(file_path,'properties','samp_freq',true));
 properties.maxfreq = str2double(find_xml_parameter(file_path,'properties','max_freq',true));
@@ -48,6 +51,17 @@ end
 
 properties.frequencies = frequencies;
 folder = find_xml_parameter(file_path,'properties','data_path',true);
+
+
+properties.param.maxiter_outer = str2double(find_xml_parameter(file_path,'properties','param.maxiter_outer',true));
+properties.param.maxiter_inner = str2double(find_xml_parameter(file_path,'properties','param.maxiter_inner',true));
+properties.param.penalty = str2double(find_xml_parameter(file_path,'properties','param.penalty',true));
+properties.param.rth = str2double(find_xml_parameter(file_path,'properties','param.rth',true));
+properties.param.axi = str2double(find_xml_parameter(file_path,'properties','param.axi',true));
+properties.param.sigma2xi = str2double(find_xml_parameter(file_path,'properties','param.sigma2xi',true));
+properties.param.ssbl_th = str2double(find_xml_parameter(file_path,'properties','param.ssbl_th',true));
+
+
 
 end
 

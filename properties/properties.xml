@@ -12,4 +12,17 @@
     <freq_resol description="Frequency resolution">0.3609</freq_resol>
     <samp_freq description="Sampling frequency">100</samp_freq>    
     <max_freq description="Maximum frequency">32</max_freq>
+    
+    
+    <param.maxiter_outer description="param.maxiter_outer">60</param.maxiter_outer>
+    <param.maxiter_inner description="param.maxiter_inner">100</param.maxiter_inner>
+    <param.penalty description="param.penalty">1</param.penalty>
+    <param.rth description="param.rth">3.16</param.rth>
+    <param.axi description="param.axi">0.001</param.axi>
+    <param.sigma2xi description="param.sigma2xi">1</param.sigma2xi> 
+    
+    <param.ssbl_th description="param.ssbl_th">1</param.ssbl_th>
+    
+    
+    
 </properties>

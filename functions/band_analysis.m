@@ -24,6 +24,7 @@ Nseg=parameters_data.Nseg;
 S_6k=parameters_data.S_6k;
 
 
+
 peak_pos=parameters_data.peak_pos;
 
 
@@ -88,13 +89,10 @@ pause(1e-12);
 %%
 %% bc-vareta toolbox...
 %% Parameters
-param.maxiter_outer = 60;
-param.maxiter_inner = 30;
+param               = properties.param;
 param.m             = length(peak_pos)*Nseg;
-param.penalty       = 1;
-param.rth           = 3.16;
-param.axi           = 1E-3;
 param.Axixi         = eye(length(Svv));
+
 %%
 %% Activation Leakage Module
 disp('activation leakage module...');
@@ -106,7 +104,7 @@ end
 %%
 [miu,sigma_post,DSTF] = cross_nonovgrouped_enet_ssbl({Svv},{K_6k},length(peak_pos)*Nseg,nonovgroups);
 stat                  = sqrt((abs(miu))./abs(sigma_post));
-indms                 = find(stat > 1);
+indms                 = find(stat > param.ssbl_th);
 %%
 %% Connectivity Leakage Module
 disp('connectivity leakage module...');
