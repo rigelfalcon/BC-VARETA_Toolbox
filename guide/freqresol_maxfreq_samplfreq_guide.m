@@ -45,9 +45,18 @@ classdef freqresol_maxfreq_samplfreq_guide < matlab.apps.AppBase
         % Button pushed function: OkButton
         function OkButtonPushed(app, event)
             app.canceled = false;
+            properties_file = strcat('properties',filesep,'properties.xml');
+            root_tab =  'properties';
+            
             app.frequency_resolution = app.FrequencyresolutionSpinner.Value;
             app.sampling_frequency = app.SamplingfrequencySpinner.Value;
             app.max_frequency = app.MaxfrequencySpinner.Value;
+            
+            parameters = ["freq_resol","samp_freq","max_freq"];
+            values = [app.frequency_resolution,app.sampling_frequency,app.max_frequency];
+            
+            change_xml_parameter(properties_file,root_tab,parameters,values);
+            
             uiresume(app.UIFigure);
             
         end

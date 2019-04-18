@@ -12,10 +12,10 @@ classdef hhgm_params_guide < matlab.apps.AppBase
         penaltySpinner             matlab.ui.control.Spinner
         rthSpinnerLabel            matlab.ui.control.Label
         rthSpinner                 matlab.ui.control.Spinner
-        sigma2xiEditFieldLabel     matlab.ui.control.Label
-        sigma2xiEditField          matlab.ui.control.EditField
         axiEditFieldLabel          matlab.ui.control.Label
         axiEditField               matlab.ui.control.EditField
+        sigma2xiEditFieldLabel     matlab.ui.control.Label
+        sigma2xiEditField          matlab.ui.control.EditField
         ssbl_thSpinnerLabel        matlab.ui.control.Label
         ssbl_thSpinner             matlab.ui.control.Spinner
         CancelButton               matlab.ui.control.Button
