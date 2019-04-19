@@ -138,7 +138,7 @@ else
     %%
     
     %%--------------- estimating cross-spectra-------------------------------
-    disp('estimating cross-spectra for EEG data...');
+    disp('estimating cross-spectra for M/EEG data...');
     %     try
     Fs = properties.samplfreq; % sampling frequency
     Fm = properties.maxfreq; % maximum frequency
@@ -209,7 +209,7 @@ else
                         process_waitbar,strcat('Processing...',subject_name, ...
                         ' Frequency Band... (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz'));
                     
-                    result = band_analysis(pathname,Svv,K_6k,band,parameters_data,figures,properties);
+%                     result = band_analysis(pathname,Svv,K_6k,band,parameters_data,figures,properties);
                     disp(result);
                 catch
                     fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');

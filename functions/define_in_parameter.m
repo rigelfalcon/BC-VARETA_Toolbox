@@ -20,7 +20,7 @@ if(properties.run_mode ~= '1')
     end
     change_xml_parameter(strcat('properties',filesep,'properties.xml'),'properties','data_path',root_path);    
     guiHandle = hhgm_params_guide;
-    disp('-----Waiting for Windows number and frequency''s resolution------');
+    disp('-----Waiting for H-HHGM Parameters------');
     uiwait(guiHandle.HHHGMParametersUIFigure);
     if( isvalid(guiHandle) | ~guiHandle.canceled)
         delete(guiHandle);      

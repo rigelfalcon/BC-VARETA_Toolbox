@@ -32,6 +32,15 @@ set(gca,'Color','k','XColor','w','YColor','w');
 ylabel('PSD (dB)','Color','w');
 xlabel('Freq. (Hz)','Color','w');
 title('Power Spectral Density','Color','w');
+
+if(band(1) == band(2))
+text_cross = strcat(band(1), 'Hz');
+else
+  text_cross = strcat( band(1),'Hz -> ', band(2), 'Hz');
+end
+text(str2double(band(2)),max_psd*0.9,text_cross,'Color','w','FontSize',12,'HorizontalAlignment','center');
+
+
 pause(1e-10);
 
 fig_struct = struct;
