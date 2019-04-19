@@ -31,8 +31,8 @@ classdef frequency_bands_guide < matlab.apps.AppBase
         AgreeButton                matlab.ui.control.Button
         CancelButton               matlab.ui.control.Button
         RunmodeButtonGroup         matlab.ui.container.ButtonGroup
-        ByfrequencysbandButton     matlab.ui.control.RadioButton
-        FrequencysbinButton        matlab.ui.control.RadioButton
+        ByfrequencybandButton      matlab.ui.control.RadioButton
+        FrequencybinButton         matlab.ui.control.RadioButton
     end
 
     
@@ -60,14 +60,14 @@ classdef frequency_bands_guide < matlab.apps.AppBase
             allOk = true;
             root_tab =  'properties';
             parameter_name = 'run_frequency_bin';
-            if(app.FrequencysbinButton.Value == true)
+            if(app.FrequencybinButton.Value == true)
                 parameter_value = 1;
             else
                 parameter_value = 0;
             end
             change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
             
-            if(app.ByfrequencysbandButton.Value)
+            if(app.ByfrequencybandButton.Value)
                 app.frequency_bin = false;
             end
             if(app.CheckBox_Delta.Value)
@@ -297,16 +297,16 @@ classdef frequency_bands_guide < matlab.apps.AppBase
             app.RunmodeButtonGroup.Title = 'Run mode';
             app.RunmodeButtonGroup.Position = [29 273 309 60];
 
-            % Create ByfrequencysbandButton
-            app.ByfrequencysbandButton = uiradiobutton(app.RunmodeButtonGroup);
-            app.ByfrequencysbandButton.Text = 'By frequency''s band ';
-            app.ByfrequencysbandButton.Position = [11 14 134 22];
-            app.ByfrequencysbandButton.Value = true;
+            % Create ByfrequencybandButton
+            app.ByfrequencybandButton = uiradiobutton(app.RunmodeButtonGroup);
+            app.ByfrequencybandButton.Text = 'By frequency band ';
+            app.ByfrequencybandButton.Position = [11 14 125 22];
+            app.ByfrequencybandButton.Value = true;
 
-            % Create FrequencysbinButton
-            app.FrequencysbinButton = uiradiobutton(app.RunmodeButtonGroup);
-            app.FrequencysbinButton.Text = 'Frequency''s bin';
-            app.FrequencysbinButton.Position = [188 14 106 22];
+            % Create FrequencybinButton
+            app.FrequencybinButton = uiradiobutton(app.RunmodeButtonGroup);
+            app.FrequencybinButton.Text = 'Frequency bin';
+            app.FrequencybinButton.Position = [188 14 98 22];
         end
     end
 

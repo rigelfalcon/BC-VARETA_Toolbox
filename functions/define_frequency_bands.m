@@ -18,26 +18,34 @@ if(isvalid(guiHandle) & ~guiHandle.canceled)
         freq_res = properties.freqres;
         frequency_bins = [];
         process_bin_waitbar =  waitbar(0,strcat('Computing the frequency''s bin...'));
-       frequency_bands = properties.frequencies;
+        frequency_bands = properties.frequencies;
         for h=1:size(frequency_bands,1)
             waitbar(h/size(frequency_bands,1),process_bin_waitbar,strcat('Computing the frequency''s bin...'));
             band = frequency_bands(h,:);
             pointer = str2num( band(1,1));
+            frequency_bins = [frequency_bins;...
+                pointer,pointer, band(1,3)];
             while str2num(band(1,2)) > pointer + freq_res
-                
                 frequency_bins = [ frequency_bins;...
-                    pointer,pointer + freq_res , str2num(band(1,3)), band(1,3)];
+                    pointer + freq_res , pointer + freq_res , band(1,3)];
                 pointer =  pointer + freq_res;
             end
             if(pointer < str2num(band(1,2)))
                 frequency_bins = [ frequency_bins;...
-                    pointer,band(1,2), band(1,3)];
+                    band(1,2),band(1,2), band(1,3)];
             end
         end
         delete(process_bin_waitbar);
         properties.frequencies = frequency_bins;
+        
+        for i=1 : length(properties.frequencies)
+             disp(strcat( '"' , properties.frequencies(i), '"','     -------     ', properties.frequencies(i)) );
+        end        
+    else  
+        disp(properties.frequencies);        
     end
-    disp(properties.frequencies);
+    
+    
     disp('finishing frequencies_band...');
     delete(guiHandle);
 else

@@ -144,9 +144,9 @@ else
     Fm = properties.maxfreq; % maximum frequency
     deltaf = properties.freqres; % frequency resolution
     
-    waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for EEG data...'));
+    waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for M/EEG data...'));
     [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k);
-    waitbar(0.08,process_waitbar,strcat('Difine frequency''s bands...'));
+    waitbar(0.08,process_waitbar,strcat('Define frequency bands...'));
     
     if(properties.run_mode ~= '1' & properties.define_bands == '1')
         % ----- Graficar el cross-spectra
@@ -188,8 +188,11 @@ else
         if(all_file_ok)
             for h=1:size(frequency_bands,1)
                 band = frequency_bands(h,:);
-                
-                disp(strcat( '---- Frequency Band: (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz    -------------') );
+                if( properties.run_frequency_bin == '1')
+                    disp(strcat( '---- Frequency Band: (' , band(3) , ')   bin ->>>' , band(1), 'Hz -------------') );
+                else
+                    disp(strcat( '---- Frequency Band: (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz    -------------') );
+                end
                 disp(strcat( '---- -----------------------------------') );
                 
                 % --------- Get band -----------------------------------
@@ -203,8 +206,8 @@ else
                 %% alpha peak picking and psd visualization...
                 try
                     waitbar((iteration*h)/(total_subjects*size(frequency_bands,1)),...
-                        process_waitbar,strcat('Processing ',subject_name, ...
-                        ' Frequency''s Band: (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz'));
+                        process_waitbar,strcat('Processing...',subject_name, ...
+                        ' Frequency Band... (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz'));
                     
                     result = band_analysis(pathname,Svv,K_6k,band,parameters_data,figures,properties);
                     disp(result);

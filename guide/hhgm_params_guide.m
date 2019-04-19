@@ -202,7 +202,7 @@ classdef hhgm_params_guide < matlab.apps.AppBase
             app.ssbl_thSpinner = uispinner(app.ParametersPanel);
             app.ssbl_thSpinner.Step = 0.1;
             app.ssbl_thSpinner.Limits = [0.1 Inf];
-            app.ssbl_thSpinner.Tooltip = {'rayleigh threshold: 3.16 (90 percentile of the partial correlation in the subspace of the null hypothesis)'};
+            app.ssbl_thSpinner.Tooltip = {'ssbl screening: threshold for the emprical variances rated by posterior variances'};
             app.ssbl_thSpinner.Position = [283 59 71 22];
             app.ssbl_thSpinner.Value = 1;
 
