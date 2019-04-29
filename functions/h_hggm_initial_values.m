@@ -1,8 +1,7 @@
-function [sigma2xi,theta2xi,p,Ip,Axixi_inv,Lvj,Ljv,Svv,Sigmajj,Thetajj,Iq,Ajj,aj,llh] = h_hggm_initial_values(Svv,Lvj,m,maxiter_outer,Axixi)
+function [sigma2xi,theta2xi,p,Ip,Axixi_inv,Lvj,Ljv,Svv,Sigmajj,Thetajj,Iq,Ajj,aj,llh] = h_hggm_initial_values(Svv,Lvj,m,maxiter_outer,sigma2xi,Axixi)
 %% Initialization of variables and tunning parameters
 [p,q]           = size(Lvj);
 llh             = zeros(maxiter_outer,1);                                    % Likelihood h_hggm
-sigma2xi        = 1;                                                         % residuals (noise) variance
 theta2xi        = 1/sigma2xi;                                                % residuals (noise) precision
 Ip              = eye(p);                                                    % Identity matrix on the sensors space
 Iq              = eye(q);                                                    % Identity matrix on the cortical generators space

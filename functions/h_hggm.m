@@ -35,16 +35,15 @@ m                     = param.m;
 penalty               = param.penalty;
 rth                   = param.rth;
 axi                   = param.axi;
+sigma2xi              = param.sigma2xi;
 Axixi                 = param.Axixi;
 %%
-[sigma2xi,theta2xi,p,Ip,Axixi_inv,Lvj,Ljv,Svv,Sigmajj,Thetajj,Iq,Ajj,aj,llh] = h_hggm_initial_values(Svv,Lvj,m,maxiter_outer,Axixi);
+[sigma2xi,theta2xi,p,Ip,Axixi_inv,Lvj,Ljv,Svv,Sigmajj,Thetajj,Iq,Ajj,aj,llh] = h_hggm_initial_values(Svv,Lvj,m,maxiter_outer,sigma2xi,Axixi);
 %% Outer loop EM algorithm
 jj_on   = 0;
 xixi_on = 0;
-process_waitbar_h = waitbar(0,'Please wait...');
 for k_outer = 1:maxiter_outer
-     waitbar(k_outer/maxiter_outer,process_waitbar_h,strcat('h-hggm unhide and solve (em) loop # ',num2str(k_outer)));
-    disp(['h-hggm unhide and solve (em) loop # ',num2str(k_outer)]);
+    disp(['h-hggm unhide and solve (em) loop # ',num2str(k_outer)])
     %% Source Posterior Covariance (SPC)
     SigmajjLjv        = Sigmajj*Ljv; % SEC*SDTF'
     LvjSigmajj        = SigmajjLjv'; % Tranconjugated SEC*SDTF'
@@ -136,12 +135,11 @@ for k_outer = 1:maxiter_outer
     %%
     %% Likelihood
     llh(k_outer)      = llhjj + llhxixi;
-    if (k_outer > 1) && (abs(llh(k_outer) - llh(k_outer-1))/abs(llh(k_outer-1)) < 1E-4)
+    if (k_outer > 1) && (abs(llh(k_outer) - llh(k_outer-1))/abs(llh(k_outer-1)) < 1E-8)
         llh(k_outer + 1:end) = llh(k_outer);
         break
     end
     %%
 end %iterations outer loop
-delete(process_waitbar_h);
 %%
 end

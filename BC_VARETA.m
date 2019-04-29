@@ -2,16 +2,25 @@ classdef BC_VARETA < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        BCVARETAUIFigure          matlab.ui.Figure
-        FileMenu                  matlab.ui.container.Menu
-        ExitMenu                  matlab.ui.container.Menu
-        ToolsMenu                 matlab.ui.container.Menu
-        CreateDatasStructureMenu  matlab.ui.container.Menu
-        DatasAnalizeMenu          matlab.ui.container.Menu
-        HelpMenu                  matlab.ui.container.Menu
-        TextArea                  matlab.ui.control.TextArea
+        BCVARETAUIFigure         matlab.ui.Figure
+        FileMenu                 matlab.ui.container.Menu
+        ExitMenu                 matlab.ui.container.Menu
+        ToolsMenu                matlab.ui.container.Menu
+        CreateDataStructureMenu  matlab.ui.container.Menu
+        SingleSubjectMenu        matlab.ui.container.Menu
+        DataBatchingMenu         matlab.ui.container.Menu
+        HelpMenu                 matlab.ui.container.Menu
+        TextArea                 matlab.ui.control.TextArea
     end
 
+    
+    properties (Access = private)
+        Property % Description
+    end
+    
+    properties (Access = public)
+        single_subject % Description
+    end
     
     methods (Access = private)
         
@@ -46,8 +55,13 @@ classdef BC_VARETA < matlab.apps.AppBase
 
         % Code that executes after component creation
         function startupFcn(app)
-            try
-                           
+            clc;
+            warning off;
+            addpath('guide');
+            addpath('tools');
+            addpath('functions');
+            addpath('properties');
+            try                
                 jDesktop = com.mathworks.mde.desk.MLDesktop.getInstance;
                 jCmdWin = jDesktop.getClient('Command Window');
                 jTextArea = jCmdWin.getComponent(0).getViewport.getView;
@@ -57,18 +71,24 @@ classdef BC_VARETA < matlab.apps.AppBase
             end
         end
 
-        % Menu selected function: DatasAnalizeMenu
-        function DatasAnalizeMenuSelected(app, event)
+        % Menu selected function: DataBatchingMenu
+        function DataBatchingMenuSelected(app, event)
+            root_tab =  'properties';
+            parameter_name = 'run_single_subject';
+            parameter_value = 0;
+            change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
             Main;
+            msgbox('Completed operation!!!','Info');
         end
 
-        % Menu selected function: CreateDatasStructureMenu
-        function CreateDatasStructureMenuSelected(app, event)
+        % Menu selected function: CreateDataStructureMenu
+        function CreateDataStructureMenuSelected(app, event)
             folder = uigetdir('tittle','Select the Source Folder');
             if(folder==0)
                 return;
             end
             create_data_structure(folder);
+            msgbox('Completed operation!!!','Info');
         end
 
         % Callback function
@@ -84,7 +104,18 @@ classdef BC_VARETA < matlab.apps.AppBase
 
         % Menu selected function: ExitMenu
         function ExitMenuSelected(app, event)
-             delete(app);
+            delete(app);
+        end
+
+        % Menu selected function: SingleSubjectMenu
+        function SingleSubjectMenuSelected(app, event)
+            
+            root_tab =  'properties';
+            parameter_name = 'run_single_subject';
+            parameter_value = 1;
+            change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
+            Main;
+            msgbox('Completed operation!!!','Info');
         end
     end
 
@@ -114,15 +145,20 @@ classdef BC_VARETA < matlab.apps.AppBase
             app.ToolsMenu = uimenu(app.BCVARETAUIFigure);
             app.ToolsMenu.Text = 'Tools';
 
-            % Create CreateDatasStructureMenu
-            app.CreateDatasStructureMenu = uimenu(app.ToolsMenu);
-            app.CreateDatasStructureMenu.MenuSelectedFcn = createCallbackFcn(app, @CreateDatasStructureMenuSelected, true);
-            app.CreateDatasStructureMenu.Text = 'Create Data''s Structure';
+            % Create CreateDataStructureMenu
+            app.CreateDataStructureMenu = uimenu(app.ToolsMenu);
+            app.CreateDataStructureMenu.MenuSelectedFcn = createCallbackFcn(app, @CreateDataStructureMenuSelected, true);
+            app.CreateDataStructureMenu.Text = 'Create Data Structure';
 
-            % Create DatasAnalizeMenu
-            app.DatasAnalizeMenu = uimenu(app.ToolsMenu);
-            app.DatasAnalizeMenu.MenuSelectedFcn = createCallbackFcn(app, @DatasAnalizeMenuSelected, true);
-            app.DatasAnalizeMenu.Text = 'Data''s Analize';
+            % Create SingleSubjectMenu
+            app.SingleSubjectMenu = uimenu(app.ToolsMenu);
+            app.SingleSubjectMenu.MenuSelectedFcn = createCallbackFcn(app, @SingleSubjectMenuSelected, true);
+            app.SingleSubjectMenu.Text = 'Single Subject';
+
+            % Create DataBatchingMenu
+            app.DataBatchingMenu = uimenu(app.ToolsMenu);
+            app.DataBatchingMenu.MenuSelectedFcn = createCallbackFcn(app, @DataBatchingMenuSelected, true);
+            app.DataBatchingMenu.Text = 'Data Batching';
 
             % Create HelpMenu
             app.HelpMenu = uimenu(app.BCVARETAUIFigure);

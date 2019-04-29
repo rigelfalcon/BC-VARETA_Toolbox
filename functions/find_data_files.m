@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = find_data_files(pathname,properties,color_map,Fs,Fm,deltaf,frequency_bands,subject_name,process_waitbar,iteration,total_subjects)
+function [properties] = find_data_files(pathname,properties,color_map,subject_name,process_waitbar,iteration,total_subjects)
 %FIND_DATA_FILES Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -128,9 +128,7 @@ else
     
     %---------------end the Check the file's structure----------------------
     %
-    
-    
-    
+       
     %%-------------- initial values...------------
     Input_flat = 0;
     [Ne1,Np1] = size(K_6k);
@@ -140,35 +138,61 @@ else
     %%
     
     %%--------------- estimating cross-spectra-------------------------------
-    disp('estimating cross-spectra for EEG data...');
-    try
-        waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for EEG data...'));
-        [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k);
-        
-        error = false;
-    catch
-        fprintf(2, 'You have some problem with the configuration''s properties\n' );
-        error = true;
+    disp('estimating cross-spectra for M/EEG data...');
+    %     try
+    Fs = properties.samplfreq; % sampling frequency
+    Fm = properties.maxfreq; % maximum frequency
+    deltaf = properties.freqres; % frequency resolution
+    
+    waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for M/EEG data...'));
+    [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k);
+    waitbar(0.08,process_waitbar,strcat('Define frequency bands...'));
+    
+    if(properties.run_mode ~= '1' & properties.define_bands == '1')
+        % ----- Graficar el cross-spectra
+        PSD_log = 10*log10(abs(PSD));
+        min_psd = min(PSD_log(:));
+        max_psd = max(PSD_log(:));
+        plot_peak = min_psd*ones(Nf,1);
+      
+        figure_cross = figure('Color','k');
+        hold on;
+        plot(F,PSD_log);
+        plot(F,plot_peak,'--w');
+        set(gca,'Color','k','XColor','w','YColor','w');
+        ylabel('PSD (dB)','Color','w');
+        xlabel('Freq. (Hz)','Color','w');
+        title('Power Spectral Density','Color','w');
+        pause(1e-10);
+        %------------------------------------
+        properties.define_bands = '0';
+        [properties] = define_frequency_bands(properties);
+        delete(figure_cross);
     end
+    frequency_bands = properties.frequencies;
+    error = false;
+    %     catch
+    %         fprintf(2, 'You have some problem with the configuration''s properties\n' );
+    %         error = true;
+    %     end
     
-    %%
-    
+    %%    
     %%------- Load all parameters of datas --------------
     if(~error)
         figures = struct;
         parameters_data.cmap_a=color_map.cmap_a;
         parameters_data.cmap_c=color_map.cmap_c;
-        parameters_data.Nseg=Nseg;
-        
-        %%
-        
-        
+        parameters_data.Nseg=Nseg;       
+        %%       
         %% ----- Iterating the frequency bands to perform analyzes-----------
         if(all_file_ok)
             for h=1:size(frequency_bands,1)
                 band = frequency_bands(h,:);
-                
-                disp(strcat( '---- Frequency Band: (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz    -------------') );
+                if( properties.run_frequency_bin == '1')
+                    disp(strcat( '---- Frequency Band: (' , band(3) , ')   bin ->>>' , band(1), 'Hz -------------') );
+                else
+                    disp(strcat( '---- Frequency Band: (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz    -------------') );
+                end
                 disp(strcat( '---- -----------------------------------') );
                 
                 % --------- Get band -----------------------------------
@@ -180,18 +204,16 @@ else
                 parameters_data.peak_pos = peak_pos;
                 
                 %% alpha peak picking and psd visualization...
-               try
+                try
                     waitbar((iteration*h)/(total_subjects*size(frequency_bands,1)),...
-                        process_waitbar,strcat('Processing ',subject_name, ...
-                        ' Frequency''s Band: (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz'));
+                        process_waitbar,strcat('Processing...',subject_name, ...
+                        ' Frequency Band... (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz'));
                     
                     result = band_analysis(pathname,Svv,K_6k,band,parameters_data,figures,properties);
-                    
                     disp(result);
-               catch
-                   fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
+                catch
+                    fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
                 end
-                
                 
                 disp('-----------------------------------------------------------------');
                 disp('       -------------------------------------------------');
@@ -199,6 +221,7 @@ else
                 disp('                     -------------------');
                 
             end
+            
             
             disp(strcat( '----------------------------------------') );
         else
