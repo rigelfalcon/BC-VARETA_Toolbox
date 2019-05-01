@@ -89,7 +89,7 @@ classdef freqresol_maxfreq_samplfreq_guide < matlab.apps.AppBase
             app.SamplingfrequencySpinner.Step = 0.1;
             app.SamplingfrequencySpinner.Limits = [0 Inf];
             app.SamplingfrequencySpinner.Position = [151 77 71 22];
-            app.SamplingfrequencySpinner.Value = 100;
+            app.SamplingfrequencySpinner.Value = 200;
 
             % Create FrequencyresolutionSpinnerLabel
             app.FrequencyresolutionSpinnerLabel = uilabel(app.PropertiesPanel);
