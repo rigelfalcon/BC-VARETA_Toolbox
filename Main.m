@@ -9,18 +9,12 @@
 % for an insight to this methodology.
 
 % Authors:
+% - Ariosky Areces Gonzalez
 % - Deirel Paz Linares
 % - Eduardo Gonzalez Moreira
 % - Pedro A. Valdes Sosa
 
-% Date: March 16, 2019
-
-
-
-% Updates
-% - Ariosky Areces Gonzalez
-
-% Date: March 20, 2019
+% Updated: March 20, 2019
 
 
 %% cleaning...
