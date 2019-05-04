@@ -169,13 +169,15 @@ pause(1e-12);
 
 disp('-----------------Saving files-----------------')
 
-disp(strcat(pathname ,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),...
-    'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),'_MF_',string(properties.maxfreq),'_.mat'));
-
-pathname = strcat( pathname , filesep, 'result' , filesep);
+pathname = strcat( pathname , filesep, 'result' , filesep, band(3), filesep);
 if(~isfolder(pathname))
     mkdir (pathname);
 end
+disp(strcat(pathname,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),...
+    'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),'_MF_',string(properties.maxfreq),'_.mat'));
+
+
+
 save(strcat(pathname ,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),...
     'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),...
     '_MF_',string(properties.maxfreq),'_.mat'),'ThetaJJ','SJJ','indms');
@@ -186,7 +188,7 @@ disp('-----------------Saving files-----------------')
 %---------------------------------------------------------------------------------
 fields = fieldnames(figures);
 for i = 1:numel(fields)
-    path = strcat(pathname ,band(3),'_',string(band(1)),'Hz_',string(band(2)),...
+    path = strcat(pathname,band(3),'_',string(band(1)),'Hz_',string(band(2)),...
         'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),...
         '_MF_',string(properties.maxfreq),'_',figures.(fields{i}).title);
     

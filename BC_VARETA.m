@@ -10,6 +10,10 @@ classdef BC_VARETA < matlab.apps.AppBase
         CreateDataStructureMenu  matlab.ui.container.Menu
         SingleSubjectMenu        matlab.ui.container.Menu
         DataBatchingMenu         matlab.ui.container.Menu
+        ViewMenu                 matlab.ui.container.Menu
+        OpenFigMenu              matlab.ui.container.Menu
+        OpensubjectsresultMenu   matlab.ui.container.Menu
+        ShowrealEEGMenu          matlab.ui.container.Menu
         HelpMenu                 matlab.ui.container.Menu
         TextArea                 matlab.ui.control.TextArea
     end
@@ -62,7 +66,7 @@ classdef BC_VARETA < matlab.apps.AppBase
             addpath('tools');
             addpath('functions');
             addpath('properties');
-            try                
+            try
                 jDesktop = com.mathworks.mde.desk.MLDesktop.getInstance;
                 jCmdWin = jDesktop.getClient('Command Window');
                 jTextArea = jCmdWin.getComponent(0).getViewport.getView;
@@ -77,7 +81,8 @@ classdef BC_VARETA < matlab.apps.AppBase
             root_tab =  'properties';
             parameter_name = 'run_single_subject';
             parameter_value = 0;
-            change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
+            change_xml_parameter(strcat('properties',filesep,'properties.xml'),...
+                root_tab,parameter_name,parameter_value);
             Main;
             msgbox('Completed operation!!!','Info');
         end
@@ -121,7 +126,7 @@ classdef BC_VARETA < matlab.apps.AppBase
 
         % Menu selected function: DownloadtestdataMenu
         function DownloadtestdataMenuSelected(app, event)
-             folder = uigetdir('tittle','Select the Source Folder');
+            folder = uigetdir('tittle','Select the Source Folder');
             if(folder==0)
                 return;
             end
@@ -140,7 +145,7 @@ classdef BC_VARETA < matlab.apps.AppBase
             pause(1);
             
             url = 'https://drive.google.com/uc?id=1f8GCLWKbK4WpXzhESqQBFiMVNm0LulMs';
-            filename = strcat(folder,filesep,'BC_VARETA_test_data.zip');         
+            filename = strcat(folder,filesep,'BC_VARETA_test_data.zip');
             options = weboptions('Timeout',Inf,'RequestMethod','get');
             try
                 outfilename = websave(filename,url,options);
@@ -161,6 +166,46 @@ classdef BC_VARETA < matlab.apps.AppBase
             pause(2);
             delete(f);
             msgbox('Completed download!!!','Info');
+        end
+
+        % Menu selected function: OpenFigMenu
+        function OpenFigMenuSelected(app, event)
+
+            [file,path] = uigetfile('*.fig');
+            if isequal(file,0)
+                disp('User selected Cancel');
+                return;
+            end
+            openfig(strcat(path,filesep,file));
+        end
+
+        % Menu selected function: OpensubjectsresultMenu
+        function OpensubjectsresultMenuSelected(app, event)
+            folder = uigetdir('tittle','Select the Source Folder');
+            if(folder==0)
+                return;
+            end
+            files = dir(folder);
+            ext='.fig';
+            for j=1:size(files,1)
+                file_name = files(j).name;
+                file_path = strcat(folder,filesep, file_name);
+                [~,name,ex]=fileparts(file_name);
+                %% ----------Searching de data files ------------------------------------
+                if(~isfolder(file_path) & strcmpi(strtrim(ex),ext) )
+                    openfig(strcat(file_path));
+                end
+            end
+        end
+
+        % Menu selected function: ShowrealEEGMenu
+        function ShowrealEEGMenuSelected(app, event)
+            [file,path] = uigetfile('*.mat');
+            if isequal(file,0)
+                disp('User selected Cancel');
+                return;
+            end
+            real_EEG=load(strcat(path,filesep,file));           
         end
     end
 
@@ -209,6 +254,25 @@ classdef BC_VARETA < matlab.apps.AppBase
             app.DataBatchingMenu = uimenu(app.ToolsMenu);
             app.DataBatchingMenu.MenuSelectedFcn = createCallbackFcn(app, @DataBatchingMenuSelected, true);
             app.DataBatchingMenu.Text = 'Data Batching';
+
+            % Create ViewMenu
+            app.ViewMenu = uimenu(app.BCVARETAUIFigure);
+            app.ViewMenu.Text = 'View';
+
+            % Create OpenFigMenu
+            app.OpenFigMenu = uimenu(app.ViewMenu);
+            app.OpenFigMenu.MenuSelectedFcn = createCallbackFcn(app, @OpenFigMenuSelected, true);
+            app.OpenFigMenu.Text = 'Open Fig';
+
+            % Create OpensubjectsresultMenu
+            app.OpensubjectsresultMenu = uimenu(app.ViewMenu);
+            app.OpensubjectsresultMenu.MenuSelectedFcn = createCallbackFcn(app, @OpensubjectsresultMenuSelected, true);
+            app.OpensubjectsresultMenu.Text = 'Open subject''s result';
+
+            % Create ShowrealEEGMenu
+            app.ShowrealEEGMenu = uimenu(app.ViewMenu);
+            app.ShowrealEEGMenu.MenuSelectedFcn = createCallbackFcn(app, @ShowrealEEGMenuSelected, true);
+            app.ShowrealEEGMenu.Text = 'Show real EEG ';
 
             % Create HelpMenu
             app.HelpMenu = uimenu(app.BCVARETAUIFigure);
