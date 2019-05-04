@@ -4,6 +4,7 @@ classdef BC_VARETA < matlab.apps.AppBase
     properties (Access = public)
         BCVARETAUIFigure         matlab.ui.Figure
         FileMenu                 matlab.ui.container.Menu
+        DownloadtestdataMenu     matlab.ui.container.Menu
         ExitMenu                 matlab.ui.container.Menu
         ToolsMenu                matlab.ui.container.Menu
         CreateDataStructureMenu  matlab.ui.container.Menu
@@ -117,6 +118,50 @@ classdef BC_VARETA < matlab.apps.AppBase
             Main;
             msgbox('Completed operation!!!','Info');
         end
+
+        % Menu selected function: DownloadtestdataMenu
+        function DownloadtestdataMenuSelected(app, event)
+             folder = uigetdir('tittle','Select the Source Folder');
+            if(folder==0)
+                return;
+            end
+            
+            f = dialog('Position',[300 300 250 80]);
+            
+            iconsClassName = 'com.mathworks.widgets.BusyAffordance$AffordanceSize';
+            iconsSizeEnums = javaMethod('values',iconsClassName);
+            SIZE_32x32 = iconsSizeEnums(2);  % (1) = 16x16,  (2) = 32x32
+            jObj = com.mathworks.widgets.BusyAffordance(SIZE_32x32, 'Downloading test data...');  % icon, label
+            
+            jObj.setPaintsWhenStopped(true);  % default = false
+            jObj.useWhiteDots(false);         % default = false (true is good for dark backgrounds)
+            javacomponent(jObj.getComponent, [50,10,150,80], f);
+            jObj.start;
+            pause(1);
+            
+            url = 'https://drive.google.com/uc?id=1f8GCLWKbK4WpXzhESqQBFiMVNm0LulMs';
+            filename = strcat(folder,filesep,'BC_VARETA_test_data.zip');         
+            options = weboptions('Timeout',Inf,'RequestMethod','get');
+            try
+                outfilename = websave(filename,url,options);
+            catch
+                delete(f);
+                errordlg('Download error!!!','Error');
+                return;
+            end
+            try
+                exampleFiles = unzip(filename,pwd);
+            catch
+                delete(f);
+                errordlg('Unpackage error!!!','Error');
+                return;
+            end
+            jObj.stop;
+            jObj.setBusyText('All done!');
+            pause(2);
+            delete(f);
+            msgbox('Completed download!!!','Info');
+        end
     end
 
     % App initialization and construction
@@ -135,6 +180,11 @@ classdef BC_VARETA < matlab.apps.AppBase
             % Create FileMenu
             app.FileMenu = uimenu(app.BCVARETAUIFigure);
             app.FileMenu.Text = 'File';
+
+            % Create DownloadtestdataMenu
+            app.DownloadtestdataMenu = uimenu(app.FileMenu);
+            app.DownloadtestdataMenu.MenuSelectedFcn = createCallbackFcn(app, @DownloadtestdataMenuSelected, true);
+            app.DownloadtestdataMenu.Text = 'Download test data';
 
             % Create ExitMenu
             app.ExitMenu = uimenu(app.FileMenu);
