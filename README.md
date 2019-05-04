@@ -11,10 +11,11 @@ Paz-Linares, D., Gonzalez-Moreira, E., Martinez-Montes, E., Valdes-Hernandez, P.
 
 Example of data structure (time series, leadfield, surface, and electrodes) is hosted in Onedrive:
 
-https://lstneuro-my.sharepoint.com/:u:/g/personal/eduardo_g_m_neuroinformatics-collaboratory_org/ETBz-35Qob5PkvTgnHSOKDUBl3NEMSKQ61PyW2AB3f2F_A?e=JCYw9X
+https://drive.google.com/uc?id=1f8GCLWKbK4WpXzhESqQBFiMVNm0LulMs
 
 Main Function for MEEG real data analysis
-- Main (**call this function**).
+- BC_VARETA.m (**call this function for desktop**).
+- Main.m      (**call this function for console**).
   
   Inputs:
    - data: subfolder containing the EEG data, leadfield, sufraces.
