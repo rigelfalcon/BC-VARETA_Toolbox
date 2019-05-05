@@ -200,12 +200,12 @@ classdef BC_VARETA < matlab.apps.AppBase
 
         % Menu selected function: ShowrealEEGMenu
         function ShowrealEEGMenuSelected(app, event)
-            [file,path] = uigetfile('*.mat');
-            if isequal(file,0)
-                disp('User selected Cancel');
-                return;
-            end
-            real_EEG=load(strcat(path,filesep,file));           
+%             [file,path] = uigetfile('*.mat');
+%             if isequal(file,0)
+%                 disp('User selected Cancel');
+%                 return;
+%             end
+%             real_EEG=load(strcat(path,filesep,file));           
         end
     end
 
