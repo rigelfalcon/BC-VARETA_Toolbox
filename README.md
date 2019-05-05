@@ -13,6 +13,10 @@ Example of data structure (time series, leadfield, surface, and electrodes) is h
 
 https://drive.google.com/uc?id=1f8GCLWKbK4WpXzhESqQBFiMVNm0LulMs
 
+Or
+
+https://lstneuro-my.sharepoint.com/:u:/g/personal/joint-lab_neuroinformatics-collaboratory_org/EQVy7Y3oL9lDqS4_aNwglCsBMngspSuQ6yVudDj1xUOhgA?e=4csoDL
+
 Main Function for MEEG real data analysis
 - BC_VARETA.m (**call this function for desktop**).
 - Main.m      (**call this function for console**).
