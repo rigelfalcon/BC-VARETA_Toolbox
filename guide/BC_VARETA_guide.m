@@ -1,4 +1,4 @@
-classdef BC_VARETA < matlab.apps.AppBase
+classdef BC_VARETA_guide < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
@@ -83,7 +83,7 @@ classdef BC_VARETA < matlab.apps.AppBase
             parameter_value = 0;
             change_xml_parameter(strcat('properties',filesep,'properties.xml'),...
                 root_tab,parameter_name,parameter_value);
-            Main;
+            BC_VARETA_bash;
             msgbox('Completed operation!!!','Info');
         end
 
@@ -120,7 +120,7 @@ classdef BC_VARETA < matlab.apps.AppBase
             parameter_name = 'run_single_subject';
             parameter_value = 1;
             change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
-            Main;
+            BC_VARETA_bash;
             msgbox('Completed operation!!!','Info');
         end
 
@@ -200,12 +200,12 @@ classdef BC_VARETA < matlab.apps.AppBase
 
         % Menu selected function: ShowrealEEGMenu
         function ShowrealEEGMenuSelected(app, event)
-            [file,path] = uigetfile('*.mat');
-            if isequal(file,0)
-                disp('User selected Cancel');
-                return;
-            end
-            real_EEG=load(strcat(path,filesep,file));           
+%             [file,path] = uigetfile('*.mat');
+%             if isequal(file,0)
+%                 disp('User selected Cancel');
+%                 return;
+%             end
+%             real_EEG=load(strcat(path,filesep,file));           
         end
     end
 
@@ -287,7 +287,7 @@ classdef BC_VARETA < matlab.apps.AppBase
     methods (Access = public)
 
         % Construct app
-        function app = BC_VARETA
+        function app = BC_VARETA_guide
 
             % Create and configure components
             createComponents(app)

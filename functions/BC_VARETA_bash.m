@@ -1,5 +1,5 @@
-function [] = Load_Files(root_path,properties)
-%%LOAD_FILES Summary of this function goes here
+
+%%BC_VARETA_bash Summary of this function goes here
 %   Detailed explanation goes here
 %
 %
@@ -16,6 +16,8 @@ function [] = Load_Files(root_path,properties)
 %
 % Date: March 26, 2019
 %%
+
+[properties,root_path] = define_in_parameter();
 
 color_map = load(strcat( 'tools',filesep,'mycolormap_brain_basic_conn.mat'));
 %%
@@ -52,5 +54,5 @@ end
 %%
 delete(process_waitbar);
 toc
-end
+
 
