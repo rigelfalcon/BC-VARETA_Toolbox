@@ -144,10 +144,13 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             jObj.start;
             pause(1);
             
-            url = 'https://drive.google.com/uc?id=1f8GCLWKbK4WpXzhESqQBFiMVNm0LulMs';
+            url = 'https://lstneuro-my.sharepoint.com/:u:/g/personal/joint-lab_neuroinformatics-collaboratory_org/EQVy7Y3oL9lDqS4_aNwglCsBMngspSuQ6yVudDj1xUOhgA?download=1';
             filename = strcat(folder,filesep,'BC_VARETA_test_data.zip');
-            options = weboptions('Timeout',Inf,'RequestMethod','get');
+            matlab.net.http.HTTPOptions.VerifyServerName = false;
+            options = weboptions('Timeout',Inf,'RequestMethod','get');          
+           
             try
+                disp('Downloding test data....');
                 outfilename = websave(filename,url,options);
             catch
                 delete(f);
@@ -155,7 +158,8 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
                 return;
             end
             try
-                exampleFiles = unzip(filename,pwd);
+                disp('Unpacking test data....');
+                exampleFiles = unzip(filename,folder);
             catch
                 delete(f);
                 errordlg('Unpackage error!!!','Error');
@@ -163,6 +167,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             end
             jObj.stop;
             jObj.setBusyText('All done!');
+            disp('All done....');
             pause(2);
             delete(f);
             msgbox('Completed download!!!','Info');
