@@ -35,7 +35,7 @@ classdef protocol_guide < matlab.apps.AppBase
             app.canceled = false;
             properties_file = strcat('properties',filesep,'bs_properties.xml');
             root_tab =  'properties'; 
-            parameters = ["protocolo_name"];
+            parameters = ["protocol_name"];
             values = [app.ProtocolnameEditField.Value ];            
             change_xml_parameter(properties_file,root_tab,parameters,values);            
             uiresume(app.ProtocolUIFigure);

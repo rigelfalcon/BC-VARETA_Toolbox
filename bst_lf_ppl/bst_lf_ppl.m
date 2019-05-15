@@ -21,7 +21,7 @@ if (find_xml_parameter(strcat('properties',filesep,'properties.xml'), 'propertie
         [filepath,filename,ext] = download_file(url,pwd,filename);        
         [folderpath,foldername] = unpackage_file(filename,pwd);        
     end
-    ProtocolName = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','protocolo_name',1);    
+    ProtocolName = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','protocol_name',1);    
 else
     if(isempty( bs_path))
         answer = questdlg('Did you download the brainstorm?', ...
@@ -55,7 +55,7 @@ else
     disp('------Waitintg for Protocol------');
     uiwait(guiHandle.UIFigure);
     delete(guiHandle);     
-    ProtocolName = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','protocolo_name',1);
+    ProtocolName = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','protocol_name',1);
 end
 
 addpath(genpath(bs_path));
