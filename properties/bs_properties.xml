@@ -5,6 +5,6 @@
     <bs_url>https://codeload.github.com/brainstorm-tools/brainstorm3/zip/master</bs_url>
     <bs_db_path>C:\Users\Ariosky\.brainstorm\local_db</bs_db_path>
     <raw_data_path>D:\NeuroInformatics Lab\LeadField-Pipeline-BS\data</raw_data_path>
-    <protocolo_name/>   
+    <protocol_name>ExampleProtocol</protocol_name> 
     
 </properties>
