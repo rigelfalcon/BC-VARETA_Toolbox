@@ -21,19 +21,28 @@
 clear all;
 clc;
 close all;
-addpath('functions');
 addpath('guide');
 addpath('properties');
 addpath('tools');
 
-%%  Test's Seccion
+
+%%               Upload the actived processes
 %%----------------Start in the properties-----------------------------
 file_path = strcat('properties',filesep,'properties.xml');
 strcat('properties',filesep,'properties.xml')
 root_tab =  'properties';
 parameter_name = 'run_mode';
 if (find_xml_parameter(file_path,root_tab,parameter_name,1)== '1')
-    BC_VARETA_bash;
+    %----- Finding proccess for run ---------
+    processes = find_xml_list(strcat('properties',filesep,'processes.xml'),'processes');
+    for i = 1: length(processes)
+        process = processes(i);
+        if(process.name == char('process') &  process.value == '1' )
+            disp(strcat('---- Running process: ' , process.attributes.name, ' -----------' ))
+            addpath(process.attributes.root_folder);
+            eval(process.attributes.function);
+        end
+    end    
 else
     BC_VARETA_guide;
 end
