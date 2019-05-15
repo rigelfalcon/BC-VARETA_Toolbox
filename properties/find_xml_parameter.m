@@ -6,7 +6,11 @@ DOMnode = xmlread(file_path);
 bndbox_elem = DOMnode.getElementsByTagName(root_tab);
 element = bndbox_elem.item(0).getElementsByTagName(parameter_name);
 if(value)
+    try
     result = char(element.item(0).getFirstChild.getData);
+    catch
+        result = [];
+    end
 else
     result = element.item(0).getAttributes;
 end
