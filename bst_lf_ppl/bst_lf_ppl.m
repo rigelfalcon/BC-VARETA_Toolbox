@@ -93,7 +93,7 @@ disp(strcat('------Data Source:  ', data_folder ));
 subjects = dir(data_folder);
 for j=1:size(subjects,1)
     subject_name = subjects(j).name;
-    if(isfolder(fullfile(data_folder,subject_name)) && subject_name ~= '.' && string(subject_name) ~="..")
+    if(isfolder(fullfile(data_folder,subject_name)) & subject_name ~= '.' & string(subject_name) ~="..")
         disp(strcat('------------> Processing subject: ', subject_name , ' <--------------'));
         % Input files
         sucject_folder = fullfile(data_folder,subject_name);
