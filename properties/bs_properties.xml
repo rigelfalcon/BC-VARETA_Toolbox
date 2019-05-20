@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <properties>
     
-    <bs_path>D:\NeuroInformatics Lab\BC-VARETA1.0_repo\brainstorm3-master</bs_path>
+    <bs_path>D:\NeuroInformatics Lab\BC-VARETA1.0_repo\brainstorm3</bs_path>
     <bs_url>https://codeload.github.com/brainstorm-tools/brainstorm3/zip/master</bs_url>
     <bs_db_path>C:\Users\Ariosky\.brainstorm\local_db</bs_db_path>
     <raw_data_path>D:\NeuroInformatics Lab\LeadField-Pipeline-BS\data</raw_data_path>
