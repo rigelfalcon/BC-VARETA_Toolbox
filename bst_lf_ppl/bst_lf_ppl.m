@@ -93,15 +93,14 @@ disp(strcat('------Data Source:  ', data_folder ));
 subjects = dir(data_folder);
 for j=1:size(subjects,1)
     subject_name = subjects(j).name;
-    if(isfolder(fullfile(data_folder,subject_name)) & subject_name ~= '.' & string(subject_name) ~="..")
+    if(isfolder(fullfile(data_folder,subject_name)) && subject_name ~= '.' && string(subject_name) ~="..")
         disp(strcat('------------> Processing subject: ', subject_name , ' <--------------'));
         % Input files
         sucject_folder = fullfile(data_folder,subject_name);
         if(exist(strcat(sucject_folder,filesep,subject_name,'_EEG_anatomy_t13d_anatVOL_20060115002658_2.nii_out',filesep,'mri',filesep,'T1.mgz'),'file'))
             
             sFiles = [];
-            
-            
+                       
             RawFiles = {strcat(sucject_folder,filesep,subject_name,'_EEG_anatomy_t13d_anatVOL_20060115002658_2.nii_out',filesep,'mri',filesep,'T1.mgz'), ...
                 strcat(sucject_folder,filesep,subject_name,'_EEG_anatomy_t13d_anatVOL_20060115002658_2.nii_out'), ...
                 strcat(sucject_folder,filesep,subject_name,'_EEG_data.mat'), ''};
@@ -110,83 +109,174 @@ for j=1:size(subjects,1)
             bst_report('Start', sFiles);
             
             % Process: Import MRI
-            sFiles = bst_process('CallProcess', 'process_import_mri', sFiles, [], 'subjectname', subject_name, 'mrifile', {RawFiles{1}, 'MGH'});
+            try
+                sFiles = bst_process('CallProcess', 'process_import_mri', sFiles, [], 'subjectname', subject_name, 'mrifile', {RawFiles{1}, 'MGH'});
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Process: Compute MNI transformation
-            sFiles = bst_process('CallProcess', 'process_mni_affine', sFiles, [], 'subjectname', subject_name);
+            try
+                sFiles = bst_process('CallProcess', 'process_mni_affine', sFiles, [], 'subjectname', subject_name);
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Check Fiducials
-            Fiducial =  load(strcat(BrainstormDbDir, filesep,ProtocolName,filesep,'anat',filesep,subject_name,filesep,'subjectimage_T1.mat'));
+            try
+                Fiducial =  load(strcat(BrainstormDbDir, filesep,ProtocolName,filesep,'anat',filesep,subject_name,filesep,'subjectimage_T1.mat'));
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Process: Import anatomy folder
-            sFiles = bst_process('CallProcess', 'process_import_anatomy', sFiles, [], 'subjectname', subject_name,     'mrifile',     {RawFiles{2}, 'FreeSurfer'},     'nvertices',   6001, ...
-                'nas', Fiducial.SCS.NAS, 'lpa', Fiducial.SCS.LPA, 'rpa', Fiducial.SCS.RPA, 'ac', Fiducial.NCS.AC, 'pc', Fiducial.NCS.PC, 'ih', Fiducial.NCS.IH, 'aseg', 1);
+            try
+                sFiles = bst_process('CallProcess', 'process_import_anatomy', sFiles, [], 'subjectname', subject_name,     'mrifile',     {RawFiles{2}, 'FreeSurfer'},     'nvertices',   6001, ...
+                    'nas', Fiducial.SCS.NAS, 'lpa', Fiducial.SCS.LPA, 'rpa', Fiducial.SCS.RPA, 'ac', Fiducial.NCS.AC, 'pc', Fiducial.NCS.PC, 'ih', Fiducial.NCS.IH, 'aseg', 1);
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Process: Generate BEM surfaces
-            sFiles = bst_process('CallProcess', 'process_generate_bem', sFiles, [], ...
-                'subjectname', subject_name, ...
-                'nscalp',      1922, ...
-                'nouter',      1922, ...
-                'ninner',      1922, ...
-                'thickness',   4);
+            try
+                sFiles = bst_process('CallProcess', 'process_generate_bem', sFiles, [], ...
+                    'subjectname', subject_name, ...
+                    'nscalp',      1922, ...
+                    'nouter',      1922, ...
+                    'ninner',      1922, ...
+                    'thickness',   4);
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Process: Create link to raw file
-            sFiles = bst_process('CallProcess', 'process_import_data_raw', sFiles, [], ...
-                'subjectname',    subject_name, ...
-                'datafile',       {RawFiles{3}, 'EEG-MAT'}, ...
-                'channelreplace', 1, ...
-                'channelalign',   1, ...
-                'evtmode',        'value');
+            try
+                sFiles = bst_process('CallProcess', 'process_import_data_raw', sFiles, [], ...
+                    'subjectname',    subject_name, ...
+                    'datafile',       {RawFiles{3}, 'EEG-MAT'}, ...
+                    'channelreplace', 1, ...
+                    'channelalign',   1, ...
+                    'evtmode',        'value');
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Process: Set channel file
-            sFiles = bst_process('CallProcess', 'process_import_channel', sFiles, [], ...
-                'channelfile',  {RawFiles{4}, RawFiles{4}}, ...
-                'usedefault',   43, ...  % ICBM152: 10-20 19
-                'channelalign', 1, ...
-                'fixunits',     1, ...
-                'vox2ras',      1);
+            try
+                sFiles = bst_process('CallProcess', 'process_import_channel', sFiles, [], ...
+                    'channelfile',  {RawFiles{4}, RawFiles{4}}, ...
+                    'usedefault',   43, ...  % ICBM152: 10-20 19
+                    'channelalign', 1, ...
+                    'fixunits',     1, ...
+                    'vox2ras',      1);
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Process: Refine registration
-            sFiles = bst_process('CallProcess', 'process_headpoints_refine', sFiles, []);
+            try
+                sFiles = bst_process('CallProcess', 'process_headpoints_refine', sFiles, []);
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Process: Project electrodes on scalp
-            sFiles = bst_process('CallProcess', 'process_channel_project', sFiles, []);
+            try
+                sFiles = bst_process('CallProcess', 'process_channel_project', sFiles, []);
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Process: Compute head model
-            sFiles = bst_process('CallProcess', 'process_headmodel', sFiles, [], ...
-                'Comment',     '', ...
-                'sourcespace', 1, ...  % Cortex surface
-                'volumegrid',  struct(...
-                'Method',        'isotropic', ...
-                'nLayers',       17, ...
-                'Reduction',     3, ...
-                'nVerticesInit', 4000, ...
-                'Resolution',    0.005, ...
-                'FileName',      ''), ...
-                'eeg',         3, ...  % OpenMEEG BEM
-                'openmeeg',    struct(...
-                'BemSelect',    [1, 1, 1], ...
-                'BemCond',      [1, 0.0125, 1], ...
-                'BemNames',     {{'Scalp', 'Skull', 'Brain'}}, ...
-                'BemFiles',     {{}}, ...
-                'isAdjoint',    0, ...
-                'isAdaptative', 1, ...
-                'isSplit',      0, ...
-                'SplitLength',  4000));
+            try
+                sFiles = bst_process('CallProcess', 'process_headmodel', sFiles, [], ...
+                    'Comment',     '', ...
+                    'sourcespace', 1, ...  % Cortex surface
+                    'volumegrid',  struct(...
+                    'Method',        'isotropic', ...
+                    'nLayers',       17, ...
+                    'Reduction',     3, ...
+                    'nVerticesInit', 4000, ...
+                    'Resolution',    0.005, ...
+                    'FileName',      ''), ...
+                    'eeg',         3, ...  % OpenMEEG BEM
+                    'openmeeg',    struct(...
+                    'BemSelect',    [1, 1, 1], ...
+                    'BemCond',      [1, 0.0125, 1], ...
+                    'BemNames',     {{'Scalp', 'Skull', 'Brain'}}, ...
+                    'BemFiles',     {{}}, ...
+                    'isAdjoint',    0, ...
+                    'isAdaptative', 1, ...
+                    'isSplit',      0, ...
+                    'SplitLength',  4000));
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Save lead field
-            load(strcat(BrainstormDbDir,filesep,ProtocolName,filesep,'data',filesep,subject_name,filesep,'@raw',subject_name,'_EEG_data',filesep,'headmodel_surf_openmeeg.mat'));
-            Gain3d=Gain; Gain = bst_gain_orient(Gain3d, GridOrient);
-            save Gain Gain Gain3d;
+            try
+                load(strcat(BrainstormDbDir,filesep,ProtocolName,filesep,'data',filesep,subject_name,filesep,'@raw',subject_name,'_EEG_data',filesep,'headmodel_surf_openmeeg.mat'));
+                Gain3d=Gain; Gain = bst_gain_orient(Gain3d, GridOrient);
+                save Gain Gain Gain3d;
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Save patch
-            load(strcat(BrainstormDbDir,filesep,ProtocolName,filesep,'data',filesep,subject_name,filesep,'tess_cortex_pial_low.mat'));
-            save patch Vertices Faces;
+            try
+                load(strcat(BrainstormDbDir,filesep,ProtocolName,filesep,'anat',filesep,subject_name,filesep,'tess_cortex_pial_low.mat'));
+                save patch Vertices Faces;
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
             
             % Save and display report
-            ReportFile = bst_report('Save', sFiles);
-            bst_report('Open', ReportFile);
-            % bst_report('Export', ReportFile, ExportDir);
+            try
+                ReportFile = bst_report('Save', sFiles);
+                bst_report('Open', ReportFile);
+                % bst_report('Export', ReportFile, ExportDir);
+            catch exception
+                disp(strcat('Error: '));
+                disp(exception);
+                disp('Jumping to the next subject..........');
+                continue;
+            end
         else
             disp(strcat('The subject: ',subject_name));
             disp(strcat('Sourse folder: ',data_folder));
