@@ -4,7 +4,7 @@
     <run_mode description="HPC-option1">0</run_mode> 
     <run_parallel description="HPC-option1">0</run_parallel>
     <run_frequency_bin>0</run_frequency_bin>
-    <run_single_subject>0</run_single_subject>
+    <run_single_subject>1</run_single_subject>
     <data_path>D:\NeuroInformatics Lab\BC-VARETA1.0_repo\data\subject#1</data_path>
     <delta_band end="4" run="true" start="0.1"/>
     <theta_band end="7" run="true" start="4"/>

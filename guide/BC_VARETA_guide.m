@@ -197,6 +197,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             parameter_name = 'run_single_subject';
             parameter_value = 1;
             change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
+            addpath('functions');
             BC_VARETA_bash;
             msgbox('Completed operation!!!','Info');
         end
