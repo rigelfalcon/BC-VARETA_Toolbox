@@ -45,8 +45,7 @@ for j=1:size(subject_childs,1)
                     files_to_load(k) = [];
                 end
             end
-        end
-        
+        end        
     end
     %%
 end
@@ -166,8 +165,15 @@ else
         pause(1e-10);
         %------------------------------------
         properties.define_bands = '0';
-        [properties] = define_frequency_bands(properties);
+        
+        %------ difening frequency bands ----------------
+        [properties,result] = define_frequency_bands(properties);
+        
         delete(figure_cross);
+        
+        if(result == 'canceled')
+            return;
+        end       
     end
     frequency_bands = properties.frequencies;
     error = false;

@@ -17,7 +17,10 @@
 % Date: March 26, 2019
 %%
 
-[properties,root_path] = define_in_parameter();
+[properties,root_path,result] = define_in_parameter();
+if(result == 'canceled')
+    return;
+end
 
 color_map = load(strcat( 'tools',filesep,'mycolormap_brain_basic_conn.mat'));
 %%

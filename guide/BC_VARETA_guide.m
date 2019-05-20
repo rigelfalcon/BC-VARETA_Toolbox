@@ -65,7 +65,14 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
         % Code that executes after component creation
         function startupFcn(app)
             clc;
-            warning off;           
+            warning off; 
+            processes = find_xml_list(strcat('properties',filesep,'processes.xml'),'processes');
+            for i = 1: length(processes)
+                process = processes(i);
+                if(process.name == char('process') &  process.value == '1' )                   
+                    addpath(process.attributes.root_folder);                    
+                end
+            end
             try
                 jDesktop = com.mathworks.mde.desk.MLDesktop.getInstance;
                 jCmdWin = jDesktop.getClient('Command Window');
@@ -197,7 +204,6 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             parameter_name = 'run_single_subject';
             parameter_value = 1;
             change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
-            addpath('functions');
             BC_VARETA_bash;
             msgbox('Completed operation!!!','Info');
         end
