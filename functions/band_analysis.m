@@ -22,7 +22,7 @@ cmap_a=parameters_data.cmap_a;
 cmap_c=parameters_data.cmap_c;
 Nseg=parameters_data.Nseg;
 S_6k=parameters_data.S_6k;
-
+Atlas = S_6k.Atlas(6).Scouts;
 
 
 peak_pos=parameters_data.peak_pos;
@@ -108,11 +108,11 @@ indms                 = find(stat > param.ssbl_th);
 %%
 %% Connectivity Leakage Module
 disp('connectivity leakage module...');
-[ThetaJJ,SJJ,llh,jj_on,xixi_on] = h_hggm(Svv,K_6k(:,indms),param);
+[Thetajj,Sjj,llh,jj_on,xixi_on] = h_hggm(Svv,K_6k(:,indms),param);
 %%
 %% Plotting results
 sources_iv          = zeros(length(K_6k),1);
-sources_iv(indms)   = abs(diag(SJJ));
+sources_iv(indms)   = abs(diag(Sjj));
 sources_iv          = sources_iv/max(sources_iv(:));
 ind_zr              = sources_iv < 0.01;
 sources_iv(ind_zr)  = 0;
@@ -122,16 +122,16 @@ set(gca,'Color','k');
 az = 0; el = 0;
 view(az,el);
 colormap(gca,cmap_a);
-title('BC-VARETA','Color','w','FontSize',16);
+title('BC-VARETA-activity','Color','w','FontSize',16);
 
 
 fig_struct = struct;
 fig_struct.figure = figure_BC_VARETA1;
-fig_struct.title = 'BC_VARETA1';
+fig_struct.title = 'BC_VARETA_activity';
 figures.figure_BC_VARETA1 = fig_struct;
 
-temp_iv    = abs(SJJ);
-connect_iv = abs(ThetaJJ);
+temp_iv    = abs(Sjj);
+connect_iv = abs(Thetajj);
 temp       = abs(connect_iv);
 temp_diag  = diag(diag(temp));
 temp_ndiag = temp-temp_diag;
@@ -155,12 +155,65 @@ ylabel('sources','Color','w');
 colorbar;
 colormap(gca,cmap_c);
 axis square;
-title('BC-VARETA','Color','w','FontSize',16);
+title('BC-VARETA-node-wise-conn','Color','w','FontSize',16);
 
 fig_struct = struct;
 fig_struct.figure = figure_BC_VARETA2;
-fig_struct.title = 'BC_VARETA2';
-figures.figure_BC_VARET2 = fig_struct;
+fig_struct.title = 'BC_VARETA_node_wise_conn';
+figures.figure_BC_VARETA2 = fig_struct;
+
+
+%% Roi analysis
+Thetajj_full              = zeros(length(stat));
+Sjj_full                  = zeros(length(stat));
+Thetajj_full(indms,indms) = Thetajj;
+Sjj_full(indms,indms)     = Sjj;
+atlas_label               = cell(1,length(Atlas));
+conn_roi                  = zeros(length(Atlas));
+act_roi                   = zeros(length(Atlas),1);
+for roi1 = 1:length(Atlas)
+    for roi2 = 1:length(Atlas)
+        conn_tmp             = Thetajj_full(Atlas(roi1).Vertices,Atlas(roi2).Vertices);
+        conn_tmp             = mean(abs(conn_tmp(:)));
+        conn_roi(roi1,roi2)  = conn_tmp;
+    end
+atlas_label{roi1} = Atlas(roi1).Label;
+end
+
+for roi1 = 1:length(Atlas)
+    act_tmp              = diag(Sjj_full(Atlas(roi1).Vertices,Atlas(roi1).Vertices));
+    act_tmp              = mean(abs(act_tmp));
+    act_roi(roi1)        = act_tmp;
+end
+act_roi    = diag(act_roi);
+temp_iv    = abs(act_roi);
+connect_iv = abs(conn_roi);
+temp       = abs(connect_iv);
+temp_diag  = diag(diag(temp));
+temp_ndiag = temp-temp_diag;
+temp_ndiag = temp_ndiag/max(temp_ndiag(:));
+temp_diag  = diag(abs(diag(temp_iv)));
+temp_diag  = temp_diag/max(temp_diag(:));
+temp_diag  = diag(diag(temp_diag)+1);
+temp_comp  = temp_diag+temp_ndiag;
+
+figure_BC_VARETA3 = figure('Color','k');
+imagesc(temp_comp);
+set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
+    'XTick',1:length(Atlas),'YTick',1:length(Atlas),...
+    'XTickLabel',atlas_label,'XTickLabelRotation',90,...
+    'YTickLabel',atlas_label,'YTickLabelRotation',0);
+xlabel('sources','Color','w');
+ylabel('sources','Color','w');
+colorbar;
+colormap(gca,cmap_c);
+axis square;
+title('BC-VARETA-roi-conn','Color','w','FontSize',16);
+
+fig_struct = struct;
+fig_struct.figure = figure_BC_VARETA3;
+fig_struct.title = 'BC_VARETA_roi_conn';
+figures.figure_BC_VARETA3 = fig_struct;
 
 pause(1e-12);
 
@@ -180,7 +233,7 @@ disp(strcat(pathname,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),...
 
 save(strcat(pathname ,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),...
     'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),...
-    '_MF_',string(properties.maxfreq),'_.mat'),'ThetaJJ','SJJ','indms');
+    '_MF_',string(properties.maxfreq),'_.mat'),'Thetajj','Sjj','indms');
 
 disp('-----------------Saving files-----------------')
 
@@ -212,10 +265,6 @@ disp('--------------------------------------------------------------------------
 result = ["Finished iteration ", "";...
     "Path and subject: " , string(pathname) ;...
     "Output file: " , string(resultfile) ];
-
-
-
-
 
 
 end
