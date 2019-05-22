@@ -65,7 +65,6 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
         % Code that executes after component creation
         function startupFcn(app)
             clc;
-            warning off; 
             processes = find_xml_list(strcat('properties',filesep,'processes.xml'),'processes');
             for i = 1: length(processes)
                 process = processes(i);
@@ -200,6 +199,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
         % Menu selected function: SingleSubjectMenu_A
         function SingleSubjectMenu_ASelected(app, event)
+            addpath('functions');
             root_tab =  'properties';
             parameter_name = 'run_single_subject';
             parameter_value = 1;
@@ -210,6 +210,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
         % Menu selected function: BatchProcessingMenu_A
         function BatchProcessingMenu_ASelected(app, event)
+            addpath('functions');
             root_tab =  'properties';
             parameter_name = 'run_single_subject';
             parameter_value = 0;
@@ -221,13 +222,15 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
         % Menu selected function: SingleSubjectMenu_LF
         function SingleSubjectMenu_LFSelected(app, event)
-            bs_lf_ppl('single');
+            addpath('bst_lf_ppl');
+            bs_lf_ppl;
             msgbox('Completed operation!!!','Info');
         end
 
         % Menu selected function: BatchProcessingMenu_LF
         function BatchProcessingMenu_LFSelected(app, event)
-            bs_lf_ppl('batch');
+            addpath('bst_lf_ppl');
+            bs_lf_ppl;
             msgbox('Completed operation!!!','Info');
         end
     end
