@@ -1,7 +1,7 @@
 function [properties,folder,result] = define_in_parameter()
 
 [properties,folder] = get_properties(strcat('properties',filesep,'properties.xml'));
-
+result = 1;
 if(properties.run_mode ~= '1')
     %%---------------Frequency's bands---------------
     guiHandle = freqresol_maxfreq_samplfreq_guide;
