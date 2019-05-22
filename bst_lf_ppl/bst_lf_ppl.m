@@ -100,7 +100,7 @@ for j=1:size(subjects,1)
         if(exist(strcat(sucject_folder,filesep,subject_name,'_EEG_anatomy_t13d_anatVOL_20060115002658_2.nii_out',filesep,'mri',filesep,'T1.mgz'),'file'))
             
             sFiles = [];
-                       
+            
             RawFiles = {strcat(sucject_folder,filesep,subject_name,'_EEG_anatomy_t13d_anatVOL_20060115002658_2.nii_out',filesep,'mri',filesep,'T1.mgz'), ...
                 strcat(sucject_folder,filesep,subject_name,'_EEG_anatomy_t13d_anatVOL_20060115002658_2.nii_out'), ...
                 strcat(sucject_folder,filesep,subject_name,'_EEG_data.mat'), ''};
@@ -115,6 +115,8 @@ for j=1:size(subjects,1)
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
@@ -125,6 +127,8 @@ for j=1:size(subjects,1)
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
@@ -135,62 +139,139 @@ for j=1:size(subjects,1)
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
             % Process: Import anatomy folder
             try
-                sFiles = bst_process('CallProcess', 'process_import_anatomy', sFiles, [], 'subjectname', subject_name,     'mrifile',     {RawFiles{2}, 'FreeSurfer'},     'nvertices',   6001, ...
-                    'nas', Fiducial.SCS.NAS, 'lpa', Fiducial.SCS.LPA, 'rpa', Fiducial.SCS.RPA, 'ac', Fiducial.NCS.AC, 'pc', Fiducial.NCS.PC, 'ih', Fiducial.NCS.IH, 'aseg', 1);
+                parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_import_anatomy');
+                process_param = struct;
+                for i = 1: length(parameters)
+                    parameter = parameters(i);
+                    switch char(parameter.name)
+                        case 'mrifile2'
+                            process_param.mrifile2 = parameter.value;
+                        case 'nvertices'
+                            process_param.nvertices = parameter.value;
+                        case 'aseg'
+                            process_param.aseg = parameter.value;
+                    end
+                end
+                sFiles = bst_process('CallProcess', 'process_import_anatomy', sFiles, [],...
+                    'subjectname', subject_name,...
+                    'mrifile',     {RawFiles{2}, char(process_param.mrifile2)},...
+                    'nvertices',   str2double(process_param.nvertices), ...
+                    'nas', Fiducial.SCS.NAS,...
+                    'lpa', Fiducial.SCS.LPA,...
+                    'rpa', Fiducial.SCS.RPA,...
+                    'ac', Fiducial.NCS.AC,...
+                    'pc', Fiducial.NCS.PC,...
+                    'ih', Fiducial.NCS.IH,...
+                    'aseg', str2double(process_param.aseg));
             catch exception
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
             % Process: Generate BEM surfaces
             try
+                parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_generate_bem');
+                process_param = struct;
+                for i = 1: length(parameters)
+                    parameter = parameters(i);
+                    switch char(parameter.name)
+                        case 'nscalp'
+                            process_param.nscalp = parameter.value;
+                        case 'nouter'
+                            process_param.nouter = parameter.value;
+                        case 'ninner'
+                            process_param.ninner = parameter.value;
+                        case 'thickness'
+                            process_param.thickness = parameter.value;
+                    end
+                end
                 sFiles = bst_process('CallProcess', 'process_generate_bem', sFiles, [], ...
                     'subjectname', subject_name, ...
-                    'nscalp',      1922, ...
-                    'nouter',      1922, ...
-                    'ninner',      1922, ...
-                    'thickness',   4);
+                    'nscalp',      str2double(process_param.nscalp), ...
+                    'nouter',      str2double(process_param.nouter), ...
+                    'ninner',      str2double(process_param.ninner), ...
+                    'thickness',   str2double(process_param.thickness));
             catch exception
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
             % Process: Create link to raw file
             try
+                parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_import_data_raw');
+                process_param = struct;
+                for i = 1: length(parameters)
+                    parameter = parameters(i);
+                    switch char(parameter.name)
+                        case 'datafile'
+                            process_param.datafile = parameter.value;
+                        case 'channelreplace'
+                            process_param.channelreplace = parameter.value;
+                        case 'channelalign'
+                            process_param.channelalign = parameter.value;
+                        case 'evtmode'
+                            process_param.evtmode = parameter.value;
+                    end
+                end
                 sFiles = bst_process('CallProcess', 'process_import_data_raw', sFiles, [], ...
                     'subjectname',    subject_name, ...
-                    'datafile',       {RawFiles{3}, 'EEG-MAT'}, ...
-                    'channelreplace', 1, ...
-                    'channelalign',   1, ...
-                    'evtmode',        'value');
+                    'datafile',       {RawFiles{3}, char(process_param.datafile)}, ...
+                    'channelreplace', str2double(process_param.channelreplace), ...
+                    'channelalign',   str2double(process_param.channelalign), ...
+                    'evtmode',        char(process_param.evtmode));
             catch exception
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
             % Process: Set channel file
             try
+                parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_import_channel');
+                process_param = struct;
+                for i = 1: length(parameters)
+                    parameter = parameters(i);
+                    switch char(parameter.name)
+                        case 'usedefault'
+                            process_param.usedefault = parameter.value;
+                        case 'channelalign'
+                            process_param.channelalign = parameter.value;
+                        case 'fixunits'
+                            process_param.fixunits = parameter.value;
+                        case 'vox2ras'
+                            process_param.vox2ras = parameter.value;
+                    end
+                end
                 sFiles = bst_process('CallProcess', 'process_import_channel', sFiles, [], ...
                     'channelfile',  {RawFiles{4}, RawFiles{4}}, ...
-                    'usedefault',   43, ...  % ICBM152: 10-20 19
-                    'channelalign', 1, ...
-                    'fixunits',     1, ...
-                    'vox2ras',      1);
+                    'usedefault',   str2double(process_param.usedefault), ...  % ICBM152: 10-20 19
+                    'channelalign', str2double(process_param.channelalign), ...
+                    'fixunits',     str2double(process_param.fixunits), ...
+                    'vox2ras',      str2double(process_param.vox2ras));
             catch exception
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
@@ -201,6 +282,8 @@ for j=1:size(subjects,1)
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
@@ -211,37 +294,90 @@ for j=1:size(subjects,1)
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
             % Process: Compute head model
-            try
+%             try
+                parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_headmodel');
+                process_param = struct;
+                for i = 1: length(parameters)
+                    parameter = parameters(i);
+                    switch char(parameter.name)
+                        case 'Comment'
+                            if(~isempty(parameter.value))
+                                process_param.Comment = parameter.value;
+                            else
+                                process_param.Comment = '';
+                            end
+                        case 'sourcespace'
+                            process_param.sourcespace = parameter.value;
+                        case 'Method'
+                            process_param.Method = parameter.value;
+                        case 'nLayers'
+                            process_param.nLayers = parameter.value;
+                        case 'Reduction'
+                            process_param.Reduction = parameter.value;
+                        case 'nVerticesInit'
+                            process_param.nVerticesInit = parameter.value;
+                        case 'Resolution'
+                            process_param.Resolution = parameter.value;
+                        case 'FileName'
+                            if(~isempty(parameter.value))
+                                process_param.FileName = parameter.value;
+                            else
+                                process_param.FileName = '';
+                            end                            
+                        case 'eeg'
+                            process_param.eeg = parameter.value;
+                        case 'BemSelect'
+                            process_param.BemSelect = parameter.value;
+                        case 'BemCond'
+                            process_param.BemCond = parameter.value;
+                        case 'BemNames'
+                            process_param.BemNames = parameter.value;
+                        case 'BemFiles'
+                            process_param.BemFiles = parameter.value;
+                        case 'isAdjoint'
+                            process_param.isAdjoint = parameter.value;
+                        case 'isAdaptative'
+                            process_param.isAdaptative = parameter.value;
+                        case 'isSplit'
+                            process_param.isSplit = parameter.value;
+                        case 'SplitLength'
+                            process_param.SplitLength = parameter.value;
+                    end
+                end
                 sFiles = bst_process('CallProcess', 'process_headmodel', sFiles, [], ...
-                    'Comment',     '', ...
-                    'sourcespace', 1, ...  % Cortex surface
+                    'Comment',     char(process_param.Comment), ...
+                    'sourcespace', str2double(process_param.sourcespace), ...  % Cortex surface
                     'volumegrid',  struct(...
-                    'Method',        'isotropic', ...
-                    'nLayers',       17, ...
-                    'Reduction',     3, ...
-                    'nVerticesInit', 4000, ...
-                    'Resolution',    0.005, ...
-                    'FileName',      ''), ...
-                    'eeg',         3, ...  % OpenMEEG BEM
+                    'Method',        char(process_param.Method), ...
+                    'nLayers',       str2double(process_param.nLayers), ...
+                    'Reduction',     str2double(process_param.Reduction), ...
+                    'nVerticesInit', str2double(process_param.nVerticesInit), ...
+                    'Resolution',    str2double(process_param.Resolution), ...
+                    'FileName',      process_param.FileName), ...
+                    'eeg',           str2double(process_param.eeg), ...  % OpenMEEG BEM
                     'openmeeg',    struct(...
-                    'BemSelect',    [1, 1, 1], ...
-                    'BemCond',      [1, 0.0125, 1], ...
-                    'BemNames',     {{'Scalp', 'Skull', 'Brain'}}, ...
+                    'BemSelect',    char(process_param.BemSelect), ...
+                    'BemCond',      char(process_param.BemCond), ...
+                    'BemNames',     char(process_param.BemNames), ...
                     'BemFiles',     {{}}, ...
-                    'isAdjoint',    0, ...
-                    'isAdaptative', 1, ...
-                    'isSplit',      0, ...
-                    'SplitLength',  4000));
-            catch exception
-                disp(strcat('Error: '));
-                disp(exception);
-                disp('Jumping to the next subject..........');
-                continue;
-            end
+                    'isAdjoint',    str2double(process_param.isAdjoint), ...
+                    'isAdaptative', str2double(process_param.isAdaptative), ...
+                    'isSplit',      str2double(process_param.isSplit), ...
+                    'SplitLength',  str2double(process_param.SplitLength)));
+%             catch exception
+%                 disp(strcat('Error: '));
+%                 disp(exception);
+%                 disp('Jumping to the next subject..........');
+%                 disp('---------------------------------------');
+%                 disp('    -------------------------     ');
+%                 continue;
+%             end
             
             % Save lead field
             try
@@ -252,6 +388,8 @@ for j=1:size(subjects,1)
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
@@ -263,6 +401,8 @@ for j=1:size(subjects,1)
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
             
@@ -275,6 +415,8 @@ for j=1:size(subjects,1)
                 disp(strcat('Error: '));
                 disp(exception);
                 disp('Jumping to the next subject..........');
+                disp('---------------------------------------');
+                disp('    -------------------------     ');
                 continue;
             end
         else
