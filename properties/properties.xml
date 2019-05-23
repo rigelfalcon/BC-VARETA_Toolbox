@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <properties>
     
-    <run_mode description="HPC-option1">1</run_mode> 
+    <run_mode description="HPC-option1">0</run_mode> 
     <run_parallel description="HPC-option1">0</run_parallel>
     <run_frequency_bin>0</run_frequency_bin>
     <run_single_subject>1</run_single_subject>
