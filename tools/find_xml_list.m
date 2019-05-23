@@ -24,7 +24,11 @@ if (xml_node.hasChildNodes)
         if(child_node.getNodeName ~= '#text')
             child = struct();
             child.name = child_node.getNodeName;
+            try
             child.value = child_node.getFirstChild.getData;
+            catch
+                child.value = '';
+            end
             if(child_node.hasAttributes)
                 theAttributes = child_node.getAttributes;
                 numAttributes = theAttributes.getLength;

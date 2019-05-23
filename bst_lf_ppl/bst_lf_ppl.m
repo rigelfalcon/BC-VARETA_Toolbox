@@ -9,9 +9,12 @@
 %
 %    May 14, 2019
 
+ 
 %%
 %------------ Preparing properties --------------------
 % brainstorm('stop');
+addpath(strcat('bst_lf_ppl',filesep,'properties'));
+
 disp('------------Preparing BrianStorm properties ---------------');
 bs_path =  find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','bs_path',1);
 console = false;
@@ -300,84 +303,95 @@ for j=1:size(subjects,1)
             end
             
             % Process: Compute head model
-%             try
-                parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_headmodel');
-                process_param = struct;
-                for i = 1: length(parameters)
-                    parameter = parameters(i);
-                    switch char(parameter.name)
-                        case 'Comment'
-                            if(~isempty(parameter.value))
-                                process_param.Comment = parameter.value;
-                            else
-                                process_param.Comment = '';
-                            end
-                        case 'sourcespace'
-                            process_param.sourcespace = parameter.value;
-                        case 'Method'
-                            process_param.Method = parameter.value;
-                        case 'nLayers'
-                            process_param.nLayers = parameter.value;
-                        case 'Reduction'
-                            process_param.Reduction = parameter.value;
-                        case 'nVerticesInit'
-                            process_param.nVerticesInit = parameter.value;
-                        case 'Resolution'
-                            process_param.Resolution = parameter.value;
-                        case 'FileName'
-                            if(~isempty(parameter.value))
-                                process_param.FileName = parameter.value;
-                            else
-                                process_param.FileName = '';
-                            end                            
-                        case 'eeg'
-                            process_param.eeg = parameter.value;
-                        case 'BemSelect'
-                            process_param.BemSelect = parameter.value;
-                        case 'BemCond'
-                            process_param.BemCond = parameter.value;
-                        case 'BemNames'
-                            process_param.BemNames = parameter.value;
-                        case 'BemFiles'
-                            process_param.BemFiles = parameter.value;
-                        case 'isAdjoint'
-                            process_param.isAdjoint = parameter.value;
-                        case 'isAdaptative'
-                            process_param.isAdaptative = parameter.value;
-                        case 'isSplit'
-                            process_param.isSplit = parameter.value;
-                        case 'SplitLength'
-                            process_param.SplitLength = parameter.value;
-                    end
+            %             try
+           parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_headmodel');
+            process_param = struct;
+            for i = 1: length(parameters)
+                parameter = parameters(i);
+                switch char(parameter.name)
+                    case 'Comment'
+                        if(~isempty(parameter.value))
+                            process_param.Comment = parameter.value;
+                        else
+                            process_param.Comment = '';
+                        end
+                    case 'sourcespace'
+                        process_param.sourcespace = parameter.value;
+                    case 'Method'
+                        process_param.Method = parameter.value;
+                    case 'nLayers'
+                        process_param.nLayers = parameter.value;
+                    case 'Reduction'
+                        process_param.Reduction = parameter.value;
+                    case 'nVerticesInit'
+                        process_param.nVerticesInit = parameter.value;
+                    case 'Resolution'
+                        process_param.Resolution = parameter.value;
+                    case 'FileName'
+                        if(~isempty(parameter.value))
+                            process_param.FileName = parameter.value;
+                        else
+                            process_param.FileName = '';
+                        end
+                    case 'eeg'
+                        process_param.eeg = parameter.value;
+                    case 'BemSelect'
+                        process_param.BemSelect = str2num( parameter.value);
+                    case 'BemCond'
+                        value =  str2num( parameter.value);
+                        process_param.BemCond = value;
+                    case 'BemNames'
+                        if(~isempty(parameter.value))
+                            value = strsplit(char(parameter.value),',');
+                            process_param.BemNames = value;
+                        else
+                            process_param.BemNames = {};
+                        end
+                    case 'BemFiles'
+                        if(~isempty(parameter.value))
+                            value = strsplit(char(parameter.value),',');
+                            process_param.BemFiles = value;
+                        else
+                            process_param.BemFiles  = {};
+                        end
+                    case 'isAdjoint'
+                        process_param.isAdjoint = parameter.value;
+                    case 'isAdaptative'
+                        process_param.isAdaptative = parameter.value;
+                    case 'isSplit'
+                        process_param.isSplit = parameter.value;
+                    case 'SplitLength'
+                        process_param.SplitLength = parameter.value;
                 end
-                sFiles = bst_process('CallProcess', 'process_headmodel', sFiles, [], ...
-                    'Comment',     char(process_param.Comment), ...
-                    'sourcespace', str2double(process_param.sourcespace), ...  % Cortex surface
-                    'volumegrid',  struct(...
-                    'Method',        char(process_param.Method), ...
-                    'nLayers',       str2double(process_param.nLayers), ...
-                    'Reduction',     str2double(process_param.Reduction), ...
-                    'nVerticesInit', str2double(process_param.nVerticesInit), ...
-                    'Resolution',    str2double(process_param.Resolution), ...
-                    'FileName',      process_param.FileName), ...
-                    'eeg',           str2double(process_param.eeg), ...  % OpenMEEG BEM
-                    'openmeeg',    struct(...
-                    'BemSelect',    char(process_param.BemSelect), ...
-                    'BemCond',      char(process_param.BemCond), ...
-                    'BemNames',     char(process_param.BemNames), ...
-                    'BemFiles',     {{}}, ...
-                    'isAdjoint',    str2double(process_param.isAdjoint), ...
-                    'isAdaptative', str2double(process_param.isAdaptative), ...
-                    'isSplit',      str2double(process_param.isSplit), ...
-                    'SplitLength',  str2double(process_param.SplitLength)));
-%             catch exception
-%                 disp(strcat('Error: '));
-%                 disp(exception);
-%                 disp('Jumping to the next subject..........');
-%                 disp('---------------------------------------');
-%                 disp('    -------------------------     ');
-%                 continue;
-%             end
+            end
+            sFiles = bst_process('CallProcess', 'process_headmodel', sFiles, [], ...
+                'Comment',     char(process_param.Comment), ...
+                'sourcespace', str2double(process_param.sourcespace), ...  % Cortex surface
+                'volumegrid',  struct(...
+                'Method',        char(process_param.Method), ...
+                'nLayers',       str2double(process_param.nLayers), ...
+                'Reduction',     str2double(process_param.Reduction), ...
+                'nVerticesInit', str2double(process_param.nVerticesInit), ...
+                'Resolution',    str2double(process_param.Resolution), ...
+                'FileName',      process_param.FileName), ...
+                'eeg',           str2double(process_param.eeg), ...  % OpenMEEG BEM
+                'openmeeg',    struct(...
+                'BemSelect',    process_param.BemSelect, ...
+                'BemCond',      process_param.BemCond, ...
+                'BemNames',     {process_param.BemNames}, ...
+                'BemFiles',     {process_param.BemFiles}, ...
+                'isAdjoint',    str2double(process_param.isAdjoint), ...
+                'isAdaptative', str2double(process_param.isAdaptative), ...
+                'isSplit',      str2double(process_param.isSplit), ...
+                'SplitLength', str2double(process_param.SplitLength)));
+            %             catch exception
+            %                 disp(strcat('Error: '));
+            %                 disp(exception);
+            %                 disp('Jumping to the next subject..........');
+            %                 disp('---------------------------------------');
+            %                 disp('    -------------------------     ');
+            %                 continue;
+            %             end
             
             % Save lead field
             try
@@ -420,11 +434,17 @@ for j=1:size(subjects,1)
                 continue;
             end
         else
+            fprintf(2,'-----------Process warning------------');
+            disp('--------------------------------------------------')
             disp(strcat('The subject: ',subject_name));
             disp(strcat('Sourse folder: ',data_folder));
-            disp(strcat('----  Have not a correct structure or miss the T1 file -----'));
+            fprintf(2,strcat('----  Have not a correct structure or miss the T1 file -----'));
+            disp('--------------------------------------------------')
         end
     end
 end
 
 brainstorm('stop');
+
+
+
