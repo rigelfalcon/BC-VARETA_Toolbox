@@ -14,11 +14,16 @@
 %------------ Preparing properties --------------------
 % brainstorm('stop');
 addpath(strcat('bst_lf_ppl',filesep,'properties'));
-
+addpath(strcat('bst_lf_ppl',filesep,'guide'));
 disp('------------Preparing BrianStorm properties ---------------');
 bs_path =  find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','bs_path',1);
 console = false;
-if (find_xml_parameter(strcat('properties',filesep,'properties.xml'), 'properties','run_mode',1)== '1')
+try 
+run_mode = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','run_mode',1);
+catch
+run_mode = find_xml_parameter(strcat('properties',filesep,'properties.xml'), 'properties','run_mode',1);
+end
+if (run_mode == '1')
     console = true;
     if(isempty( bs_path))
         bs_url =  find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','bs_url',1);
