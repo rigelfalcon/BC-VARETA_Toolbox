@@ -15,23 +15,24 @@
 % brainstorm('stop');
 addpath(strcat('bst_lf_ppl',filesep,'properties'));
 addpath(strcat('bst_lf_ppl',filesep,'guide'));
+properties_file = strcat('bst_lf_ppl',filesep,'properties',filesep,'bs_properties.xml');
 disp('------------Preparing BrianStorm properties ---------------');
-bs_path =  find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','bs_path',1);
+bs_path =  find_xml_parameter(properties_file, 'properties','bs_path',1);
 console = false;
 try 
-run_mode = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','run_mode',1);
-catch
 run_mode = find_xml_parameter(strcat('properties',filesep,'properties.xml'), 'properties','run_mode',1);
+catch
+run_mode = find_xml_parameter(properties_file, 'properties','run_mode',1);
 end
 if (run_mode == '1')
     console = true;
     if(isempty( bs_path))
-        bs_url =  find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','bs_url',1);
+        bs_url =  find_xml_parameter(properties_file, 'properties','bs_url',1);
         filename = 'brainstorm.zip';
         [filepath,filename,ext] = download_file(url,pwd,filename);
         [folderpath,foldername] = unpackage_file(filename,pwd);
     end
-    ProtocolName = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','protocol_name',1);
+    ProtocolName = find_xml_parameter(properties_file, 'properties','protocol_name',1);
 else
     if(isempty( bs_path))
         answer = questdlg('Did you download the brainstorm?', ...
@@ -44,17 +45,17 @@ else
                     disp('User selected Cancel');
                     return;
                 end
-                change_xml_parameter(strcat('properties',filesep,'bs_properties.xml'),'properties','bs_path',bs_path);
+                change_xml_parameter(properties_file,'properties','bs_path',bs_path);
                 
             case 'Download'
-                bs_url =  find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','bs_url',1);
+                bs_url =  find_xml_parameter(properties_file, 'properties','bs_url',1);
                 filename = 'brainstorm.zip';
                 
                 [filepath,filename,ext] = download_file(url,pwd,filename);
                 
                 [folderpath,foldername] = unpackage_file(filename,pwd);
                 
-                change_xml_parameter(strcat('properties',filesep,'bs_properties.xml'),'properties','bs_path',fullfile(folderpath,foldername));
+                change_xml_parameter(properties_file,'properties','bs_path',fullfile(folderpath,foldername));
                 
             case 'Cancel'
                 result = false;
@@ -65,29 +66,29 @@ else
     disp('------Waitintg for Protocol------');
     uiwait(guiHandle.UIFigure);
     delete(guiHandle);
-    ProtocolName = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','protocol_name',1);
+    ProtocolName = find_xml_parameter(properties_file, 'properties','protocol_name',1);
 end
 
 addpath(genpath(bs_path));
-change_xml_parameter(strcat('properties',filesep,'bs_properties.xml'),'properties','bs_path',bs_path);
+change_xml_parameter(properties_file,'properties','bs_path',bs_path);
 
 %---------------- Starting BrainStorm-----------------------
 if ~brainstorm('status')
     if(console)
         brainstorm nogui local
-        data_folder = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','raw_data_path',1);
+        data_folder = find_xml_parameter(properties_file, 'properties','raw_data_path',1);
     else
         brainstorm nogui
         data_folder = uigetdir('tittle','Select the Data Folder');
         if(data_folder==0)
             return;
         end
-        change_xml_parameter(strcat('properties',filesep,'bs_properties.xml'),'properties','raw_data_path',data_folder);
+        change_xml_parameter(properties_file,'properties','raw_data_path',data_folder);
     end
 end
 
 BrainstormDbDir = bst_get('BrainstormDbDir');
-change_xml_parameter(strcat('properties',filesep,'bs_properties.xml'),'properties','bs_db_path',BrainstormDbDir);
+change_xml_parameter(properties_file,'properties','bs_db_path',BrainstormDbDir);
 
 % Delete existing protocol
 gui_brainstorm('DeleteProtocol', ProtocolName);
@@ -111,7 +112,8 @@ for j=1:size(subjects,1)
             
             RawFiles = {strcat(sucject_folder,filesep,subject_name,'_EEG_anatomy_t13d_anatVOL_20060115002658_2.nii_out',filesep,'mri',filesep,'T1.mgz'), ...
                 strcat(sucject_folder,filesep,subject_name,'_EEG_anatomy_t13d_anatVOL_20060115002658_2.nii_out'), ...
-                strcat(sucject_folder,filesep,subject_name,'_EEG_data.mat'), ''};
+                strcat(sucject_folder,filesep,subject_name,'_EEG_data.mat'),...
+                ''};
             
             % Start a new report
             bst_report('Start', sFiles);
@@ -154,7 +156,7 @@ for j=1:size(subjects,1)
             
             % Process: Import anatomy folder
             try
-                parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_import_anatomy');
+                parameters = find_xml_list(properties_file,'process_import_anatomy');
                 process_param = struct;
                 for i = 1: length(parameters)
                     parameter = parameters(i);
@@ -189,7 +191,7 @@ for j=1:size(subjects,1)
             
             % Process: Generate BEM surfaces
             try
-                parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_generate_bem');
+                parameters = find_xml_list(properties_file,'process_generate_bem');
                 process_param = struct;
                 for i = 1: length(parameters)
                     parameter = parameters(i);
@@ -221,7 +223,7 @@ for j=1:size(subjects,1)
             
             % Process: Create link to raw file
             try
-                parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_import_data_raw');
+                parameters = find_xml_list(properties_file,'process_import_data_raw');
                 process_param = struct;
                 for i = 1: length(parameters)
                     parameter = parameters(i);
@@ -252,8 +254,8 @@ for j=1:size(subjects,1)
             end
             
             % Process: Set channel file
-            try
-                parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_import_channel');
+%             try
+                parameters = find_xml_list(properties_file,'process_import_channel');
                 process_param = struct;
                 for i = 1: length(parameters)
                     parameter = parameters(i);
@@ -274,14 +276,14 @@ for j=1:size(subjects,1)
                     'channelalign', str2double(process_param.channelalign), ...
                     'fixunits',     str2double(process_param.fixunits), ...
                     'vox2ras',      str2double(process_param.vox2ras));
-            catch exception
-                disp(strcat('Error: '));
-                disp(exception);
-                disp('Jumping to the next subject..........');
-                disp('---------------------------------------');
-                disp('    -------------------------     ');
-                continue;
-            end
+%             catch exception
+%                 disp(strcat('Error: '));
+%                 disp(exception);
+%                 disp('Jumping to the next subject..........');
+%                 disp('---------------------------------------');
+%                 disp('    -------------------------     ');
+%                 continue;
+%             end
             
             % Process: Refine registration
             try
@@ -309,7 +311,7 @@ for j=1:size(subjects,1)
             
             % Process: Compute head model
             %             try
-           parameters = find_xml_list(strcat('properties',filesep,'bs_properties.xml'),'process_headmodel');
+           parameters = find_xml_list(properties_file,'process_headmodel');
             process_param = struct;
             for i = 1: length(parameters)
                 parameter = parameters(i);
@@ -402,7 +404,7 @@ for j=1:size(subjects,1)
             try
                 load(strcat(BrainstormDbDir,filesep,ProtocolName,filesep,'data',filesep,subject_name,filesep,'@raw',subject_name,'_EEG_data',filesep,'headmodel_surf_openmeeg.mat'));
                 Gain3d=Gain; Gain = bst_gain_orient(Gain3d, GridOrient);
-                save Gain Gain Gain3d;
+                save(strcat('bst_result',filesep,subject_name,filesep,'Gain.mat'), 'Gain', 'Gain3d');
             catch exception
                 disp(strcat('Error: '));
                 disp(exception);
@@ -415,7 +417,7 @@ for j=1:size(subjects,1)
             % Save patch
             try
                 load(strcat(BrainstormDbDir,filesep,ProtocolName,filesep,'anat',filesep,subject_name,filesep,'tess_cortex_pial_low.mat'));
-                save patch Vertices Faces;
+                save(strcat('bst_result',filesep,subject_name,filesep,'patch.mat'),'Vertices','Faces');
             catch exception
                 disp(strcat('Error: '));
                 disp(exception);

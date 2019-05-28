@@ -1,18 +1,26 @@
 %%
 %------------ Preparing properties --------------------
 % brainstorm('stop');
+addpath(strcat('bst_lf_ppl',filesep,'properties'));
+addpath(strcat('bst_lf_ppl',filesep,'guide'));
+properties_file = strcat('bst_lf_ppl',filesep,'properties',filesep,'bs_properties.xml');
 disp('------------Preparing BrianStorm properties ---------------');
-bs_path =  find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','bs_path',1);
+bs_path =  find_xml_parameter(properties_file, 'properties','bs_path',1);
 console = false;
+try 
+run_mode = find_xml_parameter(strcat('properties',filesep,'properties.xml'), 'properties','run_mode',1);
+catch
+run_mode = find_xml_parameter(properties_file, 'properties','run_mode',1);
+end
 if (find_xml_parameter(strcat('properties',filesep,'properties.xml'), 'properties','run_mode',1)== '1')
     console = true;
     if(isempty( bs_path))
-        bs_url =  find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','bs_url',1);
+        bs_url =  find_xml_parameter(properties_file, 'properties','bs_url',1);
         filename = 'brainstorm.zip';
         [filepath,filename,ext] = download_file(url,pwd,filename);
         [folderpath,foldername] = unpackage_file(filename,pwd);
     end
-    ProtocolName = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','protocol_name',1);
+    ProtocolName = find_xml_parameter(properties_file, 'properties','protocol_name',1);
 else
     if(isempty( bs_path))
         answer = questdlg('Did you download the brainstorm?', ...
@@ -25,17 +33,17 @@ else
                     disp('User selected Cancel');
                     return;
                 end
-                change_xml_parameter(strcat('properties',filesep,'bs_properties.xml'),'properties','bs_path',bs_path);
+                change_xml_parameter(properties_file,'properties','bs_path',bs_path);
                 
             case 'Download'
-                bs_url =  find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','bs_url',1);
+                bs_url =  find_xml_parameter(properties_file, 'properties','bs_url',1);
                 filename = 'brainstorm.zip';
                 
                 [filepath,filename,ext] = download_file(url,pwd,filename);
                 
                 [folderpath,foldername] = unpackage_file(filename,pwd);
                 
-                change_xml_parameter(strcat('properties',filesep,'bs_properties.xml'),'properties','bs_path',fullfile(folderpath,foldername));
+                change_xml_parameter(properties_file,'properties','bs_path',fullfile(folderpath,foldername));
                 
             case 'Cancel'
                 result = false;
@@ -46,29 +54,29 @@ else
     disp('------Waitintg for Protocol------');
     uiwait(guiHandle.UIFigure);
     delete(guiHandle);
-    ProtocolName = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','protocol_name',1);
+    ProtocolName = find_xml_parameter(properties_file, 'properties','protocol_name',1);
 end
 
 addpath(genpath(bs_path));
-change_xml_parameter(strcat('properties',filesep,'bs_properties.xml'),'properties','bs_path',bs_path);
+change_xml_parameter(properties_file,'properties','bs_path',bs_path);
 
 %---------------- Starting BrainStorm-----------------------
 if ~brainstorm('status')
     if(console)
         brainstorm nogui local
-        data_folder = find_xml_parameter(strcat('properties',filesep,'bs_properties.xml'), 'properties','raw_data_path',1);
+        data_folder = find_xml_parameter(properties_file, 'properties','raw_data_path',1);
     else
         brainstorm nogui
         data_folder = uigetdir('tittle','Select the Data Folder');
         if(data_folder==0)
             return;
         end
-        change_xml_parameter(strcat('properties',filesep,'bs_properties.xml'),'properties','raw_data_path',data_folder);
+        change_xml_parameter(properties_file,'properties','raw_data_path',data_folder);
     end
 end
 
 BrainstormDbDir = bst_get('BrainstormDbDir');
-change_xml_parameter(strcat('properties',filesep,'bs_properties.xml'),'properties','bs_db_path',BrainstormDbDir);
+change_xml_parameter(properties_file,'properties','bs_db_path',BrainstormDbDir);
 
 % Delete existing protocol
 gui_brainstorm('DeleteProtocol', ProtocolName);
