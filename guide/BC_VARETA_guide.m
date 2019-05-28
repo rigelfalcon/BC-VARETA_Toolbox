@@ -2,20 +2,24 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        BCVARETAUIFigure         matlab.ui.Figure
-        FileMenu                 matlab.ui.container.Menu
-        DownloadtestdataMenu     matlab.ui.container.Menu
-        ExitMenu                 matlab.ui.container.Menu
-        ToolsMenu                matlab.ui.container.Menu
-        CreateDataStructureMenu  matlab.ui.container.Menu
-        SingleSubjectMenu        matlab.ui.container.Menu
-        DataBatchingMenu         matlab.ui.container.Menu
-        ViewMenu                 matlab.ui.container.Menu
-        OpenFigMenu              matlab.ui.container.Menu
-        OpensubjectsresultMenu   matlab.ui.container.Menu
-        ShowrealEEGMenu          matlab.ui.container.Menu
-        HelpMenu                 matlab.ui.container.Menu
-        TextArea                 matlab.ui.control.TextArea
+        BCVARETAUIFigure          matlab.ui.Figure
+        FileMenu                  matlab.ui.container.Menu
+        DownloadtestdataMenu      matlab.ui.container.Menu
+        ExitMenu                  matlab.ui.container.Menu
+        ToolsMenu                 matlab.ui.container.Menu
+        CreateDataStructureMenu   matlab.ui.container.Menu
+        LeadFieldComputationMenu  matlab.ui.container.Menu
+        SingleSubjectMenu_LF      matlab.ui.container.Menu
+        BatchProcessingMenu_LF    matlab.ui.container.Menu
+        MEEGAnalysisMenu          matlab.ui.container.Menu
+        SingleSubjectMenu_A       matlab.ui.container.Menu
+        BatchProcessingMenu_A     matlab.ui.container.Menu
+        ViewMenu                  matlab.ui.container.Menu
+        OpenFigMenu               matlab.ui.container.Menu
+        OpensubjectsresultMenu    matlab.ui.container.Menu
+        ShowrealEEGMenu           matlab.ui.container.Menu
+        HelpMenu                  matlab.ui.container.Menu
+        TextArea                  matlab.ui.control.TextArea
     end
 
     
@@ -61,11 +65,13 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
         % Code that executes after component creation
         function startupFcn(app)
             clc;
-            warning off;
-            addpath('guide');
-            addpath('tools');
-            addpath('functions');
-            addpath('properties');
+            processes = find_xml_list(strcat('properties',filesep,'processes.xml'),'processes');
+            for i = 1: length(processes)
+                process = processes(i);
+                if(process.name == char('process') &  process.value == '1' )                   
+                    addpath(process.attributes.root_folder);                    
+                end
+            end
             try
                 jDesktop = com.mathworks.mde.desk.MLDesktop.getInstance;
                 jCmdWin = jDesktop.getClient('Command Window');
@@ -74,17 +80,6 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             catch
                 warndlg('fatal error');
             end
-        end
-
-        % Menu selected function: DataBatchingMenu
-        function DataBatchingMenuSelected(app, event)
-            root_tab =  'properties';
-            parameter_name = 'run_single_subject';
-            parameter_value = 0;
-            change_xml_parameter(strcat('properties',filesep,'properties.xml'),...
-                root_tab,parameter_name,parameter_value);
-            BC_VARETA_bash;
-            msgbox('Completed operation!!!','Info');
         end
 
         % Menu selected function: CreateDataStructureMenu
@@ -113,17 +108,6 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             delete(app);
         end
 
-        % Menu selected function: SingleSubjectMenu
-        function SingleSubjectMenuSelected(app, event)
-            
-            root_tab =  'properties';
-            parameter_name = 'run_single_subject';
-            parameter_value = 1;
-            change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
-            BC_VARETA_bash;
-            msgbox('Completed operation!!!','Info');
-        end
-
         % Menu selected function: DownloadtestdataMenu
         function DownloadtestdataMenuSelected(app, event)
             folder = uigetdir('tittle','Select the Source Folder');
@@ -147,8 +131,8 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             url = 'https://lstneuro-my.sharepoint.com/:u:/g/personal/joint-lab_neuroinformatics-collaboratory_org/EQVy7Y3oL9lDqS4_aNwglCsBMngspSuQ6yVudDj1xUOhgA?download=1';
             filename = strcat(folder,filesep,'BC_VARETA_test_data.zip');
             matlab.net.http.HTTPOptions.VerifyServerName = false;
-            options = weboptions('Timeout',Inf,'RequestMethod','get');          
-           
+            options = weboptions('Timeout',Inf,'RequestMethod','get');
+            
             try
                 disp('Downloding test data....');
                 outfilename = websave(filename,url,options);
@@ -205,12 +189,49 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
         % Menu selected function: ShowrealEEGMenu
         function ShowrealEEGMenuSelected(app, event)
-%             [file,path] = uigetfile('*.mat');
-%             if isequal(file,0)
-%                 disp('User selected Cancel');
-%                 return;
-%             end
-%             real_EEG=load(strcat(path,filesep,file));           
+            %             [file,path] = uigetfile('*.mat');
+            %             if isequal(file,0)
+            %                 disp('User selected Cancel');
+            %                 return;
+            %             end
+            %             real_EEG=load(strcat(path,filesep,file));
+        end
+
+        % Menu selected function: SingleSubjectMenu_A
+        function SingleSubjectMenu_ASelected(app, event)
+            addpath('functions');
+            root_tab =  'properties';
+            parameter_name = 'run_single_subject';
+            parameter_value = 1;
+            change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
+            BC_VARETA_bash;
+            msgbox('Completed operation!!!','Info');
+        end
+
+        % Menu selected function: BatchProcessingMenu_A
+        function BatchProcessingMenu_ASelected(app, event)
+            addpath('functions');
+            root_tab =  'properties';
+            parameter_name = 'run_single_subject';
+            parameter_value = 0;
+            change_xml_parameter(strcat('properties',filesep,'properties.xml'),...
+                root_tab,parameter_name,parameter_value);
+            BC_VARETA_bash;
+            msgbox('Completed operation!!!','Info');
+        end
+
+        % Menu selected function: SingleSubjectMenu_LF
+        function SingleSubjectMenu_LFSelected(app, event)
+            addpath('bst_lf_ppl');
+            bs_lf_ppl;
+            msgbox('Completed operation!!!','Info');
+        end
+
+        % Menu selected function: BatchProcessingMenu_LF
+        function BatchProcessingMenu_LFSelected(app, event)
+            addpath('bst_lf_ppl');
+            bs_lf_ppl;
+            msgbox('Completed operation!!!','Info');
         end
     end
 
@@ -250,15 +271,33 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             app.CreateDataStructureMenu.MenuSelectedFcn = createCallbackFcn(app, @CreateDataStructureMenuSelected, true);
             app.CreateDataStructureMenu.Text = 'Create Data Structure';
 
-            % Create SingleSubjectMenu
-            app.SingleSubjectMenu = uimenu(app.ToolsMenu);
-            app.SingleSubjectMenu.MenuSelectedFcn = createCallbackFcn(app, @SingleSubjectMenuSelected, true);
-            app.SingleSubjectMenu.Text = 'Single Subject';
+            % Create LeadFieldComputationMenu
+            app.LeadFieldComputationMenu = uimenu(app.ToolsMenu);
+            app.LeadFieldComputationMenu.Text = 'Lead Field Computation';
 
-            % Create DataBatchingMenu
-            app.DataBatchingMenu = uimenu(app.ToolsMenu);
-            app.DataBatchingMenu.MenuSelectedFcn = createCallbackFcn(app, @DataBatchingMenuSelected, true);
-            app.DataBatchingMenu.Text = 'Data Batching';
+            % Create SingleSubjectMenu_LF
+            app.SingleSubjectMenu_LF = uimenu(app.LeadFieldComputationMenu);
+            app.SingleSubjectMenu_LF.MenuSelectedFcn = createCallbackFcn(app, @SingleSubjectMenu_LFSelected, true);
+            app.SingleSubjectMenu_LF.Text = 'Single Subject';
+
+            % Create BatchProcessingMenu_LF
+            app.BatchProcessingMenu_LF = uimenu(app.LeadFieldComputationMenu);
+            app.BatchProcessingMenu_LF.MenuSelectedFcn = createCallbackFcn(app, @BatchProcessingMenu_LFSelected, true);
+            app.BatchProcessingMenu_LF.Text = 'Batch Processing';
+
+            % Create MEEGAnalysisMenu
+            app.MEEGAnalysisMenu = uimenu(app.ToolsMenu);
+            app.MEEGAnalysisMenu.Text = 'MEEG Analysis';
+
+            % Create SingleSubjectMenu_A
+            app.SingleSubjectMenu_A = uimenu(app.MEEGAnalysisMenu);
+            app.SingleSubjectMenu_A.MenuSelectedFcn = createCallbackFcn(app, @SingleSubjectMenu_ASelected, true);
+            app.SingleSubjectMenu_A.Text = 'Single Subject';
+
+            % Create BatchProcessingMenu_A
+            app.BatchProcessingMenu_A = uimenu(app.MEEGAnalysisMenu);
+            app.BatchProcessingMenu_A.MenuSelectedFcn = createCallbackFcn(app, @BatchProcessingMenu_ASelected, true);
+            app.BatchProcessingMenu_A.Text = 'Batch Processing';
 
             % Create ViewMenu
             app.ViewMenu = uimenu(app.BCVARETAUIFigure);

@@ -1,4 +1,4 @@
-function [properties] = define_frequency_bands(properties)
+function [properties,result] = define_frequency_bands(properties)
 %DEFINE_FREQUENCY_BANDS Summary of this function goes here
 %   Detailed explanation goes here
 %--------------------frequency bands-----------------------------------
@@ -43,16 +43,17 @@ if(isvalid(guiHandle) & ~guiHandle.canceled)
         end        
     else  
         disp(properties.frequencies);        
-    end
-    
-    
+    end    
     disp('finishing frequencies_band...');
     delete(guiHandle);
 else
     fprintf(2,'-----------Canceled by User------------\n');
     delete(guiHandle);
-    return
+    result = 'canceled';
+    return;
 end
+
+result = 1;
 
 
 end
