@@ -30,7 +30,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
     properties (Access = public)
         single_subject % Description
     end
-    
+   
     methods (Access = private)
         
         function setPromptFcn(app,jTextArea,eventData,newPrompt)
@@ -64,7 +64,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
         % Code that executes after component creation
         function startupFcn(app)
-            clc;
+            clc;           
             processes = find_xml_list(strcat('properties',filesep,'processes.xml'),'processes');
             for i = 1: length(processes)
                 process = processes(i);
@@ -128,7 +128,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             jObj.start;
             pause(1);
             
-            url = 'https://lstneuro-my.sharepoint.com/:u:/g/personal/joint-lab_neuroinformatics-collaboratory_org/EQVy7Y3oL9lDqS4_aNwglCsBMngspSuQ6yVudDj1xUOhgA?download=1';
+            url = 'https://lstneuro-my.sharepoint.com/:u:/g/personal/cc-lab_neuroinformatics-collaboratory_org/EQVy7Y3oL9lDqS4_aNwglCsBMngspSuQ6yVudDj1xUOhgA?download=1';
             filename = strcat(folder,filesep,'BC_VARETA_test_data.zip');
             matlab.net.http.HTTPOptions.VerifyServerName = false;
             options = weboptions('Timeout',Inf,'RequestMethod','get');
