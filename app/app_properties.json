@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<properties>
+       
+    <generals>
+       <name>BC-VARETA ToolBox</name> 
+       <version>v1.0</version>
+       <version_time>30-05-2019</version_time>
+       <version_number>2</version_number>
+    </generals>
+    
+    <external>
+        <brainstorm>
+            <url>
+            </url>
+            <local_path>
+            </local_path>
+        </brainstorm>
+    </external>
+</properties>
