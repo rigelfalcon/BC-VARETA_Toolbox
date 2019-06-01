@@ -21,6 +21,8 @@
 clear all;
 clc;
 close all;
+
+addpath('app')
 addpath('guide');
 addpath('properties');
 addpath('tools');
@@ -28,8 +30,9 @@ addpath('tools');
 
 %%               Upload the actived processes
 %%----------------Start in the properties-----------------------------
+bcv_check_version;
+
 file_path = strcat('properties',filesep,'properties.xml');
-strcat('properties',filesep,'properties.xml')
 root_tab =  'properties';
 parameter_name = 'run_mode';
 if (find_xml_parameter(file_path,root_tab,parameter_name,1)== '1')
