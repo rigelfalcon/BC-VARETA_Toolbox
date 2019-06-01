@@ -13,7 +13,7 @@
 % try
 
 % finding online data
-url = 'https://raw.github.com/CCC-members/BC-VARETA_Toolbox/develop/app/app_properties.json';
+url = 'https://raw.github.com/CCC-members/BC-VARETA_Toolbox/master/app/app_properties.json';
 matlab.net.http.HTTPOptions.VerifyServerName = false;
 options = weboptions('ContentType','json','Timeout',Inf,'RequestMethod','auto');
 online = webread(url,options);
@@ -49,7 +49,7 @@ if(local.generals.version_number < online.generals.version_number)
             filename = strcat('BCV_lasted.zip');
             disp(strcat("Downloading lasted version......."));
             jObj.setBusyText(strcat("Downloading lasted version "));
-            url = 'https://codeload.github.com/CCC-members/BC-VARETA_Toolbox/zip/develop';
+            url = 'https://codeload.github.com/CCC-members/BC-VARETA_Toolbox/zip/master';
             matlab.net.http.HTTPOptions.VerifyServerName = false;
             options = weboptions('Timeout',Inf,'RequestMethod','auto');
             downladed_file = websave(filename,url,options);
@@ -63,8 +63,8 @@ if(local.generals.version_number < online.generals.version_number)
             pause(1);
             delete(filename);
             
-            movefile( strcat('BC-VARETA_Toolbox-develop',filesep,'*'), pwd);
-            rmdir BC-VARETA_Toolbox-develop ;
+            movefile( strcat('BC-VARETA_Toolbox-master',filesep,'*'), pwd);
+            rmdir BC-VARETA_Toolbox-master ;
             
             jObj.stop;
             jObj.setBusyText('All done!');
