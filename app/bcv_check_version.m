@@ -25,7 +25,7 @@ json = fileread(file_path);
 local = jsondecode(json);
 
 if(local.generals.version_number < online.generals.version_number)
-    answer = questdlg('There a new version aviable of BC-VARETA. Do you want to update the laster version?', ...
+    answer = questdlg('There a new version available of BC-VARETA. Do you want to update the laster version?', ...
         'Update BC-VARETA', ...
         'Yes','No','Close');
     % Handle response
@@ -36,7 +36,7 @@ if(local.generals.version_number < online.generals.version_number)
             iconsClassName = 'com.mathworks.widgets.BusyAffordance$AffordanceSize';
             iconsSizeEnums = javaMethod('values',iconsClassName);
             SIZE_32x32 = iconsSizeEnums(2);  % (1) = 16x16,  (2) = 32x32
-            jObj = com.mathworks.widgets.BusyAffordance(SIZE_32x32, 'Downloading test data...');  % icon, label
+            jObj = com.mathworks.widgets.BusyAffordance(SIZE_32x32, 'Starting update.');  % icon, label
             
             jObj.setPaintsWhenStopped(true);  % default = false
             jObj.useWhiteDots(false);         % default = false (true is good for dark backgrounds)
@@ -56,24 +56,22 @@ if(local.generals.version_number < online.generals.version_number)
             
             %% Unzip lasted version
             pause(1);
-            jObj.setBusyText('Unpacking test data...');
-            disp(strcat("Unpacking test data......"));
+            jObj.setBusyText('Unpacking version...');
+            disp(strcat("Unpacking version..."));
             
             exampleFiles = unzip(filename,pwd);
             pause(1);
             delete(filename);
             
+            movefile( strcat('BC-VARETA_Toolbox-develop',filesep,'*'), pwd);
+            rmdir BC-VARETA_Toolbox-develop ;
+            
             jObj.stop;
             jObj.setBusyText('All done!');
             disp(strcat("All done!"));
             pause(2);
-            delete(f);
-            msgbox('Completed download!!!','Info');
-            
-            movefile( strcat('BC-VARETA_Toolbox-develop',filesep,'*'), pwd);
-            rmdir BC-VARETA_Toolbox-develop ;
-%           saveJSONfile(online, strcat('app',filesep,file_path));
-            
+            delete(f);                        
+           
         case 'No'
             return;
     end
