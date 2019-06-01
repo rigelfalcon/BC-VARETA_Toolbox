@@ -30,6 +30,8 @@ addpath('tools');
 
 %%               Upload the actived processes
 %%----------------Start in the properties-----------------------------
+bcv_check_version;
+
 file_path = strcat('properties',filesep,'properties.xml');
 root_tab =  'properties';
 parameter_name = 'run_mode';

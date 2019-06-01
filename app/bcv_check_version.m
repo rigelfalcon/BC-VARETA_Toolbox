@@ -1,53 +1,86 @@
 %  BC-VARETA check version
 %
 %
-% Authors: 
+% Authors:
 %   -   Ariosky Areces Gonzalez
 %   -   Deirel Paz Linares
 %   -   Eduardo Gonzalez Moreaira
 %   -   Pedro Valdes Sosa
 
-% - Date: May 31, 2019 
+% - Date: May 31, 2019
 
-
-file_path = strcat('app',filesep,'app_properties.xml');
-root_tab = 'generals';
-name_tab = 'version_number';
-attrs = find_xml_parameter(file_path,root_tab,name_tab,1);
 
 % try
 
-    url = 'https://github.com/CCC-members/BC-VARETA_Toolbox/blob/develop/app/app_properties.xml';
-    matlab.net.http.HTTPOptions.VerifyServerName = false;
-    options = weboptions('ContentType','auto','Timeout',Inf,'RequestMethod','auto');
-    
-    data = webread(url,options);
-    
-   
+% finding online data
+url = 'https://raw.github.com/CCC-members/BC-VARETA_Toolbox/develop/app/app_properties.json';
+matlab.net.http.HTTPOptions.VerifyServerName = false;
+options = weboptions('ContentType','json','Timeout',Inf,'RequestMethod','auto');
+online = webread(url,options);
+
+
+% loading local data
+file_path = strcat('app_properties.json');
+json = fileread(file_path);
+local = jsondecode(json);
+
+if(local.generals.version_number < online.generals.version_number)
+    answer = questdlg('There a new version aviable of BC-VARETA. Do you want to update the laster version?', ...
+        'Update BC-VARETA', ...
+        'Yes','No','Close');
+    % Handle response
+    switch answer
+        case 'Yes'
+            f = dialog('Position',[300 300 250 80]);
+            
+            iconsClassName = 'com.mathworks.widgets.BusyAffordance$AffordanceSize';
+            iconsSizeEnums = javaMethod('values',iconsClassName);
+            SIZE_32x32 = iconsSizeEnums(2);  % (1) = 16x16,  (2) = 32x32
+            jObj = com.mathworks.widgets.BusyAffordance(SIZE_32x32, 'Downloading test data...');  % icon, label
+            
+            jObj.setPaintsWhenStopped(true);  % default = false
+            jObj.useWhiteDots(false);         % default = false (true is good for dark backgrounds)
+            javacomponent(jObj.getComponent, [50,10,150,80], f);
+            jObj.start;
+            pause(1);
+            
+            
+            %% Download lasted version
+            filename = strcat('BCV_lasted.zip');
+            disp(strcat("Downloading lasted version......."));
+            jObj.setBusyText(strcat("Downloading lasted version "));
+            url = 'https://codeload.github.com/CCC-members/BC-VARETA_Toolbox/zip/develop';
+            matlab.net.http.HTTPOptions.VerifyServerName = false;
+            options = weboptions('Timeout',Inf,'RequestMethod','auto');
+            downladed_file = websave(filename,url,options);
+            
+            %% Unzip lasted version
+            pause(1);
+            jObj.setBusyText('Unpacking test data...');
+            disp(strcat("Unpacking test data......"));
+            
+            exampleFiles = unzip(filename,pwd);
+            pause(1);
+            delete(filename);
+            
+            jObj.stop;
+            jObj.setBusyText('All done!');
+            disp(strcat("All done!"));
+            pause(2);
+            delete(f);
+            msgbox('Completed download!!!','Info');
+            
+            movefile( strcat('BC-VARETA_Toolbox-develop',filesep,'*'), pwd);
+            rmdir BC-VARETA_Toolbox-develop ;
+%           saveJSONfile(online, strcat('app',filesep,file_path));
+            
+        case 'No'
+            return;
+    end
+end
+
 % catch
 %     return;
 % end
 
 
-    
-
-% Read online version.txt
-try
-    str = url_read_fcn('https://github.com/CCC-members/BC-VARETA_Toolbox/blob/develop/app/app_properties.xml');
-catch
-    return;
-end
-if (length(str) < 20)
-    return;
-end
-% Find release date in text file
-iParent = strfind(str, '(');
-if (length(iParent) ~= 1)
-    return;
-end
-dateStr = str(iParent - 7:iParent - 2);
-% Interpetation of date string
-onlineRel.year  = str2num(dateStr(1:2));
-onlineRel.month = str2num(dateStr(3:4));
-onlineRel.day   = str2num(dateStr(5:6));
-isOk = 1;

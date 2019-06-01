@@ -3,7 +3,7 @@
 		"name" : "BC-VARETA ToolBox",
 		"version" : "v1.0",
 		"version_time" : "30-05-2019",
-		"version_number" : 2,
+		"version_number" : 1,
         "test_data_url": "https://lstneuro-my.sharepoint.com/:u:/g/personal/cc-lab_neuroinformatics-collaboratory_org/EQVy7Y3oL9lDqS4_aNwglCsBMngspSuQ6yVudDj1xUOhgA?download=1",
 		"url_check" : "https://github.com/CCC-members/BC-VARETA_Toolbox/blob/develop/app/app_properties.json"
         },
