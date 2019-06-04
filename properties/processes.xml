@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<processes description="List of process">        
-        <process name="Lead-Field-Cumputation" function="bst_lf_ppl" root_folder="bst_lf_ppl">0</process>
-        <process name="Lead-Field-HCP-Cumputation" function="bst_hcp_lf_ppl" root_folder="bst_lf_ppl">0</process>
-        <process name="MEEG-Analysis" function="BC_VARETA_bash"  root_folder="functions">1</process>        
-</processes>
