@@ -70,9 +70,9 @@ classdef frequency_bands_guide < matlab.apps.AppBase
                                 return;
                             end
                             bcv_properties.frequencies(i).f_start = app.Spinner_delta_start.Value;
-                            bcv_properties.frequencies(i).f_start = app.Spinner_delta_end.Value;
+                            bcv_properties.frequencies(i).f_end = app.Spinner_delta_end.Value;
                         end
-                        bcv_properties.frequencies(i).f_start = app.CheckBox_Delta.Value;
+                        bcv_properties.frequencies(i).f_run = app.CheckBox_Delta.Value;
                     case 'theta'
                         if(app.CheckBox_theta.Value)
                             if(app.Spinner_theta_start.Value >= app.Spinner_theta_end.Value)
@@ -80,9 +80,9 @@ classdef frequency_bands_guide < matlab.apps.AppBase
                                 return;
                             end
                             bcv_properties.frequencies(i).f_start = app.Spinner_theta_start.Value;
-                            bcv_properties.frequencies(i).f_start = app.Spinner_theta_end.Value;
+                            bcv_properties.frequencies(i).f_end = app.Spinner_theta_end.Value;
                         end
-                        bcv_properties.frequencies(i).f_start = app.CheckBox_theta.Value;
+                        bcv_properties.frequencies(i).f_run = app.CheckBox_theta.Value;
                     case 'alpha'
                         if(app.CheckBox_alpha.Value)
                             if(app.Spinner_alpha_start.Value >= app.Spinner_alpha_end.Value)
@@ -90,9 +90,9 @@ classdef frequency_bands_guide < matlab.apps.AppBase
                                 return;
                             end
                             bcv_properties.frequencies(i).f_start = app.Spinner_alpha_start.Value;
-                            bcv_properties.frequencies(i).f_start = app.Spinner_alpha_end.Value;
+                            bcv_properties.frequencies(i).f_end = app.Spinner_alpha_end.Value;
                         end
-                        bcv_properties.frequencies(i).f_start = app.CheckBox_alpha.Value;
+                        bcv_properties.frequencies(i).f_run = app.CheckBox_alpha.Value;
                     case 'beta'
                         if(app.CheckBox_beta.Value)
                             if(app.Spinner_beta_start.Value >= app.Spinner_beta_end.Value)
@@ -100,9 +100,9 @@ classdef frequency_bands_guide < matlab.apps.AppBase
                                 return;
                             end
                             bcv_properties.frequencies(i).f_start = app.Spinner_beta_start.Value;
-                            bcv_properties.frequencies(i).f_start = app.Spinner_beta_end.Value;
+                            bcv_properties.frequencies(i).f_end = app.Spinner_beta_end.Value;
                         end
-                        bcv_properties.frequencies(i).f_start = app.CheckBox_beta.Value;
+                        bcv_properties.frequencies(i).f_run = app.CheckBox_beta.Value;
                 end
             end
             

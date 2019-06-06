@@ -67,7 +67,7 @@ temp_diag  = diag(abs(diag(Svv)));
 temp_diag  = temp_diag/max(temp_diag(:));
 temp_diag  = diag(diag(temp_diag)+1);
 temp_comp  = temp_diag+temp_ndiag;
-figure_scalp_electrodes = figure('Color','k','Name','Scalp','NumberTitle');
+figure_scalp_electrodes = figure('Color','k','Name','Scalp','NumberTitle','off');
 imagesc(temp_comp);
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
     'XTick',1:length(elect_58_343.conv_ASA343),'YTick',1:length(elect_58_343.conv_ASA343),...

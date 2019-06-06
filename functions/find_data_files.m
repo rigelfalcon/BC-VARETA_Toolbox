@@ -163,16 +163,14 @@ else
             ylabel('PSD (dB)','Color','w');
             xlabel('Freq. (Hz)','Color','w');
             title('Power Spectral Density','Color','w');
-            pause(1e-10);
-            
-            delete(figure_cross);
+            pause(1e-10);    
           
         end
         %------------------------------------
           
         %------ difening frequency bands ----------------
-        [properties,result] = define_frequency_bands(properties);    
-        
+        [properties,result] = define_frequency_bands(properties);         
+        delete(figure_cross);
         if(result == 'canceled')
             return;
         end       
