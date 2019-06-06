@@ -19,8 +19,14 @@ PSD_log = 10*log10(abs(PSD));
 min_psd = min(PSD_log(:));
 max_psd = max(PSD_log(:));
 plot_peak = min_psd*ones(Nf,1);
+try
+[f1,nf1] = min(abs(F - band.f_bin));
+[f2,nf2] = min(abs(F - band.f_bin));
+catch   
 [f1,nf1] = min(abs(F - band.f_start));
 [f2,nf2] = min(abs(F - band.f_end));
+end
+
 peak_pos = nf1:nf2;
 Svv = mean(Svv(:,:,peak_pos),3);
 plot_peak(peak_pos) = max_psd;
