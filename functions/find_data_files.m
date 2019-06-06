@@ -192,7 +192,7 @@ else
         %%       
         %% ----- Iterating the frequency bands to perform analyzes-----------
         if(all_file_ok)
-            for h=1:size(frequency_bands)
+            for h=1:length(frequency_bands)
                 band = frequency_bands(h);
                 if(properties.run_frequency_bin.value)
                     disp(strcat( '---- Frequency Band: (' , band.name , ')   bin ->>>  ' , string(band.f_bin), 'Hz -------------') );

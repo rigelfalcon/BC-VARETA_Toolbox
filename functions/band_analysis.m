@@ -236,7 +236,7 @@ if(~isfolder(pathname))
     mkdir (pathname);
 end
 if(properties.run_frequency_bin.value)
-     str_band =  strcat( and.name,'_',string(band.f_bin),'Hz');
+     str_band =  strcat( band.name,'_',string(band.f_bin),'Hz');
 else 
     str_band =  strcat( band.name,'_',string(band.f_start),'Hz_',string(band.f_end),'Hz');
 end
