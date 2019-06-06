@@ -45,7 +45,8 @@ end
 C = abs(diag(Svv));
 C = C/max(C);
 C(C<0.01) = 0;
-figure_scalp = figure('Color','k'); hold on; set(gca,'Color','k');
+figure_scalp = figure('Color','k','Name','Scalp','NumberTitle','off'); hold on; set(gca,'Color','k');
+define_ico(figure_scalp);
 scatter3(X,Y,Z,100,C.^1,'filled');
 patch('Faces',S_h.Faces,'Vertices',S_h.Vertices,'FaceVertexCData',0.01*(ones(length(S_h.Vertices),1)),'FaceColor','interp','EdgeColor','none','FaceAlpha',.35);
 colormap(gca,cmap_a);
@@ -67,7 +68,8 @@ temp_diag  = diag(abs(diag(Svv)));
 temp_diag  = temp_diag/max(temp_diag(:));
 temp_diag  = diag(diag(temp_diag)+1);
 temp_comp  = temp_diag+temp_ndiag;
-figure_scalp_electrodes = figure('Color','k');
+figure_scalp_electrodes = figure('Color','k','Name','Scalp','NumberTitle','off');
+define_ico(figure_scalp_electrodes);
 imagesc(temp_comp);
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
     'XTick',1:length(elect_58_343.conv_ASA343),'YTick',1:length(elect_58_343.conv_ASA343),...
@@ -89,7 +91,11 @@ pause(1e-12);
 %%
 %% bc-vareta toolbox...
 %% Parameters
-param               = properties.param;
+param = struct;
+for c = 1: length(properties.hhgm_param)
+    row_param = properties.hhgm_param(c);
+    param.(row_param.name) = row_param.value;
+end
 param.m             = length(peak_pos)*Nseg;
 param.Axixi         = eye(length(Svv));
 
@@ -116,7 +122,8 @@ sources_iv(indms)   = abs(diag(Sjj));
 sources_iv          = sources_iv/max(sources_iv(:));
 ind_zr              = sources_iv < 0.01;
 sources_iv(ind_zr)  = 0;
-figure_BC_VARETA1 = figure('Color','k'); hold on;
+figure_BC_VARETA1 = figure('Color','k','Name','BC-VARETA-activity','NumberTitle','off'); hold on;
+define_ico(figure_BC_VARETA1);
 patch('Faces',S_6k.Faces,'Vertices',S_6k.Vertices,'FaceVertexCData',sources_iv,'FaceColor','interp','EdgeColor','none','FaceAlpha',.85);
 set(gca,'Color','k');
 az = 0; el = 0;
@@ -144,7 +151,8 @@ label_gen = [];
 for ii = 1:length(indms)
     label_gen{ii} = num2str(ii);
 end
-figure_BC_VARETA2 = figure('Color','k');
+figure_BC_VARETA2 = figure('Color','k','Name','BC-VARETA-node-wise-conn','NumberTitle','off');
+define_ico(figure_BC_VARETA2);
 imagesc(temp_comp);
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
     'XTick',1:length(indms),'YTick',1:length(indms),...
@@ -197,7 +205,8 @@ temp_diag  = temp_diag/max(temp_diag(:));
 temp_diag  = diag(diag(temp_diag)+1);
 temp_comp  = temp_diag+temp_ndiag;
 
-figure_BC_VARETA3 = figure('Color','k');
+figure_BC_VARETA3 = figure('Color','k','Name','BC-VARETA-roi-conn','NumberTitle','off');
+define_ico(figure_BC_VARETA3);
 imagesc(temp_comp);
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
     'XTick',1:length(Atlas),'YTick',1:length(Atlas),...
@@ -220,35 +229,40 @@ pause(1e-12);
 %% saving...
 
 
-disp('-----------------Saving files-----------------')
 
-pathname = strcat( pathname , filesep, 'result' , filesep, band(3), filesep);
+
+pathname = strcat( pathname , filesep, 'result' , filesep, band.name, filesep);
 if(~isfolder(pathname))
     mkdir (pathname);
 end
-disp(strcat(pathname,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),...
-    'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),'_MF_',string(properties.maxfreq),'_.mat'));
+if(properties.run_frequency_bin.value)
+     str_band =  strcat( and.name,'_',string(band.f_bin),'Hz');
+else 
+    str_band =  strcat( band.name,'_',string(band.f_start),'Hz_',string(band.f_end),'Hz');
+end
 
-
-
-save(strcat(pathname ,'EEG_real_',band(3),'_',band(1),'Hz_',band(2),...
-    'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),...
-    '_MF_',string(properties.maxfreq),'_.mat'),'Thetajj','Sjj','indms');
 
 disp('-----------------Saving files-----------------')
+disp(strcat(pathname,'EEG_real_',str_band,'_FR_',string(properties.freq_resol.value),...
+    '_SF_',string(properties.samp_freq.value),'_MF_',string(properties.max_freq.value),'_.mat'));
+
+save(strcat(pathname ,'EEG_real_',str_band,'_FR_',string(properties.freq_resol.value),...
+    '_SF_',string(properties.samp_freq.value),'_MF_',string(properties.max_freq.value),'_.mat'),...
+    'Thetajj','Sjj','indms');
+
 
 %% saving figures...............
+disp('-----------------Saving figures-----------------');
 %---------------------------------------------------------------------------------
 fields = fieldnames(figures);
 for i = 1:numel(fields)
-    path = strcat(pathname,band(3),'_',string(band(1)),'Hz_',string(band(2)),...
-        'Hz_FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),...
-        '_MF_',string(properties.maxfreq),'_',figures.(fields{i}).title);
+    path = strcat(pathname,str_band,'_FR_',string(properties.freq_resol.value),'_SF_',string(properties.samp_freq.value),...
+       '_MF_',string(properties.max_freq.value),'_',figures.(fields{i}).title);
     
     saveas( figures.(fields{i}).figure,strcat(path,'.fig'));
     disp(strcat('Saving figure ----> ',figures.(fields{i}).title,' to  ---> ', pathname ,...
-        ' with frequency band  --->',band(3),'_',band(1),'Hz_',band(2),'Hz','---Properties--->',...
-        'FR_',string(properties.freqres),'_SF_',string(properties.samplfreq),'_MF_',string(properties.maxfreq)) );
+        ' with frequency band  --->',str_band,'---Properties--->',...
+        'FR_',string(properties.freq_resol.value),'_SF_',string(properties.samp_freq.value),'_MF_',string(properties.max_freq.value)) );
     
     
     %------------------- Delete figures --------------------
@@ -256,8 +270,8 @@ for i = 1:numel(fields)
     
     
 end
-resultfile = strcat('EEG_real_',band(3),'_',band(1),'Hz_',band(2),'Hz_FR_',string(properties.freqres),...
-    '_SF_',string(properties.samplfreq),'_MF_',string(properties.maxfreq),'_','.mat');
+resultfile = strcat('EEG_real_',str_band,'_FR_',string(properties.freq_resol.value),...
+    '_SF_',string(properties.samp_freq.value),'_MF_',string(properties.max_freq.value),'_','.mat');
 
 disp('                       ---------------------')
 disp('           -----------------------------------------------')
@@ -265,7 +279,6 @@ disp('--------------------------------------------------------------------------
 result = ["Finished iteration ", "";...
     "Path and subject: " , string(pathname) ;...
     "Output file: " , string(resultfile) ];
-
 
 end
 

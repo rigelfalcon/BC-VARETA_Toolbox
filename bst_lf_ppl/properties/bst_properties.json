@@ -1,0 +1,62 @@
+{
+    "run_mode":{
+        "description":"Put 1 for bash, 0 for visual, just without BC-VARETA",
+        "acitive":1
+    },
+    "bst_path":"D:\NeuroInformatics Lab\BC-VARETA1.0_repo\brainstorm3",
+    "bst_url":"https://codeload.github.com/brainstorm-tools/brainstorm3/zip/master",
+    "raw_data_path":"D:\NeuroInformatics Lab\BC-VARETA1.0_repo\raw_data",
+
+    "protocol_name":"ExampleProtocol",
+
+    "process_import_anatomy":{
+        "name":"process_import_anatomy",
+        "mrifile2":"FreeSurfer",
+        "nvertices":6001,                    
+        "aseg":1
+    },
+
+    "process_generate_bem":{
+        "nscalp":1922,
+        "nouter":1922,
+        "ninner":1922,
+        "thickness":4
+    },
+
+    "process_import_data_raw":{
+        "datafile":"EEG-MAT",
+        "channelreplace":1,
+        "channelalign":1,
+        "evtmode":"value"
+    }
+
+    "process_import_channel":{
+        "usedefault":46,
+        "channelalign":1,
+        "fixunits":1,
+        "vox2ras":1 
+    }
+
+    "process_headmodel":{
+        "Comment/": null,
+        "sourcespace":1,
+
+        "Method":"isotropic",
+        "nLayers":17,
+        "Reduction":3,
+        "nVerticesInit":4000,
+        "Resolution":0.005,
+        "FileName": null,
+
+        "eeg":3,
+
+        "BemSelect":[1,1,12],
+        "BemCond":[1,0.0125,1],
+        "BemNames":[Scalp,Skull,Brain],
+        "BemFiles": null
+        "isAdjoint":0,
+        "isAdaptative":1,
+        "isSplit":0,
+        "SplitLength":4000
+    }
+}

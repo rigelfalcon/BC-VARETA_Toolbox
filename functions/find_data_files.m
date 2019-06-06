@@ -139,38 +139,38 @@ else
     %%--------------- estimating cross-spectra-------------------------------
     disp('estimating cross-spectra for M/EEG data...');
     %     try
-    Fs = properties.samplfreq; % sampling frequency
-    Fm = properties.maxfreq; % maximum frequency
-    deltaf = properties.freqres; % frequency resolution
+    Fs = properties.samp_freq.value; % sampling frequency
+    Fm = properties.max_freq.value; % maximum frequency
+    deltaf = properties.freq_resol.value; % frequency resolution
     
     waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for M/EEG data...'));
     [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k);
     waitbar(0.08,process_waitbar,strcat('Define frequency bands...'));
     
-    if(properties.run_mode ~= '1' & properties.define_bands == '1')
+    if( properties.define_bands)
         % ----- Graficar el cross-spectra
-        PSD_log = 10*log10(abs(PSD));
-        min_psd = min(PSD_log(:));
-        max_psd = max(PSD_log(:));
-        plot_peak = min_psd*ones(Nf,1);
-      
-        figure_cross = figure('Color','k');
-        hold on;
-        plot(F,PSD_log);
-        plot(F,plot_peak,'--w');
-        set(gca,'Color','k','XColor','w','YColor','w');
-        ylabel('PSD (dB)','Color','w');
-        xlabel('Freq. (Hz)','Color','w');
-        title('Power Spectral Density','Color','w');
-        pause(1e-10);
+        if(~properties.run_bash_mode.value)
+            PSD_log = 10*log10(abs(PSD));
+            min_psd = min(PSD_log(:));
+            max_psd = max(PSD_log(:));
+            plot_peak = min_psd*ones(Nf,1);
+            
+            figure_cross = figure('Color','k','Name','Power Spectral Density','NumberTitle','off');
+            hold on;
+            plot(F,PSD_log);
+            plot(F,plot_peak,'--w');
+            set(gca,'Color','k','XColor','w','YColor','w');
+            ylabel('PSD (dB)','Color','w');
+            xlabel('Freq. (Hz)','Color','w');
+            title('Power Spectral Density','Color','w');
+            pause(1e-10);    
+          
+        end
         %------------------------------------
-        properties.define_bands = '0';
-        
+          
         %------ difening frequency bands ----------------
-        [properties,result] = define_frequency_bands(properties);
-        
+        [properties,result] = define_frequency_bands(properties);         
         delete(figure_cross);
-        
         if(result == 'canceled')
             return;
         end       
@@ -192,12 +192,12 @@ else
         %%       
         %% ----- Iterating the frequency bands to perform analyzes-----------
         if(all_file_ok)
-            for h=1:size(frequency_bands,1)
-                band = frequency_bands(h,:);
-                if( properties.run_frequency_bin == '1')
-                    disp(strcat( '---- Frequency Band: (' , band(3) , ')   bin ->>>' , band(1), 'Hz -------------') );
+            for h=1:size(frequency_bands)
+                band = frequency_bands(h);
+                if(properties.run_frequency_bin.value)
+                    disp(strcat( '---- Frequency Band: (' , band.name , ')   bin ->>>  ' , string(band.f_bin), 'Hz -------------') );
                 else
-                    disp(strcat( '---- Frequency Band: (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz    -------------') );
+                    disp(strcat( '---- Frequency Band: (' , band.name , ')' , string(band.f_start), 'Hz  -->  ' , string(band.f_end) , 'Hz    -------------') );
                 end
                 disp(strcat( '---- -----------------------------------') );
                 
@@ -210,16 +210,21 @@ else
                 parameters_data.peak_pos = peak_pos;
                 
                 %% alpha peak picking and psd visualization...
-                try
-                    waitbar((iteration*h)/(total_subjects*size(frequency_bands,1)),...
-                        process_waitbar,strcat('Processing...',subject_name, ...
-                        ' Frequency Band... (' , band(3) , ')' , band(1), 'Hz  -->  ' , band(2) , 'Hz'));
-                    
+%                 try
+                    if(properties.run_frequency_bin.value)
+                        waitbar((iteration*h)/(total_subjects*size(frequency_bands,1)),...
+                            process_waitbar,strcat('Processing...',subject_name, ...
+                            ' Frequency Bin... (' , band.name) , ')' , band.f_bin, 'Hz');
+                    else
+                        waitbar((iteration*h)/(total_subjects*size(frequency_bands,1)),...
+                            process_waitbar,strcat('Processing...',subject_name, ...
+                            ' Frequency Band... (' , band.name) , ')' , band.f_start, 'Hz  -->  ' , band.f_end , 'Hz');
+                    end
                     result = band_analysis(pathname,Svv,K_6k,band,parameters_data,figures,properties);
                     disp(result);
-                catch
-                    fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
-                end
+%                 catch
+%                     fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
+%                 end
                 
                 disp('-----------------------------------------------------------------');
                 disp('       -------------------------------------------------');

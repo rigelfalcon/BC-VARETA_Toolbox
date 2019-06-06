@@ -56,59 +56,60 @@ classdef frequency_bands_guide < matlab.apps.AppBase
         % Button pushed function: AgreeButton
         function AgreeButtonPushed(app, event)
             app.canceled = false;
-            row = 1;
-            allOk = true;
-            root_tab =  'properties';
-            parameter_name = 'run_frequency_bin';
-            if(app.FrequencybinButton.Value == true)
-                parameter_value = 1;
-            else
-                parameter_value = 0;
-            end
-            change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
             
-            if(app.ByfrequencybandButton.Value)
-                app.frequency_bin = false;
-            end
-            if(app.CheckBox_Delta.Value)
-                if(app.Spinner_delta_start.Value <= app.Spinner_delta_end.Value)
-                    app.frequencies = [ app.frequencies ;app.Spinner_delta_start.Value,app.Spinner_delta_end.Value , "delta"];
-                    row = row +1;
-                else
-                    uiwait(msgbox('The start value to the delta band must be smaller than end value','Error','modal'));
-                    allOk = false;
+            bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
+            
+            bcv_properties.run_frequency_bin.value = app.FrequencybinButton.Value;
+            
+            for i = 1 : length(bcv_properties.frequencies)
+                switch bcv_properties.frequencies(i).name
+                    case 'delta'
+                        if(app.CheckBox_Delta.Value)
+                            if(app.Spinner_delta_start.Value >= app.Spinner_delta_end.Value)
+                                uiwait(msgbox('The start value to the delta band must be smaller than end value','Error','modal'));
+                                return;
+                            end
+                            bcv_properties.frequencies(i).f_start = app.Spinner_delta_start.Value;
+                            bcv_properties.frequencies(i).f_end = app.Spinner_delta_end.Value;
+                        end
+                        bcv_properties.frequencies(i).run = app.CheckBox_Delta.Value;
+                    case 'theta'
+                        if(app.CheckBox_theta.Value)
+                            if(app.Spinner_theta_start.Value >= app.Spinner_theta_end.Value)
+                                uiwait(msgbox('The start value to the theta band must be smaller than end value','Error','modal'));
+                                return;
+                            end
+                            bcv_properties.frequencies(i).f_start = app.Spinner_theta_start.Value;
+                            bcv_properties.frequencies(i).f_end = app.Spinner_theta_end.Value;
+                        end
+                        bcv_properties.frequencies(i).run = app.CheckBox_theta.Value;
+                    case 'alpha'
+                        if(app.CheckBox_alpha.Value)
+                            if(app.Spinner_alpha_start.Value >= app.Spinner_alpha_end.Value)
+                                uiwait(msgbox('The start value to the alpha band must be smaller than end value','Error','modal'));
+                                return;
+                            end
+                            bcv_properties.frequencies(i).f_start = app.Spinner_alpha_start.Value;
+                            bcv_properties.frequencies(i).f_end = app.Spinner_alpha_end.Value;
+                        end
+                        bcv_properties.frequencies(i).run = app.CheckBox_alpha.Value;
+                    case 'beta'
+                        if(app.CheckBox_beta.Value)
+                            if(app.Spinner_beta_start.Value >= app.Spinner_beta_end.Value)
+                                uiwait(msgbox('The start value to the beta band must be smaller than end value','Error','modal'));
+                                return;
+                            end
+                            bcv_properties.frequencies(i).f_start = app.Spinner_beta_start.Value;
+                            bcv_properties.frequencies(i).f_end = app.Spinner_beta_end.Value;
+                        end
+                        bcv_properties.frequencies(i).run = app.CheckBox_beta.Value;
                 end
             end
-            if(app.CheckBox_theta.Value)
-                if(app.Spinner_theta_start.Value <= app.Spinner_theta_end.Value)
-                    app.frequencies = [ app.frequencies ;app.Spinner_theta_start.Value, app.Spinner_theta_end.Value, "theta"];
-                    row = row +1;
-                else
-                    uiwait(msgbox('The start value to the theta band must be smaller than end value','Error','modal'));
-                    allOk = false;
-                end
-            end
-            if(app.CheckBox_alpha.Value)
-                if(app.Spinner_alpha_start.Value <= app.Spinner_alpha_end.Value)
-                    app.frequencies = [ app.frequencies ;app.Spinner_alpha_start.Value ,app.Spinner_alpha_end.Value , "alpha"];
-                    row = row +1;
-                else
-                    uiwait(msgbox('The start value to the alpha band must be smaller than end value','Error','modal'));
-                    allOk = false;
-                end
-            end
-            if(app.CheckBox_beta.Value)
-                if(app.Spinner_beta_start.Value <= app.Spinner_beta_end.Value)
-                    app.frequencies = [ app.frequencies ;app.Spinner_beta_start.Value , app.Spinner_beta_end.Value, "beta"];
-                    row = row +1;
-                else
-                    uiwait(msgbox('The start value to the beta band must be smaller than end value','Error','modal'));
-                    allOk = false;
-                end
-            end
-            if(allOk)
-                uiresume(app.UIFigure);
-            end
+            
+            saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json'));
+            
+            app.canceled = false;
+            uiresume(app.UIFigure);
             
         end
 

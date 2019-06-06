@@ -2,24 +2,24 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        BCVARETAUIFigure          matlab.ui.Figure
-        FileMenu                  matlab.ui.container.Menu
-        DownloadtestdataMenu      matlab.ui.container.Menu
-        ExitMenu                  matlab.ui.container.Menu
-        ToolsMenu                 matlab.ui.container.Menu
-        CreateDataStructureMenu   matlab.ui.container.Menu
-        LeadFieldComputationMenu  matlab.ui.container.Menu
-        SingleSubjectMenu_LF      matlab.ui.container.Menu
-        BatchProcessingMenu_LF    matlab.ui.container.Menu
-        MEEGAnalysisMenu          matlab.ui.container.Menu
-        SingleSubjectMenu_A       matlab.ui.container.Menu
-        BatchProcessingMenu_A     matlab.ui.container.Menu
-        ViewMenu                  matlab.ui.container.Menu
-        OpenFigMenu               matlab.ui.container.Menu
-        OpensubjectsresultMenu    matlab.ui.container.Menu
-        ShowrealEEGMenu           matlab.ui.container.Menu
-        HelpMenu                  matlab.ui.container.Menu
-        TextArea                  matlab.ui.control.TextArea
+        BCVARETAToolboxv10UIFigure  matlab.ui.Figure
+        FileMenu                    matlab.ui.container.Menu
+        DownloadtestdataMenu        matlab.ui.container.Menu
+        ExitMenu                    matlab.ui.container.Menu
+        ToolsMenu                   matlab.ui.container.Menu
+        CreateDataStructureMenu     matlab.ui.container.Menu
+        LeadFieldComputationMenu    matlab.ui.container.Menu
+        SingleSubjectMenu_LF        matlab.ui.container.Menu
+        BatchProcessingMenu_LF      matlab.ui.container.Menu
+        MEEGAnalysisMenu            matlab.ui.container.Menu
+        SingleSubjectMenu_A         matlab.ui.container.Menu
+        BatchProcessingMenu_A       matlab.ui.container.Menu
+        ViewMenu                    matlab.ui.container.Menu
+        OpenFigMenu                 matlab.ui.container.Menu
+        OpensubjectsresultMenu      matlab.ui.container.Menu
+        ShowrealEEGMenu             matlab.ui.container.Menu
+        HelpMenu                    matlab.ui.container.Menu
+        TextArea                    matlab.ui.control.TextArea
     end
 
     
@@ -64,12 +64,12 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
         % Code that executes after component creation
         function startupFcn(app)
-            clc;           
-            processes = find_xml_list(strcat('properties',filesep,'processes.xml'),'processes');
+            clc;
+            processes = jsondecode(fileread(strcat('app_processes.json')));
             for i = 1: length(processes)
                 process = processes(i);
-                if(process.name == char('process') &  process.value == '1' )                   
-                    addpath(process.attributes.root_folder);                    
+                if(process.active)
+                    addpath(process.root_folder);
                 end
             end
             try
@@ -128,7 +128,8 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             jObj.start;
             pause(1);
             
-            url = 'https://lstneuro-my.sharepoint.com/:u:/g/personal/cc-lab_neuroinformatics-collaboratory_org/EQVy7Y3oL9lDqS4_aNwglCsBMngspSuQ6yVudDj1xUOhgA?download=1';
+            app_properties= jsondecode(fileread(strcat('app_properties.json')));
+            url = app_properties.generals.test_data_url;
             filename = strcat(folder,filesep,'BC_VARETA_test_data.zip');
             matlab.net.http.HTTPOptions.VerifyServerName = false;
             options = weboptions('Timeout',Inf,'RequestMethod','get');
@@ -154,7 +155,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             disp('All done....');
             pause(2);
             delete(f);
-            msgbox('Completed download!!!','Info');
+            msgbox('Download complete','Info');
         end
 
         % Menu selected function: OpenFigMenu
@@ -199,23 +200,19 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
         % Menu selected function: SingleSubjectMenu_A
         function SingleSubjectMenu_ASelected(app, event)
-            addpath('functions');
-            root_tab =  'properties';
-            parameter_name = 'run_single_subject';
-            parameter_value = 1;
-            change_xml_parameter(strcat('properties',filesep,'properties.xml'),root_tab,parameter_name,parameter_value);
+            addpath('functions');            
+            bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
+            bcv_properties.run_single_subject.value = 1;
+            saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json'));            
             BC_VARETA_bash;
             msgbox('Completed operation!!!','Info');
         end
 
         % Menu selected function: BatchProcessingMenu_A
         function BatchProcessingMenu_ASelected(app, event)
-            addpath('functions');
-            root_tab =  'properties';
-            parameter_name = 'run_single_subject';
-            parameter_value = 0;
-            change_xml_parameter(strcat('properties',filesep,'properties.xml'),...
-                root_tab,parameter_name,parameter_value);
+             bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
+            bcv_properties.run_single_subject.value = 0;
+            saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json')); 
             BC_VARETA_bash;
             msgbox('Completed operation!!!','Info');
         end
@@ -241,15 +238,15 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
         % Create UIFigure and components
         function createComponents(app)
 
-            % Create BCVARETAUIFigure
-            app.BCVARETAUIFigure = uifigure;
-            app.BCVARETAUIFigure.Color = [0.9412 0.9412 0.9412];
-            app.BCVARETAUIFigure.Colormap = [0.2431 0.149 0.6588;0.251 0.1647 0.7059;0.2588 0.1804 0.7529;0.2627 0.1961 0.7961;0.2706 0.2157 0.8353;0.2745 0.2353 0.8706;0.2784 0.2549 0.898;0.2784 0.2784 0.9216;0.2824 0.302 0.9412;0.2824 0.3216 0.9569;0.2784 0.3451 0.9725;0.2745 0.3686 0.9843;0.2706 0.3882 0.9922;0.2588 0.4118 0.9961;0.2431 0.4353 1;0.2196 0.4588 0.9961;0.1961 0.4863 0.9882;0.1843 0.5059 0.9804;0.1804 0.5294 0.9686;0.1765 0.549 0.9529;0.1686 0.5686 0.9373;0.1529 0.5922 0.9216;0.1451 0.6078 0.9098;0.1373 0.6275 0.898;0.1255 0.6471 0.8902;0.1098 0.6627 0.8745;0.0941 0.6784 0.8588;0.0706 0.6941 0.8392;0.0314 0.7098 0.8157;0.0039 0.7216 0.7922;0.0078 0.7294 0.7647;0.0431 0.7412 0.7412;0.098 0.749 0.7137;0.1412 0.7569 0.6824;0.1725 0.7686 0.6549;0.1922 0.7765 0.6235;0.2157 0.7843 0.5922;0.2471 0.7922 0.5569;0.2902 0.7961 0.5176;0.3412 0.8 0.4784;0.3922 0.8039 0.4353;0.4471 0.8039 0.3922;0.5059 0.8 0.349;0.5608 0.7961 0.3059;0.6157 0.7882 0.2627;0.6706 0.7804 0.2235;0.7255 0.7686 0.1922;0.7725 0.7608 0.1647;0.8196 0.749 0.1529;0.8627 0.7412 0.1608;0.902 0.7333 0.1765;0.9412 0.7294 0.2118;0.9725 0.7294 0.2392;0.9961 0.7451 0.2353;0.9961 0.7647 0.2196;0.9961 0.7882 0.2039;0.9882 0.8118 0.1882;0.9804 0.8392 0.1765;0.9686 0.8627 0.1647;0.9608 0.8902 0.1529;0.9608 0.9137 0.1412;0.9647 0.9373 0.1255;0.9686 0.9608 0.1059;0.9765 0.9843 0.0824];
-            app.BCVARETAUIFigure.Position = [100 100 679 459];
-            app.BCVARETAUIFigure.Name = 'BC-VARETA';
+            % Create BCVARETAToolboxv10UIFigure
+            app.BCVARETAToolboxv10UIFigure = uifigure;
+            app.BCVARETAToolboxv10UIFigure.Color = [0.9412 0.9412 0.9412];
+            app.BCVARETAToolboxv10UIFigure.Colormap = [0.2431 0.149 0.6588;0.251 0.1647 0.7059;0.2588 0.1804 0.7529;0.2627 0.1961 0.7961;0.2706 0.2157 0.8353;0.2745 0.2353 0.8706;0.2784 0.2549 0.898;0.2784 0.2784 0.9216;0.2824 0.302 0.9412;0.2824 0.3216 0.9569;0.2784 0.3451 0.9725;0.2745 0.3686 0.9843;0.2706 0.3882 0.9922;0.2588 0.4118 0.9961;0.2431 0.4353 1;0.2196 0.4588 0.9961;0.1961 0.4863 0.9882;0.1843 0.5059 0.9804;0.1804 0.5294 0.9686;0.1765 0.549 0.9529;0.1686 0.5686 0.9373;0.1529 0.5922 0.9216;0.1451 0.6078 0.9098;0.1373 0.6275 0.898;0.1255 0.6471 0.8902;0.1098 0.6627 0.8745;0.0941 0.6784 0.8588;0.0706 0.6941 0.8392;0.0314 0.7098 0.8157;0.0039 0.7216 0.7922;0.0078 0.7294 0.7647;0.0431 0.7412 0.7412;0.098 0.749 0.7137;0.1412 0.7569 0.6824;0.1725 0.7686 0.6549;0.1922 0.7765 0.6235;0.2157 0.7843 0.5922;0.2471 0.7922 0.5569;0.2902 0.7961 0.5176;0.3412 0.8 0.4784;0.3922 0.8039 0.4353;0.4471 0.8039 0.3922;0.5059 0.8 0.349;0.5608 0.7961 0.3059;0.6157 0.7882 0.2627;0.6706 0.7804 0.2235;0.7255 0.7686 0.1922;0.7725 0.7608 0.1647;0.8196 0.749 0.1529;0.8627 0.7412 0.1608;0.902 0.7333 0.1765;0.9412 0.7294 0.2118;0.9725 0.7294 0.2392;0.9961 0.7451 0.2353;0.9961 0.7647 0.2196;0.9961 0.7882 0.2039;0.9882 0.8118 0.1882;0.9804 0.8392 0.1765;0.9686 0.8627 0.1647;0.9608 0.8902 0.1529;0.9608 0.9137 0.1412;0.9647 0.9373 0.1255;0.9686 0.9608 0.1059;0.9765 0.9843 0.0824];
+            app.BCVARETAToolboxv10UIFigure.Position = [100 100 679 459];
+            app.BCVARETAToolboxv10UIFigure.Name = 'BC-VARETA Toolbox v1.0';
 
             % Create FileMenu
-            app.FileMenu = uimenu(app.BCVARETAUIFigure);
+            app.FileMenu = uimenu(app.BCVARETAToolboxv10UIFigure);
             app.FileMenu.Text = 'File';
 
             % Create DownloadtestdataMenu
@@ -263,7 +260,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             app.ExitMenu.Text = 'Exit';
 
             % Create ToolsMenu
-            app.ToolsMenu = uimenu(app.BCVARETAUIFigure);
+            app.ToolsMenu = uimenu(app.BCVARETAToolboxv10UIFigure);
             app.ToolsMenu.Text = 'Tools';
 
             % Create CreateDataStructureMenu
@@ -300,7 +297,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             app.BatchProcessingMenu_A.Text = 'Batch Processing';
 
             % Create ViewMenu
-            app.ViewMenu = uimenu(app.BCVARETAUIFigure);
+            app.ViewMenu = uimenu(app.BCVARETAToolboxv10UIFigure);
             app.ViewMenu.Text = 'View';
 
             % Create OpenFigMenu
@@ -319,11 +316,11 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             app.ShowrealEEGMenu.Text = 'Show real EEG ';
 
             % Create HelpMenu
-            app.HelpMenu = uimenu(app.BCVARETAUIFigure);
+            app.HelpMenu = uimenu(app.BCVARETAToolboxv10UIFigure);
             app.HelpMenu.Text = 'Help';
 
             % Create TextArea
-            app.TextArea = uitextarea(app.BCVARETAUIFigure);
+            app.TextArea = uitextarea(app.BCVARETAToolboxv10UIFigure);
             app.TextArea.Position = [29 21 625 391];
         end
     end
@@ -337,7 +334,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             createComponents(app)
 
             % Register the app with App Designer
-            registerApp(app, app.BCVARETAUIFigure)
+            registerApp(app, app.BCVARETAToolboxv10UIFigure)
 
             % Execute the startup function
             runStartupFcn(app, @startupFcn)
@@ -351,7 +348,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
         function delete(app)
 
             % Delete UIFigure when app is deleted
-            delete(app.BCVARETAUIFigure)
+            delete(app.BCVARETAToolboxv10UIFigure)
         end
     end
 end

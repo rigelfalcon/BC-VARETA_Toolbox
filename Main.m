@@ -28,23 +28,23 @@ addpath('properties');
 addpath('tools');
 
 
+
 %%               Upload the actived processes
 % ------------  Checking updates --------------------------
 bcv_check_version;
 
 %%----------------Start in the properties-----------------------------
-file_path = strcat('properties',filesep,'properties.xml');
-root_tab =  'properties';
-parameter_name = 'run_mode';
-if (find_xml_parameter(file_path,root_tab,parameter_name,1)== '1')
+
+properties = jsondecode(fileread(strcat('properties',filesep,'bcv_properties.json')));
+if (properties.run_bash_mode.value)    
     %----- Finding proccess for run ---------
-    processes = find_xml_list(strcat('properties',filesep,'processes.xml'),'processes');
+    processes = jsondecode(fileread(strcat('app_processes.json')));
     for i = 1: length(processes)
         process = processes(i);
-        if(process.name == char('process') &  process.value == '1' )
-            disp(strcat('---- Running process: ' , process.attributes.name, ' -----------' ))
-            addpath(process.attributes.root_folder);
-            eval(process.attributes.function);
+        if(process.active)
+            disp(strcat('---- Running process: ' , process.name, ' -----------' ))
+            addpath(process.root_folder);
+            eval(process.function);
         end
     end    
 else    

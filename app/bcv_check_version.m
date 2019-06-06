@@ -16,9 +16,7 @@
 if(bcv_connection_status())
     
     % loading local data
-    file_path = strcat('app_properties.json');
-    json = fileread(file_path);
-    local = jsondecode(json);
+    local = jsondecode(fileread(strcat('app_properties.json')));
     
     % finding online data
     url = local.generals.url_check;
