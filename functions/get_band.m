@@ -31,6 +31,7 @@ peak_pos = nf1:nf2;
 Svv = mean(Svv(:,:,peak_pos),3);
 plot_peak(peak_pos) = max_psd;
 figure_band = figure('Color','k','Name','Power Spectral Density','NumberTitle','off');
+define_ico(figure_band);
 hold on;
 plot(F,PSD_log);
 plot(F,plot_peak,'--w');
