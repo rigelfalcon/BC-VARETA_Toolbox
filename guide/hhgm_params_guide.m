@@ -52,19 +52,14 @@ classdef hhgm_params_guide < matlab.apps.AppBase
 
         % Button pushed function: OkButton
         function OkButtonPushed(app, event)
-            properties_file = strcat('properties',filesep,'properties.xml');
-            root_tab =  'properties';
-           
+            
+            bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
+            
             maxiter_outer = app.maxiter_outerSpinner.Value;
             maxiter_inner =  app.maxiter_innerSpinner.Value;
             penalty = app.penaltySpinner.Value;
             rth = app.rthSpinner.Value;
-            
-            parameters = ["param.maxiter_outer","param.maxiter_inner","param.penalty",...
-                "param.rth","param.axi","param.sigma2xi","param.ssbl_th"];
-            values = [maxiter_outer,maxiter_inner,penalty,rth];
-            
-                        
+                     
             axi = app.axiEditField.Value;
             expression = '[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?';
             splitStr = regexp(axi,expression);
@@ -73,8 +68,7 @@ classdef hhgm_params_guide < matlab.apps.AppBase
                 app.axiEditField.Value = '1e-3';
                 return;
             end
-            values = [values, str2double(axi)];
-            
+                       
             sigma2xi = app.sigma2xiEditField.Value;
             expression = '[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?';
             splitStr = regexp(sigma2xi,expression);
@@ -82,13 +76,31 @@ classdef hhgm_params_guide < matlab.apps.AppBase
                 msgbox('The sigma2xi field has a wrong format','Info');
                 app.sigma2xiEditField.Value = '1e0';
                 return;
-            end
-            values = [values, str2double(sigma2xi)];
-            
+             end
+           
             ssbl_th = app.ssbl_thSpinner.Value;
-            values = [values, ssbl_th];
-            
-            change_xml_parameter(properties_file,root_tab,parameters,values); 
+           
+             
+             for i = 1 : length(bcv_properties.hhgm_param)                 
+                switch bcv_properties.hhgm_param(i).name
+                    case 'maxiter_outer'
+                        bcv_properties.hhgm_param(i).value = maxiter_outer;
+                    case 'maxiter_inner'
+                         bcv_properties.hhgm_param(i).value =maxiter_inner;
+                    case 'penalty'
+                         bcv_properties.hhgm_param(i).value =penalty;
+                    case 'rth'
+                         bcv_properties.hhgm_param(i).value =rth;
+                    case 'axi'
+                         bcv_properties.hhgm_param(i).value =axi;
+                    case 'sigma2xi'
+                         bcv_properties.hhgm_param(i).value =sigma2xi;
+                    case 'ssbl_th'
+                         bcv_properties.hhgm_param(i).value =ssbl_th;
+                end
+             end
+             
+            saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json'));
             
             app.canceled = false;            
             uiresume(app.HHHGMParametersUIFigure);  

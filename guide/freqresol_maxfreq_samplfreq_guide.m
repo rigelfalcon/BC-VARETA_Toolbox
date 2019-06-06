@@ -2,8 +2,8 @@ classdef freqresol_maxfreq_samplfreq_guide < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        UIFigure                       matlab.ui.Figure
-        PropertiesPanel                matlab.ui.container.Panel
+        SpectralpropertiesUIFigure     matlab.ui.Figure
+        Panel                          matlab.ui.container.Panel
         SamplingfrequencySpinnerLabel  matlab.ui.control.Label
         SamplingfrequencySpinner       matlab.ui.control.Spinner
         FrequencyresolutionSpinnerLabel  matlab.ui.control.Label
@@ -38,26 +38,22 @@ classdef freqresol_maxfreq_samplfreq_guide < matlab.apps.AppBase
         % Button pushed function: CancelButton
         function CancelButtonPushed(app, event)
             app.canceled = true;
-            uiresume(app.UIFigure);
+            uiresume(app.SpectralpropertiesUIFigure);
             close();
         end
 
         % Button pushed function: OkButton
         function OkButtonPushed(app, event)
             app.canceled = false;
-            properties_file = strcat('properties',filesep,'properties.xml');
-            root_tab =  'properties';
+            bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
+                       
+            bcv_properties.freq_resol.value = app.FrequencyresolutionSpinner.Value;
+            bcv_properties.samp_freq.value = app.SamplingfrequencySpinner.Value;
+            bcv_properties.max_freq.value = app.MaximumfrequencySpinner.Value;
+                                
+            saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json'));
             
-            app.frequency_resolution = app.FrequencyresolutionSpinner.Value;
-            app.sampling_frequency = app.SamplingfrequencySpinner.Value;
-            app.max_frequency = app.MaximumfrequencySpinner.Value;
-            
-            parameters = ["freq_resol","samp_freq","max_freq"];
-            values = [app.frequency_resolution,app.sampling_frequency,app.max_frequency];
-            
-            change_xml_parameter(properties_file,root_tab,parameters,values);
-            
-            uiresume(app.UIFigure);
+            uiresume(app.SpectralpropertiesUIFigure);
             
         end
     end
@@ -68,62 +64,61 @@ classdef freqresol_maxfreq_samplfreq_guide < matlab.apps.AppBase
         % Create UIFigure and components
         function createComponents(app)
 
-            % Create UIFigure
-            app.UIFigure = uifigure;
-            app.UIFigure.Position = [100 100 318 284];
-            app.UIFigure.Name = 'UI Figure';
+            % Create SpectralpropertiesUIFigure
+            app.SpectralpropertiesUIFigure = uifigure;
+            app.SpectralpropertiesUIFigure.Position = [100 100 318 284];
+            app.SpectralpropertiesUIFigure.Name = 'Spectral properties';
 
-            % Create PropertiesPanel
-            app.PropertiesPanel = uipanel(app.UIFigure);
-            app.PropertiesPanel.Title = 'Properties';
-            app.PropertiesPanel.Position = [32 73 258 177];
+            % Create Panel
+            app.Panel = uipanel(app.SpectralpropertiesUIFigure);
+            app.Panel.Position = [32 73 258 177];
 
             % Create SamplingfrequencySpinnerLabel
-            app.SamplingfrequencySpinnerLabel = uilabel(app.PropertiesPanel);
+            app.SamplingfrequencySpinnerLabel = uilabel(app.Panel);
             app.SamplingfrequencySpinnerLabel.HorizontalAlignment = 'right';
-            app.SamplingfrequencySpinnerLabel.Position = [21 77 115 22];
+            app.SamplingfrequencySpinnerLabel.Position = [21 96 115 22];
             app.SamplingfrequencySpinnerLabel.Text = 'Sampling frequency:';
 
             % Create SamplingfrequencySpinner
-            app.SamplingfrequencySpinner = uispinner(app.PropertiesPanel);
+            app.SamplingfrequencySpinner = uispinner(app.Panel);
             app.SamplingfrequencySpinner.Step = 0.1;
             app.SamplingfrequencySpinner.Limits = [0 Inf];
-            app.SamplingfrequencySpinner.Position = [151 77 71 22];
+            app.SamplingfrequencySpinner.Position = [151 96 71 22];
             app.SamplingfrequencySpinner.Value = 200;
 
             % Create FrequencyresolutionSpinnerLabel
-            app.FrequencyresolutionSpinnerLabel = uilabel(app.PropertiesPanel);
+            app.FrequencyresolutionSpinnerLabel = uilabel(app.Panel);
             app.FrequencyresolutionSpinnerLabel.HorizontalAlignment = 'right';
-            app.FrequencyresolutionSpinnerLabel.Position = [15 119 121 22];
+            app.FrequencyresolutionSpinnerLabel.Position = [15 138 121 22];
             app.FrequencyresolutionSpinnerLabel.Text = 'Frequency resolution:';
 
             % Create FrequencyresolutionSpinner
-            app.FrequencyresolutionSpinner = uispinner(app.PropertiesPanel);
+            app.FrequencyresolutionSpinner = uispinner(app.Panel);
             app.FrequencyresolutionSpinner.Step = 0.1;
-            app.FrequencyresolutionSpinner.Position = [151 119 71 22];
+            app.FrequencyresolutionSpinner.Position = [151 138 71 22];
             app.FrequencyresolutionSpinner.Value = 0.5;
 
             % Create MaximumfrequencySpinnerLabel
-            app.MaximumfrequencySpinnerLabel = uilabel(app.PropertiesPanel);
+            app.MaximumfrequencySpinnerLabel = uilabel(app.Panel);
             app.MaximumfrequencySpinnerLabel.HorizontalAlignment = 'right';
-            app.MaximumfrequencySpinnerLabel.Position = [19 30 117 22];
+            app.MaximumfrequencySpinnerLabel.Position = [19 49 117 22];
             app.MaximumfrequencySpinnerLabel.Text = 'Maximum frequency:';
 
             % Create MaximumfrequencySpinner
-            app.MaximumfrequencySpinner = uispinner(app.PropertiesPanel);
+            app.MaximumfrequencySpinner = uispinner(app.Panel);
             app.MaximumfrequencySpinner.Step = 0.1;
             app.MaximumfrequencySpinner.Limits = [0 Inf];
-            app.MaximumfrequencySpinner.Position = [151 30 71 22];
+            app.MaximumfrequencySpinner.Position = [151 49 71 22];
             app.MaximumfrequencySpinner.Value = 32;
 
             % Create CancelButton
-            app.CancelButton = uibutton(app.UIFigure, 'push');
+            app.CancelButton = uibutton(app.SpectralpropertiesUIFigure, 'push');
             app.CancelButton.ButtonPushedFcn = createCallbackFcn(app, @CancelButtonPushed, true);
             app.CancelButton.Position = [211 32 79 22];
             app.CancelButton.Text = 'Cancel';
 
             % Create OkButton
-            app.OkButton = uibutton(app.UIFigure, 'push');
+            app.OkButton = uibutton(app.SpectralpropertiesUIFigure, 'push');
             app.OkButton.ButtonPushedFcn = createCallbackFcn(app, @OkButtonPushed, true);
             app.OkButton.Position = [116 32 85 22];
             app.OkButton.Text = 'Ok';
@@ -139,7 +134,7 @@ classdef freqresol_maxfreq_samplfreq_guide < matlab.apps.AppBase
             createComponents(app)
 
             % Register the app with App Designer
-            registerApp(app, app.UIFigure)
+            registerApp(app, app.SpectralpropertiesUIFigure)
 
             % Execute the startup function
             runStartupFcn(app, @startupFcn)
@@ -153,7 +148,7 @@ classdef freqresol_maxfreq_samplfreq_guide < matlab.apps.AppBase
         function delete(app)
 
             % Delete UIFigure when app is deleted
-            delete(app.UIFigure)
+            delete(app.SpectralpropertiesUIFigure)
         end
     end
 end

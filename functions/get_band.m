@@ -19,12 +19,12 @@ PSD_log = 10*log10(abs(PSD));
 min_psd = min(PSD_log(:));
 max_psd = max(PSD_log(:));
 plot_peak = min_psd*ones(Nf,1);
-[f1,nf1] = min(abs(F - str2double(band(1)))) ;
-[f2,nf2] = min(abs(F - str2double(band(2)))) ;
+[f1,nf1] = min(abs(F - band.f_start));
+[f2,nf2] = min(abs(F - band.f_end));
 peak_pos = nf1:nf2;
 Svv = mean(Svv(:,:,peak_pos),3);
 plot_peak(peak_pos) = max_psd;
-figure_band = figure('Color','k');
+figure_band = figure('Color','k','Name','Power Spectral Density','NumberTitle','off');
 hold on;
 plot(F,PSD_log);
 plot(F,plot_peak,'--w');
@@ -33,13 +33,13 @@ ylabel('PSD (dB)','Color','w');
 xlabel('Freq. (Hz)','Color','w');
 title('Power Spectral Density','Color','w');
 
-if(band(1) == band(2))
-text_cross = strcat(band(1), 'Hz');
-else
-  text_cross = strcat( band(1),'Hz -> ', band(2), 'Hz');
+try
+text_cross = strcat(string(band.f_bin), 'Hz');
+text(band.f_bin,max_psd*0.9,text_cross,'Color','w','FontSize',12,'HorizontalAlignment','center');
+catch
+  text_cross = strcat( string(band.f_start),'Hz -> ', string(band.f_end), 'Hz');
+  text(band.f_end,max_psd*0.9,text_cross,'Color','w','FontSize',12,'HorizontalAlignment','center');
 end
-text(str2double(band(2)),max_psd*0.9,text_cross,'Color','w','FontSize',12,'HorizontalAlignment','center');
-
 
 pause(1e-10);
 
