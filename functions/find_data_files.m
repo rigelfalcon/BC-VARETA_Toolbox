@@ -156,6 +156,7 @@ else
             plot_peak = min_psd*ones(Nf,1);
             
             figure_cross = figure('Color','k','Name','Power Spectral Density','NumberTitle','off');
+            define_ico(figure_cross);
             hold on;
             plot(F,PSD_log);
             plot(F,plot_peak,'--w');
