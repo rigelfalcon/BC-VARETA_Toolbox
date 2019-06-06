@@ -92,9 +92,9 @@ classdef hhgm_params_guide < matlab.apps.AppBase
                     case 'rth'
                          bcv_properties.hhgm_param(i).value =rth;
                     case 'axi'
-                         bcv_properties.hhgm_param(i).value =axi;
+                         bcv_properties.hhgm_param(i).value =str2double(axi);
                     case 'sigma2xi'
-                         bcv_properties.hhgm_param(i).value =sigma2xi;
+                         bcv_properties.hhgm_param(i).value =str2double(sigma2xi);
                     case 'ssbl_th'
                          bcv_properties.hhgm_param(i).value =ssbl_th;
                 end
