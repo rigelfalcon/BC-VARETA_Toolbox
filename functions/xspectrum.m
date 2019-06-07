@@ -11,7 +11,7 @@ function [Svv,F,Ns,PSD] = xspectrum(data,Fs,Fm,deltaf)
 %    Ns       = number of segments in which the EEG signal is wrapped
 %
 %
-%% 
+%%
 % =============================================================================
 % This function is part of the BC-VARETA toolbox:
 % https://github.com/egmoreira/BC-VARETA-toolbox
@@ -26,7 +26,7 @@ function [Svv,F,Ns,PSD] = xspectrum(data,Fs,Fm,deltaf)
 %**************************************************************************
 %% Initialization oF variables...
 NFFT     = round(Fs/deltaf);                            % number of time points per window
-Nw       = 1;                                           % number of windows for Thomson spectral estimate
+Nw       = 3;                                           % number of windows for Thomson spectral estimate
 F        = 0:deltaf:Fm;                                 % frequency vector
 %% Estimation of the Cross Spectrum...
 e       = dpss(NFFT,Nw);                                % discrete prolate spheroidal (Slepian) sequences
@@ -50,9 +50,10 @@ for k = 1:Ns
         Svv(:,:,i) = Svv(:,:,i)+cov(squeeze(W(:,i,:)).',1);
     end
 end
+Ns  = 2*Nw*Ns;
 Svv = Svv/Ns;                                           % normalizing
 %% Estimation of Power Spectral Density (PSD)...
-PSD = zeros(Nc,lf);                                     
+PSD = zeros(Nc,lf);
 for freq = 1:lf
     PSD(:,freq) = diag(squeeze(abs(Svv(:,:,freq))));
 end

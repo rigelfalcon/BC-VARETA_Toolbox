@@ -45,7 +45,15 @@ end
 C = abs(diag(Svv));
 C = C/max(C);
 C(C<0.01) = 0;
-figure_scalp = figure('Color','k','Name','Scalp','NumberTitle','off'); hold on; set(gca,'Color','k');
+
+try
+    freq_text = strcat('Band:(',band.name,') FBin:',string(band.f_bin),'Hz');
+catch
+    freq_text = strcat('Band:(',band.name,') Freq:',string(band.f_start),'Hz-',string(band.f_end),'Hz');
+end
+
+figure_name = strcat('Scalp - ',freq_text);
+figure_scalp = figure('Color','k','Name',figure_name,'NumberTitle','off'); hold on; set(gca,'Color','k');
 define_ico(figure_scalp);
 scatter3(X,Y,Z,100,C.^1,'filled');
 patch('Faces',S_h.Faces,'Vertices',S_h.Vertices,'FaceVertexCData',0.01*(ones(length(S_h.Vertices),1)),'FaceColor','interp','EdgeColor','none','FaceAlpha',.35);
@@ -68,7 +76,9 @@ temp_diag  = diag(abs(diag(Svv)));
 temp_diag  = temp_diag/max(temp_diag(:));
 temp_diag  = diag(diag(temp_diag)+1);
 temp_comp  = temp_diag+temp_ndiag;
-figure_scalp_electrodes = figure('Color','k','Name','Scalp','NumberTitle','off');
+
+figure_name = strcat('Scalp - ',freq_text);
+figure_scalp_electrodes = figure('Color','k','Name',figure_name,'NumberTitle','off');
 define_ico(figure_scalp_electrodes);
 imagesc(temp_comp);
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
@@ -122,7 +132,9 @@ sources_iv(indms)   = abs(diag(Sjj));
 sources_iv          = sources_iv/max(sources_iv(:));
 ind_zr              = sources_iv < 0.01;
 sources_iv(ind_zr)  = 0;
-figure_BC_VARETA1 = figure('Color','k','Name','BC-VARETA-activity','NumberTitle','off'); hold on;
+
+figure_name = strcat('BC-VARETA-activity - ',freq_text);
+figure_BC_VARETA1 = figure('Color','k','Name',figure_name,'NumberTitle','off'); hold on;
 define_ico(figure_BC_VARETA1);
 patch('Faces',S_6k.Faces,'Vertices',S_6k.Vertices,'FaceVertexCData',sources_iv,'FaceColor','interp','EdgeColor','none','FaceAlpha',.85);
 set(gca,'Color','k');
@@ -151,7 +163,9 @@ label_gen = [];
 for ii = 1:length(indms)
     label_gen{ii} = num2str(ii);
 end
-figure_BC_VARETA2 = figure('Color','k','Name','BC-VARETA-node-wise-conn','NumberTitle','off');
+
+figure_name = strcat('BC-VARETA-node-wise-conn - ',freq_text);
+figure_BC_VARETA2 = figure('Color','k','Name',figure_name,'NumberTitle','off');
 define_ico(figure_BC_VARETA2);
 imagesc(temp_comp);
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
@@ -205,7 +219,8 @@ temp_diag  = temp_diag/max(temp_diag(:));
 temp_diag  = diag(diag(temp_diag)+1);
 temp_comp  = temp_diag+temp_ndiag;
 
-figure_BC_VARETA3 = figure('Color','k','Name','BC-VARETA-roi-conn','NumberTitle','off');
+figure_name = strcat('BC-VARETA-roi-conn - ',freq_text);
+figure_BC_VARETA3 = figure('Color','k','Name',figure_name,'NumberTitle','off');
 define_ico(figure_BC_VARETA3);
 imagesc(temp_comp);
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
@@ -227,9 +242,6 @@ figures.figure_BC_VARETA3 = fig_struct;
 pause(1e-12);
 
 %% saving...
-
-
-
 
 pathname = strcat( pathname , filesep, 'result' , filesep, band.name, filesep);
 if(~isfolder(pathname))
