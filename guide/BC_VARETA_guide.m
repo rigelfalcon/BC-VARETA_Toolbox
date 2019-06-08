@@ -2,24 +2,26 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        BCVARETAToolboxv10UIFigure  matlab.ui.Figure
-        FileMenu                    matlab.ui.container.Menu
-        DownloadtestdataMenu        matlab.ui.container.Menu
-        ExitMenu                    matlab.ui.container.Menu
-        ToolsMenu                   matlab.ui.container.Menu
-        CreateDataStructureMenu     matlab.ui.container.Menu
-        LeadFieldComputationMenu    matlab.ui.container.Menu
-        SingleSubjectMenu_LF        matlab.ui.container.Menu
-        BatchProcessingMenu_LF      matlab.ui.container.Menu
-        MEEGAnalysisMenu            matlab.ui.container.Menu
-        SingleSubjectMenu_A         matlab.ui.container.Menu
-        BatchProcessingMenu_A       matlab.ui.container.Menu
-        ViewMenu                    matlab.ui.container.Menu
-        OpenFigMenu                 matlab.ui.container.Menu
-        OpensubjectsresultMenu      matlab.ui.container.Menu
-        ShowrealEEGMenu             matlab.ui.container.Menu
-        HelpMenu                    matlab.ui.container.Menu
-        TextArea                    matlab.ui.control.TextArea
+        BCVARETAToolboxv10UIFigure    matlab.ui.Figure
+        FileMenu                      matlab.ui.container.Menu
+        DownloadtestdataMenu          matlab.ui.container.Menu
+        ExitMenu                      matlab.ui.container.Menu
+        ToolsMenu                     matlab.ui.container.Menu
+        CreateDataStructureMenu       matlab.ui.container.Menu
+        LeadFieldComputationMenu      matlab.ui.container.Menu
+        SingleSubjectMenu_LF          matlab.ui.container.Menu
+        BatchProcessingMenu_LF        matlab.ui.container.Menu
+        MEEGAnalysisMenu              matlab.ui.container.Menu
+        SingleSubjectMenu_A           matlab.ui.container.Menu
+        BatchProcessingMenu_A         matlab.ui.container.Menu
+        ViewMenu                      matlab.ui.container.Menu
+        OpenFigMenu                   matlab.ui.container.Menu
+        OpensubjectsresultMenu        matlab.ui.container.Menu
+        OpenSubjectsconnectivityMenu  matlab.ui.container.Menu
+        OpenSubjectsactivityMenu      matlab.ui.container.Menu
+        ShowrealEEGMenu               matlab.ui.container.Menu
+        HelpMenu                      matlab.ui.container.Menu
+        TextArea                      matlab.ui.control.TextArea
     end
 
     
@@ -190,19 +192,21 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
         % Menu selected function: ShowrealEEGMenu
         function ShowrealEEGMenuSelected(app, event)
-            %             [file,path] = uigetfile('*.mat');
-            %             if isequal(file,0)
-            %                 disp('User selected Cancel');
-            %                 return;
-            %             end
-            %             real_EEG=load(strcat(path,filesep,file));
+%             [file,path] = uigetfile('*.mat');
+%             if isequal(file,0)
+%                 disp('User selected Cancel');
+%                 return;
+%             end
+%             real_EEG=load(strcat(path,filesep,file));
+%             figure_EEG = figure('Color','k','Name',file,'NumberTitle','off');
+%                    
         end
 
         % Menu selected function: SingleSubjectMenu_A
         function SingleSubjectMenu_ASelected(app, event)
             addpath('functions');            
             bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
-            bcv_properties.run_single_subject.value = 1;
+            bcv_properties.run_single_subject.value = true;
             saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json'));            
             BC_VARETA_bash;
             msgbox('Completed operation!!!','Info');
@@ -211,7 +215,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
         % Menu selected function: BatchProcessingMenu_A
         function BatchProcessingMenu_ASelected(app, event)
              bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
-            bcv_properties.run_single_subject.value = 0;
+            bcv_properties.run_single_subject.value = false;
             saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json')); 
             BC_VARETA_bash;
             msgbox('Completed operation!!!','Info');
@@ -229,6 +233,48 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             addpath('bst_lf_ppl');
             bs_lf_ppl;
             msgbox('Completed operation!!!','Info');
+        end
+
+        % Menu selected function: OpenSubjectsconnectivityMenu
+        function OpenSubjectsconnectivityMenuSelected(app, event)
+            folder = uigetdir('tittle','Select the Subject''s result folder');
+            if(folder==0)
+                return;
+            end
+            files = dir(folder);
+            ext='.fig';
+            for j=1:size(files,1)
+                file_name = files(j).name;
+                if(~isempty(strfind(file_name,'roi_conn')) )
+                    file_path = strcat(folder,filesep, file_name);
+                    [~,name,ex]=fileparts(file_name);
+                    %% ----------Searching de data files ------------------------------------
+                    if(~isfolder(file_path) & strcmpi(strtrim(ex),ext) )
+                        openfig(strcat(file_path));
+                    end
+                end
+            end
+        end
+
+        % Menu selected function: OpenSubjectsactivityMenu
+        function OpenSubjectsactivityMenuSelected(app, event)
+             folder = uigetdir('tittle','Select the Subject''s result folder');
+            if(folder==0)
+                return;
+            end
+            files = dir(folder);
+            ext='.fig';
+            for j=1:size(files,1)
+                file_name = files(j).name;
+                if(~isempty(strfind(file_name,'activity')) )
+                    file_path = strcat(folder,filesep, file_name);
+                    [~,name,ex]=fileparts(file_name);
+                    %% ----------Searching de data files ------------------------------------
+                    if(~isfolder(file_path) & strcmpi(strtrim(ex),ext) )
+                        openfig(strcat(file_path));
+                    end
+                end
+            end
         end
     end
 
@@ -309,6 +355,16 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             app.OpensubjectsresultMenu = uimenu(app.ViewMenu);
             app.OpensubjectsresultMenu.MenuSelectedFcn = createCallbackFcn(app, @OpensubjectsresultMenuSelected, true);
             app.OpensubjectsresultMenu.Text = 'Open subject''s result';
+
+            % Create OpenSubjectsconnectivityMenu
+            app.OpenSubjectsconnectivityMenu = uimenu(app.ViewMenu);
+            app.OpenSubjectsconnectivityMenu.MenuSelectedFcn = createCallbackFcn(app, @OpenSubjectsconnectivityMenuSelected, true);
+            app.OpenSubjectsconnectivityMenu.Text = 'Open Subject''s connectivity';
+
+            % Create OpenSubjectsactivityMenu
+            app.OpenSubjectsactivityMenu = uimenu(app.ViewMenu);
+            app.OpenSubjectsactivityMenu.MenuSelectedFcn = createCallbackFcn(app, @OpenSubjectsactivityMenuSelected, true);
+            app.OpenSubjectsactivityMenu.Text = 'Open Subject''s activity';
 
             % Create ShowrealEEGMenu
             app.ShowrealEEGMenu = uimenu(app.ViewMenu);
