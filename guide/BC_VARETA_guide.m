@@ -2,26 +2,26 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        BCVARETAToolboxv10UIFigure    matlab.ui.Figure
-        FileMenu                      matlab.ui.container.Menu
-        DownloadtestdataMenu          matlab.ui.container.Menu
-        ExitMenu                      matlab.ui.container.Menu
-        ToolsMenu                     matlab.ui.container.Menu
-        CreateDataStructureMenu       matlab.ui.container.Menu
-        LeadFieldComputationMenu      matlab.ui.container.Menu
-        SingleSubjectMenu_LF          matlab.ui.container.Menu
-        BatchProcessingMenu_LF        matlab.ui.container.Menu
-        MEEGAnalysisMenu              matlab.ui.container.Menu
-        SingleSubjectMenu_A           matlab.ui.container.Menu
-        BatchProcessingMenu_A         matlab.ui.container.Menu
-        ViewMenu                      matlab.ui.container.Menu
-        OpenFigMenu                   matlab.ui.container.Menu
-        OpensubjectsresultMenu        matlab.ui.container.Menu
-        OpenSubjectsconnectivityMenu  matlab.ui.container.Menu
-        OpenSubjectsactivityMenu      matlab.ui.container.Menu
-        ShowrealEEGMenu               matlab.ui.container.Menu
-        HelpMenu                      matlab.ui.container.Menu
-        TextArea                      matlab.ui.control.TextArea
+        BCVARETAToolboxv10UIFigure  matlab.ui.Figure
+        FileMenu                    matlab.ui.container.Menu
+        DownloadtestdataMenu        matlab.ui.container.Menu
+        ExitMenu                    matlab.ui.container.Menu
+        ToolsMenu                   matlab.ui.container.Menu
+        CreateDataStructureMenu     matlab.ui.container.Menu
+        LeadFieldComputationMenu    matlab.ui.container.Menu
+        SingleSubjectMenu_LF        matlab.ui.container.Menu
+        BatchProcessingMenu_LF      matlab.ui.container.Menu
+        MEEGAnalysisMenu            matlab.ui.container.Menu
+        SingleSubjectMenu_A         matlab.ui.container.Menu
+        BatchProcessingMenu_A       matlab.ui.container.Menu
+        ViewMenu                    matlab.ui.container.Menu
+        FigureMenu                  matlab.ui.container.Menu
+        SubjectsresultMenu          matlab.ui.container.Menu
+        SubjectsconnectivityMenu    matlab.ui.container.Menu
+        SubjectsactivityMenu        matlab.ui.container.Menu
+        RealEEGMenu                 matlab.ui.container.Menu
+        HelpMenu                    matlab.ui.container.Menu
+        TextArea                    matlab.ui.control.TextArea
     end
 
     
@@ -32,7 +32,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
     properties (Access = public)
         single_subject % Description
     end
-   
+    
     methods (Access = private)
         
         function setPromptFcn(app,jTextArea,eventData,newPrompt)
@@ -160,9 +160,9 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             msgbox('Download complete','Info');
         end
 
-        % Menu selected function: OpenFigMenu
-        function OpenFigMenuSelected(app, event)
-
+        % Menu selected function: FigureMenu
+        function FigureMenuSelected(app, event)
+            
             [file,path] = uigetfile('*.fig');
             if isequal(file,0)
                 disp('User selected Cancel');
@@ -171,8 +171,8 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             openfig(strcat(path,filesep,file));
         end
 
-        % Menu selected function: OpensubjectsresultMenu
-        function OpensubjectsresultMenuSelected(app, event)
+        % Menu selected function: SubjectsresultMenu
+        function SubjectsresultMenuSelected(app, event)
             folder = uigetdir('tittle','Select the Source Folder');
             if(folder==0)
                 return;
@@ -190,33 +190,43 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             end
         end
 
-        % Menu selected function: ShowrealEEGMenu
-        function ShowrealEEGMenuSelected(app, event)
+        % Menu selected function: RealEEGMenu
+        function RealEEGMenuSelected(app, event)
 %             [file,path] = uigetfile('*.mat');
 %             if isequal(file,0)
 %                 disp('User selected Cancel');
 %                 return;
 %             end
 %             real_EEG=load(strcat(path,filesep,file));
-%             figure_EEG = figure('Color','k','Name',file,'NumberTitle','off');
-%                    
+%             
+%             figure_EEG = figure('Color','k','Name',file,'NumberTitle','off','units','normalized','outerposition',[0 0 1 1]);
+%             subplot(1,3,1); plot(real_EEG.Sjj);
+%             %             ylabel('generators')
+%             %     xlabel('generators')
+%             %     title('simulated partial correlations')
+%             subplot(1,3,2); plot(real_EEG.Thetajj);
+%             %             ylabel('generators')
+%             %     xlabel('generators')
+%             %     title('simulated partial correlations')
+%             subplot(1,3,3); plot(real_EEG.indms);
+            
         end
 
         % Menu selected function: SingleSubjectMenu_A
         function SingleSubjectMenu_ASelected(app, event)
-            addpath('functions');            
+            addpath('functions');
             bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
             bcv_properties.run_single_subject.value = true;
-            saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json'));            
+            saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json'));
             BC_VARETA_bash;
             msgbox('Completed operation!!!','Info');
         end
 
         % Menu selected function: BatchProcessingMenu_A
         function BatchProcessingMenu_ASelected(app, event)
-             bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
+            bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
             bcv_properties.run_single_subject.value = false;
-            saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json')); 
+            saveJSON(bcv_properties,strcat('properties',filesep,'bcv_properties.json'));
             BC_VARETA_bash;
             msgbox('Completed operation!!!','Info');
         end
@@ -235,8 +245,8 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             msgbox('Completed operation!!!','Info');
         end
 
-        % Menu selected function: OpenSubjectsconnectivityMenu
-        function OpenSubjectsconnectivityMenuSelected(app, event)
+        % Menu selected function: SubjectsconnectivityMenu
+        function SubjectsconnectivityMenuSelected(app, event)
             folder = uigetdir('tittle','Select the Subject''s result folder');
             if(folder==0)
                 return;
@@ -245,20 +255,18 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             ext='.fig';
             for j=1:size(files,1)
                 file_name = files(j).name;
-                if(~isempty(strfind(file_name,'roi_conn')) )
-                    file_path = strcat(folder,filesep, file_name);
-                    [~,name,ex]=fileparts(file_name);
-                    %% ----------Searching de data files ------------------------------------
-                    if(~isfolder(file_path) & strcmpi(strtrim(ex),ext) )
-                        openfig(strcat(file_path));
-                    end
+                file_path = strcat(folder,filesep, file_name);
+                [~,name,ex]=fileparts(file_name);
+                %% ----------Searching de data files ------------------------------------
+                if(~isfolder(file_path) & strcmpi(strtrim(ex),ext) & contains(file_name,'roi_conn'))
+                    openfig(strcat(file_path));
                 end
             end
         end
 
-        % Menu selected function: OpenSubjectsactivityMenu
-        function OpenSubjectsactivityMenuSelected(app, event)
-             folder = uigetdir('tittle','Select the Subject''s result folder');
+        % Menu selected function: SubjectsactivityMenu
+        function SubjectsactivityMenuSelected(app, event)
+            folder = uigetdir('tittle','Select the Subject''s result folder');
             if(folder==0)
                 return;
             end
@@ -266,13 +274,11 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             ext='.fig';
             for j=1:size(files,1)
                 file_name = files(j).name;
-                if(~isempty(strfind(file_name,'activity')) )
-                    file_path = strcat(folder,filesep, file_name);
-                    [~,name,ex]=fileparts(file_name);
-                    %% ----------Searching de data files ------------------------------------
-                    if(~isfolder(file_path) & strcmpi(strtrim(ex),ext) )
-                        openfig(strcat(file_path));
-                    end
+                file_path = strcat(folder,filesep, file_name);
+                [~,name,ex]=fileparts(file_name);
+                %% ----------Searching de data files ------------------------------------
+                if(~isfolder(file_path) & strcmpi(strtrim(ex),ext) & contains(file_name,'activity') )
+                    openfig(strcat(file_path));
                 end
             end
         end
@@ -346,30 +352,30 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             app.ViewMenu = uimenu(app.BCVARETAToolboxv10UIFigure);
             app.ViewMenu.Text = 'View';
 
-            % Create OpenFigMenu
-            app.OpenFigMenu = uimenu(app.ViewMenu);
-            app.OpenFigMenu.MenuSelectedFcn = createCallbackFcn(app, @OpenFigMenuSelected, true);
-            app.OpenFigMenu.Text = 'Open Fig';
+            % Create FigureMenu
+            app.FigureMenu = uimenu(app.ViewMenu);
+            app.FigureMenu.MenuSelectedFcn = createCallbackFcn(app, @FigureMenuSelected, true);
+            app.FigureMenu.Text = 'Figure';
 
-            % Create OpensubjectsresultMenu
-            app.OpensubjectsresultMenu = uimenu(app.ViewMenu);
-            app.OpensubjectsresultMenu.MenuSelectedFcn = createCallbackFcn(app, @OpensubjectsresultMenuSelected, true);
-            app.OpensubjectsresultMenu.Text = 'Open subject''s result';
+            % Create SubjectsresultMenu
+            app.SubjectsresultMenu = uimenu(app.ViewMenu);
+            app.SubjectsresultMenu.MenuSelectedFcn = createCallbackFcn(app, @SubjectsresultMenuSelected, true);
+            app.SubjectsresultMenu.Text = 'Subject''s result';
 
-            % Create OpenSubjectsconnectivityMenu
-            app.OpenSubjectsconnectivityMenu = uimenu(app.ViewMenu);
-            app.OpenSubjectsconnectivityMenu.MenuSelectedFcn = createCallbackFcn(app, @OpenSubjectsconnectivityMenuSelected, true);
-            app.OpenSubjectsconnectivityMenu.Text = 'Open Subject''s connectivity';
+            % Create SubjectsconnectivityMenu
+            app.SubjectsconnectivityMenu = uimenu(app.ViewMenu);
+            app.SubjectsconnectivityMenu.MenuSelectedFcn = createCallbackFcn(app, @SubjectsconnectivityMenuSelected, true);
+            app.SubjectsconnectivityMenu.Text = 'Subject''s connectivity';
 
-            % Create OpenSubjectsactivityMenu
-            app.OpenSubjectsactivityMenu = uimenu(app.ViewMenu);
-            app.OpenSubjectsactivityMenu.MenuSelectedFcn = createCallbackFcn(app, @OpenSubjectsactivityMenuSelected, true);
-            app.OpenSubjectsactivityMenu.Text = 'Open Subject''s activity';
+            % Create SubjectsactivityMenu
+            app.SubjectsactivityMenu = uimenu(app.ViewMenu);
+            app.SubjectsactivityMenu.MenuSelectedFcn = createCallbackFcn(app, @SubjectsactivityMenuSelected, true);
+            app.SubjectsactivityMenu.Text = 'Subject''s activity';
 
-            % Create ShowrealEEGMenu
-            app.ShowrealEEGMenu = uimenu(app.ViewMenu);
-            app.ShowrealEEGMenu.MenuSelectedFcn = createCallbackFcn(app, @ShowrealEEGMenuSelected, true);
-            app.ShowrealEEGMenu.Text = 'Show real EEG ';
+            % Create RealEEGMenu
+            app.RealEEGMenu = uimenu(app.ViewMenu);
+            app.RealEEGMenu.MenuSelectedFcn = createCallbackFcn(app, @RealEEGMenuSelected, true);
+            app.RealEEGMenu.Text = 'Real EEG ';
 
             % Create HelpMenu
             app.HelpMenu = uimenu(app.BCVARETAToolboxv10UIFigure);
