@@ -28,7 +28,6 @@ addpath('properties');
 addpath('tools');
 
 
-
 %%               Upload the actived processes
 % ------------  Checking updates --------------------------
 bcv_check_version;
