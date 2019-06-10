@@ -46,10 +46,11 @@ if(bcv_connection_status())
                 
                 
                 %% Download lasted version
-                filename = strcat('BCV_lasted.zip');
+                filename = strcat('BCV_lasted_version.zip');
                 disp(strcat("Downloading lasted version......."));
                 jObj.setBusyText(strcat("Downloading lasted version "));
-                url = 'https://codeload.github.com/CCC-members/BC-VARETA_Toolbox/zip/master';
+                
+                url = local.generals.base_url;                
                 matlab.net.http.HTTPOptions.VerifyServerName = false;
                 options = weboptions('Timeout',Inf,'RequestMethod','auto');
                 downladed_file = websave(filename,url,options);
