@@ -25,7 +25,7 @@ if(bcv_connection_status())
     online = webread(url,options);
     
     if(local.generals.version_number < online.generals.version_number)
-        answer = questdlg('There a new version available of BC-VARETA. Do you want to update the laster version?', ...
+        answer = questdlg({'There a new version available of BC-VARETA.',' Do you want to update the laster version?'}, ...
             'Update BC-VARETA', ...
             'Yes','No','Close');
         % Handle response
@@ -74,6 +74,8 @@ if(bcv_connection_status())
                 delete(f);
                 
             case 'No'
+                return;
+            case ''
                 return;
         end
     end

@@ -28,14 +28,18 @@ addpath('properties');
 addpath('tools');
 
 
-%%               Upload the actived processes
-% ------------  Checking updates --------------------------
+
+%% ------------ Checking MatLab compatibility ----------------
+if(~bcv_check_matlab_version())
+   return;
+end
+
+%% ------------  Checking updates --------------------------
 bcv_check_version;
 
-%%----------------Start in the properties-----------------------------
-
+%%               Upload the actived processes
 properties = jsondecode(fileread(strcat('properties',filesep,'bcv_properties.json')));
-if (properties.run_bash_mode.value)    
+if (properties.run_bash_mode.value)
     %----- Finding proccess for run ---------
     processes = jsondecode(fileread(strcat('app_processes.json')));
     for i = 1: length(processes)
@@ -45,8 +49,8 @@ if (properties.run_bash_mode.value)
             addpath(process.root_folder);
             eval(process.function);
         end
-    end    
-else    
+    end
+else
     BC_VARETA_guide;
 end
 

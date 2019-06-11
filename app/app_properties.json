@@ -11,5 +11,10 @@
 	"externals" : {
 		"name" : "brainstorm",
 		"url" : "unaurl"
-		}
-	}
+		},
+    "matlab_runtime": {
+         "mac":"http://ssd.mathworks.com/supportfiles/downloads/R2018b/deployment_files/R2018b/installers/maci64/MCR_R2018b_maci64_installer.dmg.zip",
+         "win":"http://ssd.mathworks.com/supportfiles/downloads/R2018b/deployment_files/R2018b/installers/win64/MCR_R2018b_win64_installer.exe",
+         "linux":"http://ssd.mathworks.com/supportfiles/downloads/R2018b/deployment_files/R2018b/installers/glnxa64/MCR_R2018b_glnxa64_installer.zip"
+    }
+}
