@@ -30,16 +30,16 @@ addpath('tools');
 
 
 %% ------------ Checking MatLab compatibility ----------------
-if(~bcv_check_matlab_version())
+if(~app_check_matlab_version())
    return;
 end
 
 %% ------------  Checking updates --------------------------
-bcv_check_version;
+app_check_version;
 
 %%               Upload the actived processes
-properties = jsondecode(fileread(strcat('properties',filesep,'bcv_properties.json')));
-if (properties.run_bash_mode.value)
+app_properties = jsondecode(fileread(strcat('app_properties.json')));
+if (app_properties.run_bash_mode.value)
     %----- Finding proccess for run ---------
     processes = jsondecode(fileread(strcat('app_processes.json')));
     for i = 1: length(processes)

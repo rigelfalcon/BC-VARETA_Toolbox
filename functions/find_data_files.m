@@ -149,7 +149,8 @@ else
     
     if( properties.define_bands)
         % ----- Graficar el cross-spectra
-        if(~properties.run_bash_mode.value)
+        app_properties = jsondecode(fileread(strcat('app',filesep,'app_properties.json')));
+        if(~app_properties.run_bash_mode.value)
             PSD_log = 10*log10(abs(PSD));
             min_psd = min(PSD_log(:));
             max_psd = max(PSD_log(:));

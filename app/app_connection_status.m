@@ -1,4 +1,4 @@
-function connected = bcv_connection_status()
+function connected =app_connection_status()
 connected = false;
 try    
   status = webread('https://www.github.com');        

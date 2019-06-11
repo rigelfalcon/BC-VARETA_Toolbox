@@ -3,7 +3,8 @@ function [properties,result] = define_frequency_bands(properties)
 %   Detailed explanation goes here
 %--------------------frequency bands-----------------------------------
 
-if(~properties.run_bash_mode.value)
+app_properties = jsondecode(fileread(strcat('app',filesep,'app_properties.json')));
+if(~app_properties.run_bash_mode.value)
     guiHandle = frequency_bands_guide;
     disp('------Waitintg for frequency_bands------');
     uiwait(guiHandle.UIFigure);

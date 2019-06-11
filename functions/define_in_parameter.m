@@ -1,10 +1,11 @@
 function [properties,result] = define_in_parameter()
 
-
 properties = jsondecode(fileread(strcat('properties',filesep,'bcv_properties.json')));
 
 result = 1;
-if(~properties.run_bash_mode.value)
+
+app_properties = jsondecode(fileread(strcat('app',filesep,'app_properties.json')));
+if(~app_properties.run_bash_mode.value)
     %%---------------Frequency's bands---------------
     guiHandle = freqresol_maxfreq_samplfreq_guide;
     disp('-----Waiting for Windows number and frequency''s resolution------');

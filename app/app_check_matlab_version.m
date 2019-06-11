@@ -1,4 +1,4 @@
-function result = bcv_check_matlab_version()
+function result = app_check_matlab_version()
 %  BC-VARETA check matlab version
 %
 %
@@ -18,9 +18,8 @@ if verLessThan('matlab','9.5')
     disp(strcat('>> You need install the MATLAB Runtime, R2018b (9.5) or superior'));
     disp(strcat('>> https://www.mathworks.com/products/compiler/matlab-runtime.html'));
     
-    bcv_properties = jsondecode(fileread(strcat('bcv_properties.json')));
-    
-    if(~bcv_properties.run_bash_mode.value)
+   app_properties = jsondecode(fileread(strcat('app_properties.json')));    
+    if(~app_properties.run_bash_mode.value)
         
         answer = questdlg({strcat('>> You have installed the Matlab version: ',version,'.'),...
             '>> BC-VARETA was developed in Matlab: 9.5.0.944444 (R2018b).',...
@@ -35,8 +34,7 @@ if verLessThan('matlab','9.5')
         % Handle response
         switch answer
             case 'Yes'
-                if(bcv_connection_status())
-                    app_properties = jsondecode(fileread(strcat('app_properties.json')));
+                if(app_connection_status())                    
                     if ismac
                         url = app_properties.matlab_runtime.mac;
                     elseif isunix
