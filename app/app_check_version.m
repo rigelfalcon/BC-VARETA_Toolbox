@@ -13,7 +13,7 @@
 % try
 
 
-if(bcv_connection_status())
+if(app_connection_status())
     
     % loading local data
     local = jsondecode(fileread(strcat('app_properties.json')));
