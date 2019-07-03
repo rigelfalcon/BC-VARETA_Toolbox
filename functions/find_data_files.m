@@ -196,6 +196,7 @@ else
         if(all_file_ok)
             for h=1:length(frequency_bands)
                 band = frequency_bands(h);
+                if(band.run)
                 if(properties.run_frequency_bin.value)
                     disp(strcat( '---- Frequency Band: (' , band.name , ')   bin ->>>  ' , string(band.f_bin), 'Hz -------------') );
                 else
@@ -233,6 +234,7 @@ else
                 disp('               --------------------------------');
                 disp('                     -------------------');
                 
+                end
             end
             
             
