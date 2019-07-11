@@ -1,0 +1,43 @@
+[
+    {
+        "classification":"CMI",
+        "function":"import_CMI_protocol",
+        "invariants":
+        [
+             {
+                "type":"folder",
+                "name":"Processed data",
+                "path":[]
+             },
+             {
+                "type":"folder",
+                "name":"data",
+                "path":["Brainstorm output"]
+                
+             },
+             {
+                "type":"folder",
+                "name":"anat",
+                "path":["Brainstorm output"]
+             }
+        ]
+    },
+    {
+        "classification":"Brainstorm",
+        "function":"", 
+        "invariants":
+        [
+             {
+                "type":"folder",
+                "name":"anat",
+                "path":["Brainstorm output"]                    
+             },
+             {
+                "type":"folder",
+                "name":"anat",
+                "path":["Brainstorm output"]                   
+             }
+        ]
+    }
+]
+
