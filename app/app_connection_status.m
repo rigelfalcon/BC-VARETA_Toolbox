@@ -5,6 +5,7 @@ try
   status = webread('https://www.github.com',options);        
   connected = true;
 catch
+    
 end
 end
 

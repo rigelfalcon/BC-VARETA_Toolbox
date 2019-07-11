@@ -26,7 +26,8 @@ addpath('app')
 addpath('guide');
 addpath('properties');
 addpath('tools');
-
+addpath('external');
+addpath('bcv_import');
 
 
 %% ------------ Checking MatLab compatibility ----------------

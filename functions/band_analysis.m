@@ -22,7 +22,7 @@ cmap_a=parameters_data.cmap_a;
 cmap_c=parameters_data.cmap_c;
 Nseg=parameters_data.Nseg;
 S_6k=parameters_data.S_6k;
-Atlas = S_6k.Atlas(6).Scouts;
+Atlas = S_6k.Atlas(S_6k.iAtlas).Scouts;
 
 
 peak_pos=parameters_data.peak_pos;
@@ -33,14 +33,10 @@ Nelec = size(K_6k,1);
 Svv_inv = sqrt(Svv*Svv+4*eye(Nelec))-Svv;
 %%
 
-%% electrodes space visualization...
-X = zeros(length(elect_58_343.conv_ASA343),1);
-Y = zeros(length(elect_58_343.conv_ASA343),1);
-Z = zeros(length(elect_58_343.conv_ASA343),1);
-for ii = 1:length(elect_58_343.conv_ASA343)
-    X(ii) = ASA_343.Channel(elect_58_343.conv_ASA343{ii}).Loc(1);
-    Y(ii) = ASA_343.Channel(elect_58_343.conv_ASA343{ii}).Loc(2);
-    Z(ii) = ASA_343.Channel(elect_58_343.conv_ASA343{ii}).Loc(3);
+for ii = 1:length(ASA_343.Channel)
+        X(ii) = ASA_343.Channel(ii).Loc(1);
+        Y(ii) = ASA_343.Channel(ii).Loc(2);
+        Z(ii) = ASA_343.Channel(ii).Loc(3);  
 end
 C = abs(diag(Svv));
 C = C/max(C);
@@ -82,7 +78,7 @@ figure_scalp_electrodes = figure('Color','k','Name',figure_name,'NumberTitle','o
 define_ico(figure_scalp_electrodes);
 imagesc(temp_comp);
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
-    'XTick',1:length(elect_58_343.conv_ASA343),'YTick',1:length(elect_58_343.conv_ASA343),...
+    'XTick',1:length(ASA_343.Channel),'YTick',1:length(ASA_343.Channel),...
     'XTickLabel',elect_58_343.label,'XTickLabelRotation',90,...
     'YTickLabel',elect_58_343.label,'YTickLabelRotation',0);
 xlabel('electrodes','Color','w');
@@ -104,7 +100,7 @@ pause(1e-12);
 param = struct;
 for c = 1: length(properties.hhgm_param)
     row_param = properties.hhgm_param(c);
-    param.(row_param.name) = row_param.value;
+    param.(row_param.name) = double(row_param.value);
 end
 param.m             = length(peak_pos)*Nseg;
 param.Axixi         = eye(length(Svv));
