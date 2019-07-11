@@ -8,44 +8,44 @@ files_to_load = ["eeg", "leadfield", "surf" ,"scalp"];
 
 for j=1:size(subject_childs,1)
     cn = subject_childs(j).name;
-    %% ----------Searching de data files ------------------------------------
+    %% ----------Searching de data files ----------------------------------
     if(isfolder(fullfile(pathname,cn)) & cn ~= '.' & string(cn) ~="..")
         [~,~,ex]=fileparts(cn);
         
         if (isfolder(fullfile(pathname,cn)))
-            if(size(strfind(cn,'eeg'))>0)
+            if(contains(cn,'eeg','IgnoreCase',true))
                 files=dir(strcat( pathname,filesep,cn));
-                if(numel(files)>2 & size(strfind(files(3).name,'.mat'))>0)
+                if(numel(files)>2 & contains(files(3).name,'.mat'))
                     filename_eeg = files(3).name;
                     k = find(files_to_load =='eeg');
                     files_to_load(k) = [];
                 end
             end
-            if(size(strfind(cn,'leadfield'))>0)
+            if(contains(cn,'leadfield','IgnoreCase',true))
                 files=dir(strcat( pathname,filesep,cn));
-                if(numel(files)>2  &  size(strfind(files(3).name,'.mat'))>0)
+                if(numel(files)>2  &  contains(files(3).name,'.mat'))
                     filename_lf = files(3).name;
                     k = find(files_to_load =='leadfield');
                     files_to_load(k) = [];
                 end
             end
-            if(size(strfind(cn,'scalp'))>0)
+            if(contains(cn,'scalp','IgnoreCase',true))
                 files=dir(strcat( pathname,filesep,cn));
-                if(numel(files)>2  &  size(strfind(files(3).name,'.mat'))>0)
+                if(numel(files)>2  &  contains(files(3).name,'.mat'))
                     filename_scalp = files(3).name;
                     k = find(files_to_load =='scalp');
                     files_to_load(k) = [];
                 end
             end
-            if(size(strfind(cn,'surf'))>0)
+            if(contains(cn,'surf','IgnoreCase',true))
                 files=dir(strcat( pathname,filesep,cn));
-                if(numel(files)>2  &  size(strfind(files(3).name,'.mat'))>0)
+                if(numel(files)>2  &  contains(files(3).name,'.mat'))
                     filename_surf = files(3).name;
                     k = find(files_to_load =='surf');
                     files_to_load(k) = [];
                 end
             end
-        end        
+        end
     end
     %%
 end
@@ -127,7 +127,7 @@ else
     
     %---------------end the Check the file's structure----------------------
     %
-       
+    
     %%-------------- initial values...------------
     Input_flat = 0;
     [Ne1,Np1] = size(K_6k);
@@ -165,17 +165,17 @@ else
             ylabel('PSD (dB)','Color','w');
             xlabel('Freq. (Hz)','Color','w');
             title('Power Spectral Density','Color','w');
-            pause(1e-10);    
-          
+            pause(1e-10);
+            
         end
         %------------------------------------
-          
+        
         %------ difening frequency bands ----------------
-        [properties,result] = define_frequency_bands(properties);         
+        [properties,result] = define_frequency_bands(properties);
         delete(figure_cross);
         if(result == 'canceled')
             return;
-        end       
+        end
     end
     frequency_bands = properties.frequencies;
     error = false;
@@ -184,36 +184,36 @@ else
     %         error = true;
     %     end
     
-    %%    
+    %%
     %%------- Load all parameters of datas --------------
     if(~error)
         figures = struct;
         parameters_data.cmap_a=color_map.cmap_a;
         parameters_data.cmap_c=color_map.cmap_c;
-        parameters_data.Nseg=Nseg;       
-        %%       
+        parameters_data.Nseg=Nseg;
+        %%
         %% ----- Iterating the frequency bands to perform analyzes-----------
         if(all_file_ok)
             for h=1:length(frequency_bands)
                 band = frequency_bands(h);
                 if(band.run)
-                if(properties.run_frequency_bin.value)
-                    disp(strcat( '---- Frequency Band: (' , band.name , ')   bin ->>>  ' , string(band.f_bin), 'Hz -------------') );
-                else
-                    disp(strcat( '---- Frequency Band: (' , band.name , ')' , string(band.f_start), 'Hz  -->  ' , string(band.f_end) , 'Hz    -------------') );
-                end
-                disp(strcat( '---- -----------------------------------') );
-                
-                % --------- Get band -----------------------------------
-                
-                [Svv,peak_pos,fig_struct] = get_band(Svv_channel,PSD,Nf,F,band);
-                
-                figures.figure_band = fig_struct;
-                
-                parameters_data.peak_pos = peak_pos;
-                
-                %% alpha peak picking and psd visualization...
-%                 try
+                    if(properties.run_frequency_bin.value)
+                        disp(strcat( '---- Frequency Band: (' , band.name , ')   bin ->>>  ' , string(band.f_bin), 'Hz -------------') );
+                    else
+                        disp(strcat( '---- Frequency Band: (' , band.name , ')' , string(band.f_start), 'Hz  -->  ' , string(band.f_end) , 'Hz    -------------') );
+                    end
+                    disp(strcat( '---- -----------------------------------') );
+                    
+                    % --------- Get band -----------------------------------
+                    
+                    [Svv,peak_pos,fig_struct] = get_band(Svv_channel,PSD,Nf,F,band);
+                    
+                    figures.figure_band = fig_struct;
+                    
+                    parameters_data.peak_pos = peak_pos;
+                    
+                    %% alpha peak picking and psd visualization...
+                    %                 try
                     if(properties.run_frequency_bin.value)
                         waitbar((iteration*h)/(total_subjects*length(frequency_bands)),...
                             process_waitbar,...
@@ -225,15 +225,15 @@ else
                     end
                     result = band_analysis(pathname,Svv,K_6k,band,parameters_data,figures,properties);
                     disp(result);
-%                 catch
-%                     fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
-%                 end
-                
-                disp('-----------------------------------------------------------------');
-                disp('       -------------------------------------------------');
-                disp('               --------------------------------');
-                disp('                     -------------------');
-                
+                    %                 catch
+                    %                     fprintf(2,'-----Please verify the input data, there may be an error in the loaded files.--------\n');
+                    %                 end
+                    
+                    disp('-----------------------------------------------------------------');
+                    disp('       -------------------------------------------------');
+                    disp('               --------------------------------');
+                    disp('                     -------------------');
+                    
                 end
             end
             
