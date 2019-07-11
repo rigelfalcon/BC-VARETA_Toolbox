@@ -5,6 +5,7 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
         BCVARETAToolboxv10UIFigure  matlab.ui.Figure
         FileMenu                    matlab.ui.container.Menu
         DownloadtestdataMenu        matlab.ui.container.Menu
+        ImportdataMenu              matlab.ui.container.Menu
         ExitMenu                    matlab.ui.container.Menu
         ToolsMenu                   matlab.ui.container.Menu
         CreateDataStructureMenu     matlab.ui.container.Menu
@@ -192,23 +193,23 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
 
         % Menu selected function: RealEEGMenu
         function RealEEGMenuSelected(app, event)
-%             [file,path] = uigetfile('*.mat');
-%             if isequal(file,0)
-%                 disp('User selected Cancel');
-%                 return;
-%             end
-%             real_EEG=load(strcat(path,filesep,file));
-%             
-%             figure_EEG = figure('Color','k','Name',file,'NumberTitle','off','units','normalized','outerposition',[0 0 1 1]);
-%             subplot(1,3,1); plot(real_EEG.Sjj);
-%             %             ylabel('generators')
-%             %     xlabel('generators')
-%             %     title('simulated partial correlations')
-%             subplot(1,3,2); plot(real_EEG.Thetajj);
-%             %             ylabel('generators')
-%             %     xlabel('generators')
-%             %     title('simulated partial correlations')
-%             subplot(1,3,3); plot(real_EEG.indms);
+            %             [file,path] = uigetfile('*.mat');
+            %             if isequal(file,0)
+            %                 disp('User selected Cancel');
+            %                 return;
+            %             end
+            %             real_EEG=load(strcat(path,filesep,file));
+            %
+            %             figure_EEG = figure('Color','k','Name',file,'NumberTitle','off','units','normalized','outerposition',[0 0 1 1]);
+            %             subplot(1,3,1); plot(real_EEG.Sjj);
+            %             %             ylabel('generators')
+            %             %     xlabel('generators')
+            %             %     title('simulated partial correlations')
+            %             subplot(1,3,2); plot(real_EEG.Thetajj);
+            %             %             ylabel('generators')
+            %             %     xlabel('generators')
+            %             %     title('simulated partial correlations')
+            %             subplot(1,3,3); plot(real_EEG.indms);
             
         end
 
@@ -282,6 +283,11 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
                 end
             end
         end
+
+        % Menu selected function: ImportdataMenu
+        function ImportdataMenuSelected(app, event)
+            import_data_structure;
+        end
     end
 
     % App initialization and construction
@@ -305,6 +311,11 @@ classdef BC_VARETA_guide < matlab.apps.AppBase
             app.DownloadtestdataMenu = uimenu(app.FileMenu);
             app.DownloadtestdataMenu.MenuSelectedFcn = createCallbackFcn(app, @DownloadtestdataMenuSelected, true);
             app.DownloadtestdataMenu.Text = 'Download test data';
+
+            % Create ImportdataMenu
+            app.ImportdataMenu = uimenu(app.FileMenu);
+            app.ImportdataMenu.MenuSelectedFcn = createCallbackFcn(app, @ImportdataMenuSelected, true);
+            app.ImportdataMenu.Text = 'Import data';
 
             % Create ExitMenu
             app.ExitMenu = uimenu(app.FileMenu);
