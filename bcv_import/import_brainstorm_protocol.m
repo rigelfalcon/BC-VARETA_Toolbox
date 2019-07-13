@@ -1,4 +1,4 @@
-function [] = import_CMI_protocol(subject,bcv_input_folder)
+function [] = import_brainstorm_protocol(subject,bcv_input_folder)
 
 
 [path,subject_name,ext] = fileparts(subject);
@@ -13,25 +13,11 @@ chanlocs = '';
 K_6k = double([]);
 orig_leadfield = '';
  files_to_load = ["preprocessed","channel","headmodel","surface"];
- conv_ASA343 = {};
+ 
 for i=1:size(sub_folders,1)
     waitbar(i/(size(sub_folders,1)*2),process_waitbar,strcat('Search data files for: ' , subject_name ));
    
-    subfolder = sub_folders(i).name;
-    if(isfolder(fullfile(subject,subfolder)) & subfolder ~= '.' & string(subfolder) ~="..")
-        if(contains(subfolder,'data','IgnoreCase',true))
-                       
-            files=dir(fullfile(subject,subfolder));
-            if(numel(files)>2  &  contains(files(3).name,'.mat'))
-                filename_resting = files(3).name;
-                if(isfile(fullfile(subject,subfolder,filename_resting)))
-                    disp (">> Genering eeg file");
-                    load(fullfile(subject,subfolder,filename_resting));
-                    ii = find(files_to_load =='preprocessed');
-                    files_to_load(ii) = [];
-                end
-            end
-        end
+    subfolder = sub_folders(i).name;   
         if(contains(subfolder,'brainstorm','IgnoreCase',true))
                         
             data_dir = fullfile(subject,subfolder,'data');
@@ -98,7 +84,6 @@ else
                 else
                     reduced_channel(p) = all_channel(o);
                 end
-                conv_ASA343(p) = {o};
                 break;
             end
         end
@@ -108,7 +93,6 @@ else
         K_6k(end + 1,:) =  row;
         %                         conv_ASA343(end + 1) = {length(all_channel)};
         reduced_channel(end + 1) = all_channel(end);
-        conv_ASA343(end + 1) = {length(all_channel)};
     end
     save(strcat(output_subject,filesep,'leadfield',filesep,'leadfield.mat'),'K_6k');
     
@@ -135,7 +119,7 @@ else
     % ---- Geting electrodes_343 -----------------------
     elect_58_343 = struct;
     elect_58_343.label = {chanlocs.labels}';
-    elect_58_343.conv_ASA343 = conv_ASA343';
+    % elect_58_343.conv_ASA343 = conv_ASA343';
     
     
     S_h = struct;

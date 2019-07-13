@@ -20,8 +20,11 @@ Example of data structure (time series, leadfield, surface, and electrodes) is h
 Main Function for MEEG real data analysis
     - Main.m      (**call this function for run**).
   
-  Inputs for bash:
-    - configure file: properties/properties.xml
+Inputs for bash:
+    - configure files:
+        app/app_processes.json
+        app/app_properties.json
+        properties/bcv_properties.json
  
    Outputs:
     - results: subfolder containing the bc-vareta outputs

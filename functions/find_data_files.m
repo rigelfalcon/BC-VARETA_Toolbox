@@ -137,7 +137,7 @@ else
     %%
     
     %%--------------- estimating cross-spectra-------------------------------
-    disp('estimating cross-spectra for M/EEG data...');
+    disp('>> Estimating cross-spectra for M/EEG data...');
     %     try
     Fs = properties.samp_freq.value; % sampling frequency
     Fm = properties.max_freq.value; % maximum frequency

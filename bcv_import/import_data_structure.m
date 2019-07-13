@@ -26,15 +26,17 @@ for i = 1 : length(subjects)
         % Identify data structure
         [data_clasification,subject] = check_data_structure(subject);
         if(~isempty(data_clasification))
-            funct = strcat(data_clasification.function,'(''',subject,''',''',bcv_input_folder,''')');
-            eval(funct);
+            if(~isempty(data_clasification.function))
+                funct = strcat(data_clasification.function,'(''',subject,''',''',bcv_input_folder,''')');
+                eval(funct);
+            end
         else
             disp(strcat('>> The subject: ', subjects(i).name, '. Don''t have a correct structure to import'));
             disp('>> Please check this folder:');
             disp(strcat('>> ',subject));
         end
         
-    end    
+    end
 end
 
 

@@ -30,12 +30,12 @@
              {
                 "type":"folder",
                 "name":"anat",
-                "path":["Brainstorm output"]                    
+                "path":[]                    
              },
              {
                 "type":"folder",
-                "name":"anat",
-                "path":["Brainstorm output"]                   
+                "name":"data",
+                "path":[]                   
              }
         ]
     }

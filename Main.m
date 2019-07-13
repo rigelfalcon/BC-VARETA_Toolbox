@@ -1,4 +1,4 @@
-%% BC-VARETA toolbox v8.1
+%% BC-VARETA toolbox v1.0
 %%%%%%%%%%%%%%%%%%%%
 
 % Includes the routines of the Brain Connectivity Variable Resolution
