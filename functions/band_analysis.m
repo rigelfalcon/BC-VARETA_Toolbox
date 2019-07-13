@@ -23,6 +23,7 @@ cmap_c=parameters_data.cmap_c;
 Nseg=parameters_data.Nseg;
 S_6k=parameters_data.S_6k;
 Atlas = S_6k.Atlas(S_6k.iAtlas).Scouts;
+% Atlas = S_6k.Atlas(6).Scouts;
 
 
 peak_pos=parameters_data.peak_pos;
@@ -32,11 +33,21 @@ peak_pos=parameters_data.peak_pos;
 Nelec = size(K_6k,1);
 Svv_inv = sqrt(Svv*Svv+4*eye(Nelec))-Svv;
 %%
-
-for ii = 1:length(ASA_343.Channel)
+if (~isequal(length(elect_58_343.conv_ASA343),length(ASA_343.Channel)))
+    X = zeros(length(elect_58_343.conv_ASA343),1);
+    Y = zeros(length(elect_58_343.conv_ASA343),1);
+    Z = zeros(length(elect_58_343.conv_ASA343),1);
+    for ii = 1:length(elect_58_343.conv_ASA343)
+        X(ii) = ASA_343.Channel(elect_58_343.conv_ASA343{ii}).Loc(1);
+        Y(ii) = ASA_343.Channel(elect_58_343.conv_ASA343{ii}).Loc(2);
+        Z(ii) = ASA_343.Channel(elect_58_343.conv_ASA343{ii}).Loc(3);
+    end
+else
+    for ii = 1:length(ASA_343.Channel)
         X(ii) = ASA_343.Channel(ii).Loc(1);
         Y(ii) = ASA_343.Channel(ii).Loc(2);
-        Z(ii) = ASA_343.Channel(ii).Loc(3);  
+        Z(ii) = ASA_343.Channel(ii).Loc(3);
+    end
 end
 C = abs(diag(Svv));
 C = C/max(C);
@@ -77,10 +88,18 @@ figure_name = strcat('Scalp - ',freq_text);
 figure_scalp_electrodes = figure('Color','k','Name',figure_name,'NumberTitle','off');
 define_ico(figure_scalp_electrodes);
 imagesc(temp_comp);
+if (~isequal(length(elect_58_343.conv_ASA343),length(ASA_343.Channel)))
 set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
     'XTick',1:length(ASA_343.Channel),'YTick',1:length(ASA_343.Channel),...
     'XTickLabel',elect_58_343.label,'XTickLabelRotation',90,...
     'YTickLabel',elect_58_343.label,'YTickLabelRotation',0);
+else
+    set(gca,'Color','k','XColor','w','YColor','w','ZColor','w',...
+    'XTick',1:length(elect_58_343.conv_ASA343),'YTick',1:length(elect_58_343.conv_ASA343),...
+    'XTickLabel',elect_58_343.label,'XTickLabelRotation',90,...
+    'YTickLabel',elect_58_343.label,'YTickLabelRotation',0);
+end
+
 xlabel('electrodes','Color','w');
 ylabel('electrodes','Color','w');
 colormap(gca,cmap_c);

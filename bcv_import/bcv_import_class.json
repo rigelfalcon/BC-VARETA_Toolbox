@@ -24,7 +24,7 @@
     },
     {
         "classification":"Brainstorm",
-        "function":"import_brainstorm_protocol", 
+        "function":"", 
         "invariants":
         [
              {
