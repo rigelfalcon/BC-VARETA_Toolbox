@@ -95,6 +95,7 @@ else
     for i = 1:length(all_channel)
         conv_ASA343(i)= {i} ;
     end   
+     save(strcat(output_subject,filesep,'leadfield',filesep,'leadfield.mat'),'K_6k');
 end
 
 %  -------- Genering scalp file -------------------------------
