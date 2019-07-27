@@ -1,4 +1,4 @@
-function [Svv,F,Ns,PSD] = xspectrum(data,Fs,Fm,deltaf)
+function [Svv,F,Ns,PSD] = xspectrum(data,Fs,Fm,deltaf,Nw)
 % xspectrum estimates the Cross Spectrum of the input M/EEG data
 % Inputs:
 %    data     = M/EEG data matrix, in which every row is a channel
@@ -26,7 +26,7 @@ function [Svv,F,Ns,PSD] = xspectrum(data,Fs,Fm,deltaf)
 %**************************************************************************
 %% Initialization oF variables...
 NFFT     = round(Fs/deltaf);                            % number of time points per window
-Nw       = 3;                                           % number of windows for Thomson spectral estimate
+Nw       = Nw;                                           % number of windows for Thomson spectral estimate
 F        = 0:deltaf:Fm;                                 % frequency vector
 %% Estimation of the Cross Spectrum...
 e       = dpss(NFFT,Nw);                                % discrete prolate spheroidal (Slepian) sequences
