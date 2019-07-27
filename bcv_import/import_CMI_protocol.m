@@ -55,9 +55,11 @@ end
 %----- Genering leadfield file -----------------------------------
 %----- Delete bad channels -----------------------------------
 disp (">> Genering leadfield file");
+
+reduced_channel = struct;
 if(~isempty(chanlocs))
     conv_ASA343 = {length(chanlocs)};
-    reduced_channel = struct;
+    
     for p = 1 : length(chanlocs)
         true_label = chanlocs(p).labels;
         for o = 1 : length(all_channel)
@@ -83,9 +85,16 @@ if(~isempty(chanlocs))
             reduced_channel(end + 1) = all_channel(end);
         end
         save(strcat(output_subject,filesep,'leadfield',filesep,'leadfield.mat'),'K_6k');
+        
     end
 else
-    
+    chanlocs = all_channel;
+    reduced_channel = all_channel;
+    K_6k = orig_leadfield;
+    conv_ASA343 = {length(all_channel)};
+    for i = 1:length(all_channel)
+        conv_ASA343(i)= {i} ;
+    end   
 end
 
 %  -------- Genering scalp file -------------------------------
@@ -110,7 +119,11 @@ ASA_343.SCS = SCS;
 
 % ---- Geting electrodes_343 -----------------------
 elect_58_343 = struct;
-elect_58_343.label = {chanlocs.labels}';
+try
+    elect_58_343.label = {chanlocs.labels}';
+catch
+    elect_58_343.label = {chanlocs.Name}';
+end
 elect_58_343.conv_ASA343 = conv_ASA343';
 
 
