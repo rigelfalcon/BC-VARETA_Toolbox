@@ -142,7 +142,7 @@ else
     Fs = properties.samp_freq.value; % sampling frequency
     Fm = properties.max_freq.value; % maximum frequency
     deltaf = properties.freq_resol.value; % frequency resolution
-    Nw = properties.win_order;
+    Nw = properties.win_order.value;
     
     waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for M/EEG data...'));
     [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k,Nw);
