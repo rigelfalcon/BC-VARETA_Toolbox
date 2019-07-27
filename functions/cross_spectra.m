@@ -1,4 +1,4 @@
-function [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k)
+function [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k,Nw)
 
 
 % Authors:
@@ -14,7 +14,7 @@ function [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k
 % Date: March 18, 2019
 
 %% estimating cross-spectra...
-[Svv_channel,F,Nseg,PSD] = xspectrum(data,Fs,Fm,deltaf);                 % estimates the Cross Spectrum of the input M/EEG data
+[Svv_channel,F,Nseg,PSD] = xspectrum(data,Fs,Fm,deltaf,Nw);                 % estimates the Cross Spectrum of the input M/EEG data
 disp('applying average reference...');
 Nf = length(F);
 for jj = 1:Nf
