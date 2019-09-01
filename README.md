@@ -18,7 +18,7 @@ Example of data structure (time series, leadfield, surface, and electrodes) is h
     https://lstneuro-my.sharepoint.com/:u:/g/personal/cc-lab_neuroinformatics-collaboratory_org/EQVy7Y3oL9lDqS4_aNwglCsBMngspSuQ6yVudDj1xUOhgA?download=1
 
 Main Function for MEEG real data analysis
-    - Main.m      (**call this function for run**).
+    - Main.m      (**call this function for run**)
   
 Inputs for bash:
     - configure files:
