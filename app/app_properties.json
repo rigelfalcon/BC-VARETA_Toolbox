@@ -10,7 +10,7 @@
         },
     "run_bash_mode":{
         "description":"HPC-option1",
-        "value":false
+        "value":true
         },
 	"externals" : {
 		"name" : "brainstorm",
