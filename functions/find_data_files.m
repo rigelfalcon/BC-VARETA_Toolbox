@@ -144,10 +144,11 @@ else
     deltaf = properties.freq_resol.value; % frequency resolution
     Nw = properties.win_order.value;
     
-    waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for M/EEG data...'));
+%     waitbar(0.04,process_waitbar,strcat('estimating cross-spectra for M/EEG data...'));
+    disp(strcat('estimating cross-spectra for M/EEG data...'))
     [Svv_channel,K_6k,PSD,Nf,F,Nseg] = cross_spectra(data,Fs,Fm,deltaf,K_6k,Nw);
-    waitbar(0.08,process_waitbar,strcat('Define frequency bands...'));
-    
+%     waitbar(0.08,process_waitbar,strcat('Define frequency bands...'));
+    disp(strcat('Define frequency bands...'))
     if( properties.define_bands)
         % ----- Graficar el cross-spectra
         app_properties = jsondecode(fileread(strcat('app',filesep,'app_properties.json')));
@@ -173,7 +174,7 @@ else
         
         %------ difening frequency bands ----------------
         [properties,result] = define_frequency_bands(properties);
-        delete(figure_cross);
+%         delete(figure_cross);
         if(result == 'canceled')
             return;
         end
@@ -216,13 +217,15 @@ else
                     %% alpha peak picking and psd visualization...
                     %                 try
                     if(properties.run_frequency_bin.value)
-                        waitbar((iteration*h)/(total_subjects*length(frequency_bands)),...
-                            process_waitbar,...
-                            strcat(subject_name,': FBin (' , band.name , ') - ' , string(band.f_bin), 'Hz'));
+%                         waitbar((iteration*h)/(total_subjects*length(frequency_bands)),...
+%                             process_waitbar,...
+%                             strcat(subject_name,': FBin (' , band.name , ') - ' , string(band.f_bin), 'Hz'));
+                        disp(strcat(subject_name,': FBin (' , band.name , ') - ' , string(band.f_bin), 'Hz'))
                     else
-                        waitbar((iteration*h)/(total_subjects*length(frequency_bands)),...
-                            process_waitbar,...
-                            strcat(subject_name,': FBand (' , band.name , ')(' , string(band.f_start), 'Hz-' , string(band.f_end) , 'Hz)'));
+%                         waitbar((iteration*h)/(total_subjects*length(frequency_bands)),...
+%                             process_waitbar,...
+%                             strcat(subject_name,': FBand (' , band.name , ')(' , string(band.f_start), 'Hz-' , string(band.f_end) , 'Hz)'));
+                        disp(strcat(subject_name,': FBand (' , band.name , ')(' , string(band.f_start), 'Hz-' , string(band.f_end) , 'Hz)'))
                     end
                     result = band_analysis(pathname,Svv,K_6k,band,parameters_data,figures,properties);
                     disp(result);

@@ -26,7 +26,8 @@ color_map = load(strcat( 'tools',filesep,'mycolormap_brain_basic_conn.mat'));
 %%
 
 tic
-process_waitbar = waitbar(0,'Please wait...');
+% process_waitbar = waitbar(0,'Please wait...');
+process_waitbar=[]
 %% Begin parallel process
 root_path = properties.data_path;
 if(properties.run_parallel.value)
@@ -54,7 +55,7 @@ else
 end
 %%
 %%
-delete(process_waitbar);
+% delete(process_waitbar);
 toc
 
 
